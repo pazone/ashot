@@ -33,7 +33,7 @@
     <scm>
         <url>https://github.com/yandex-qatools/ashot</url>
         <connection>scm:git:git@github.com:yandex-qatools/ashot.git</connection>
-        <developerConnection>scm:git:git@github.com:yandex-qatools/shot.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:yandex-qatools/ashot.git</developerConnection>
     </scm>
 
     <name>Yandex QATools AShot WebDriver Utility</name>
