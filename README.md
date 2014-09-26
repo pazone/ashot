@@ -15,7 +15,7 @@ The objective of taking web element looks simply and consists of three goals:
 * Crop origin screenshot image
 
 As result aShot provides he image with WebElement
-![images snippet](//img/images_intent_blur.png)
+![images snippet](/doc/img/images_intent_blur.png)
 
 #####Taking screenshot of page
 
