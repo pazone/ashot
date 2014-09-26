@@ -4,9 +4,48 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
+
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.1</version>
+    <version>1.1-SNAPSHOT</version>
+
+    <organization>
+        <name>Yandex</name>
+        <url>http://company.yandex.com</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>GitHub Issues</system>
+        <url>https://github.com/yandex-qatools/ashot/issues</url>
+    </issueManagement>
+
+    <scm>
+        <url>https://github.com/yandex-qatools/ashot</url>
+        <connection>scm:git:git@github.com:yandex-qatools/ashot.git</connection>
+        <developerConnection>scm:git:git@github.com:yandex-qatools/shot.git</developerConnection>
+    </scm>
+
+    <name>Yandex QATools AShot WebDriver Utility</name>
+
+    <developers>
+        <developer>
+            <id>Pazone</id>
+            <name>Pavel Zorin</name>
+            <email>pazone@yandex-team.ru</email>
+            <organization>Yandex</organization>
+        </developer>
+    </developers>
 
     <dependencies>
         <dependency>
@@ -19,6 +58,11 @@
             <artifactId>gson</artifactId>
             <version>2.2.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+        </dependency>
 
         <!--test-->
         <dependency>
@@ -26,11 +70,6 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
