@@ -15,7 +15,7 @@ The objective of taking web element looks simply and consists of three goals:
 * Crop origin screenshot image
 
 As result aShot provides he image with WebElement
-![images snippet](//doc/img/images_intent_blur.png)
+![images snippet](/doc/img/images_intent_blur.png)
 
 #####Taking screenshot of page
 
@@ -54,7 +54,7 @@ So, let's take a simple screenshot of weather snippet at Yandex.com.
    .takeScreenshot(webDriver);
  ```
  AShot cropped origin images and we can see this result.
- ![simple weather snippet](//doc/img/def_crop.png)
+ ![simple weather snippet](/doc/img/def_crop.png)
  
  In default case DefaultCropper is using. But there is a way to use another cropper
  
@@ -66,7 +66,7 @@ So, let's take a simple screenshot of weather snippet at Yandex.com.
     .takeScreenshot(driver);
   ```
   
-  ![indent blur weather snippet](//doc/img/weather_indent_blur.png)
+  ![indent blur weather snippet](/doc/img/weather_indent_blur.png)
   This screenshot provides more information about element's position relatively his siblings and blurs indent to focus view on web element.
   
 #####Comparison of screenshots
