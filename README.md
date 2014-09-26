@@ -3,23 +3,23 @@ aShot
 
 WebDriver Screenshot utility
 
-* Takes screenshot of web element from different device types
-* Prettifying screenshot images
-* Provides configurable screenshot comparison
+* Takes a screenshot of web element from the different device types
+* Allows to prettify screenshot images
+* Provides the configurable screenshot comparison
 
 #####WebElement view
 
 The objective of taking web element looks simply and consists of three goals:
 * Take screenshot of the page
 * Find element's size and position   
-* Crop origin screenshot image
+* Crop original screenshot image
 
-As result aShot provides he image with WebElement
+As a result aShot provides the image with a WebElement
 ![images snippet](/doc/img/images_intent_blur.png)
 
 #####Taking screenshot of page
 
-Different webDrivers have a different behaviour with screenshot taking. Some of them provides screenshot of whole page or viewport only. AShot cam be configured according to exact behaviour. This example configuration allows to take screenshot of whole page when driver provides viewport image only, for example, Chrome, Mobile Safari and etc. 
+Different webDrivers have a different behaviour with screenshot taking. Some of them provide a screenshot of whole page or viewport only. AShot can be configured according to exact behaviour. This example configuration allows to take screenshot of whole page when driver provides viewport image only, for example, Chrome, Mobile Safari and etc. 
 ```java
 new AShot()
   .shootingStrategy(new ViewportPastingStrategy())
@@ -28,7 +28,7 @@ new AShot()
 
 #####Taking screenshot of web element
 
-To take screenshot of element we just need to set the locator.
+To take a screenshot of element we just need to set the locator.
  ```java
  new AShot()
    .componentSelector(By.cssSelector("#my_element"))
