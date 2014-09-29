@@ -7,6 +7,17 @@ WebDriver Screenshot utility
 * Allows to prettify screenshot images
 * Provides the configurable screenshot comparison
 
+
+#####Include aShot in your project
+```
+<dependency>
+    <groupId>ru.yandex.qatools.ashot</groupId>
+    <artifactId>ashot</artifactId>
+    <version>1.1</version>
+</dependency>
+```
+
+
 #####WebElement view
 
 The objective of taking web element looks simply and consists of three goals:
