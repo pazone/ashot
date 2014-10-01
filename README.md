@@ -28,19 +28,18 @@ new AShot()
 
 #####Taking screenshot of web element
 
-To take screenshot of element we just need to set the locator.
+To take screenshot of element we just need to specify our element or collection of web elements.
  ```java
+ WebElement myWebElement = webDriver.findElement(By.cssSelector("#my_element"));
  new AShot()
-   .componentSelector(By.cssSelector("#my_element"))
-   .takeScreenshot(webDriver);
+   .takeScreenshot(webDriver, myWebElement);
  ```
  
  In this case aShot will find element's location and position and will crop origin image. WebDriver API gives an opportunity to find coordinates of web element, but also different WebDriver implementations provides differently. In my opinion the most universal way to find coordinates is to use jQuery for it. AShot uses jQuery by default. But some drivers have a problems with Javascript execution such as Opera. In this case it's better to use another way to find web element coordinates.
   ```java
    new AShot()
-     .componentSelector(By.cssSelector("#my_element"))
      .coordsProvider(new WebDriverCoordsProvider()) //find coordinated using WebDriver API
-     .takeScreenshot(webDriver);
+     .takeScreenshot(webDriver, myWebElement);
    ```
  Of course, if you don't like to use jQuery, you can implement you own CoordsProvider and contribute this project.
  
@@ -50,8 +49,7 @@ So, let's take a simple screenshot of weather snippet at Yandex.com.
 
  ```java
  new AShot()
-   .componentSelector(By.cssSelector("#weather"))
-   .takeScreenshot(webDriver);
+   .takeScreenshot(webDriver, yandexWeatherElement);
  ```
  AShot cropped origin images and we can see this result.
  ![simple weather snippet](/doc/img/def_crop.png)
@@ -60,10 +58,9 @@ So, let's take a simple screenshot of weather snippet at Yandex.com.
  
  ```java
   new AShot()
-    .componentSelector(By.cssSelector("#weather"))
     .withCropper(new IndentCropper() //overwriting cropper
                     .addIndentFilter(blur())) //adding filter for indent
-    .takeScreenshot(driver);
+    .takeScreenshot(driver, yandexWeatherElement);
   ```
   
   ![indent blur weather snippet](/doc/img/weather_indent_blur.png)
@@ -74,9 +71,8 @@ As you noticed, the ```.takeScreenshot()``` returns a Screenshot object, contain
 
 ```java
   Screenshot myScreenshot = new AShot()
-    .componentSelector(By.cssSelector(".#weather"))
     .addIgnoredElement(By.cssSelector(".#weather .blinking_element")) //ignored element
-    .takeScreenshot(driver);
+    .takeScreenshot(driver, yandexWeatherElement);
 ```
 
 To get a diff between two images use ImageDiffer:
@@ -85,77 +81,3 @@ To get a diff between two images use ImageDiffer:
   ImageDiff diff = new ImageDiffer().makeDiff(myScreenshot, anotherScreenshot);
   BufferedImage diffImage = diff.getMarkedImage(); //megred image with marked diff areas
 ```
-
-
- 
- 
-
-
-
-
-
-
-
-
-
-
-
-  
-  
-
-
-
-
-
-
-
-
-
-
-    
-    
- 
-  
-  
-  
-
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-
-
-
-
-
-
-
-
-
- 
- 
-
- 
-  
- 
-   
- 
- 
-
-
-
-
-
-
-
-
-
