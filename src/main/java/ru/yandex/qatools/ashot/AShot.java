@@ -13,10 +13,7 @@ import ru.yandex.qatools.ashot.screentaker.ScreenTaker;
 import ru.yandex.qatools.ashot.screentaker.ShootingStrategy;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.intersectingWith;
 
@@ -110,10 +107,10 @@ public class AShot {
      * @see Screenshot
      */
     public Screenshot takeScreenshot(WebDriver driver, Collection<WebElement> elements) {
-        Coords elementCoords = coordsProvider.ofElements(driver, elements);
+        Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = taker.take(driver);
         Screenshot screenshot = cropper.crop(shot, elementCoords);
-        List<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(elementCoords));
+        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(elementCoords));
         screenshot.setIgnoredAreas(ignoredAreas);
         return screenshot;
     }
@@ -143,12 +140,12 @@ public class AShot {
         return screenshot;
     }
 
-    protected List<Coords> compileIgnoredAreas(WebDriver driver, CoordsPreparationStrategy preparationStrategy) {
-        List<Coords> ignoredCoords = new ArrayList<>();
+    protected Set<Coords> compileIgnoredAreas(WebDriver driver, CoordsPreparationStrategy preparationStrategy) {
+        Set<Coords> ignoredCoords = new HashSet<>();
         for (By ignoredLocator : ignoredLocators) {
             List<WebElement> ignoredElements = driver.findElements(ignoredLocator);
             if (!ignoredElements.isEmpty()) {
-                ignoredCoords.add(preparationStrategy.prepare(coordsProvider.ofElements(driver, ignoredElements)));
+                ignoredCoords.addAll(preparationStrategy.prepare(coordsProvider.ofElements(driver, ignoredElements)));
             }
         }
         return ignoredCoords;

@@ -1,6 +1,7 @@
 package ru.yandex.qatools.elementscompare.tests;
 
 import org.junit.Test;
+import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.comparison.ImageDiff;
 import ru.yandex.qatools.ashot.comparison.ImageDiffer;
 import ru.yandex.qatools.ashot.coordinates.Coords;
@@ -8,9 +9,10 @@ import ru.yandex.qatools.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +25,7 @@ public class DifferTest {
     public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
 
-    static BufferedImage loadImage(String path) {
+    public static BufferedImage loadImage(String path) {
         try {
             return ImageIO.read(ClassLoader.getSystemResourceAsStream(path));
         } catch (Throwable e) {
@@ -45,24 +47,39 @@ public class DifferTest {
 
     @Test
     public void testIgnoredCoordsSame() throws Exception {
-        List<Coords> ignored = new ArrayList<>();
-        ignored.add(new Coords(50, 50));
-        ImageDiffer differ = new ImageDiffer().withIgnoredCoords(ignored, ignored);
-        ImageDiff diff = differ.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        Screenshot a = createScreenshotWithSameIgnoredAreas(IMAGE_A_SMALL);
+        Screenshot b = createScreenshotWithSameIgnoredAreas(IMAGE_B_SMALL);
+        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_same.png")));
     }
 
     @Test
     public void testIgnoredCoordsNotSame() throws Exception {
-        List<Coords> ignoredExpected = new ArrayList<>();
-        List<Coords> ignoredActual = new ArrayList<>();
-
-        ignoredExpected.add(new Coords(50, 50));
-        ignoredActual.add(new Coords(80, 80));
-
-        ImageDiffer differ = new ImageDiffer()
-                .withIgnoredCoords(ignoredExpected, ignoredActual);
-        ImageDiff diff = differ.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(50, 50))));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
+        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_not_same.png")));
     }
+
+    @Test
+    public void testCoordsToCompareAndIgnoredCombine() throws Exception {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(60, 60))));
+        a.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
+        b.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
+        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
+        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
+    }
+
+    private Screenshot createScreenshotWithSameIgnoredAreas(BufferedImage image) {
+        return createScreenshotWithIgnoredAreas(image, new HashSet<>(asList(new Coords(50, 50))));
+    }
+
+    private Screenshot createScreenshotWithIgnoredAreas(BufferedImage image, Set<Coords> ignored) {
+        Screenshot screenshot = new Screenshot(image);
+        screenshot.setIgnoredAreas(ignored);
+        return screenshot;
+    }
+
+
 }

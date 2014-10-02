@@ -4,6 +4,7 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.image.BufferedImage;
+import java.util.Set;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -11,13 +12,13 @@ import java.awt.image.BufferedImage;
 
 public abstract class ImageCropper {
 
-    public Screenshot crop(BufferedImage image, Coords cropArea) {
-        return cropArea == null
+    public Screenshot crop(BufferedImage image, Set<Coords> cropArea) {
+        return cropArea.isEmpty()
                 ? new Screenshot(image)
                 : cropScreenshot(image, cropArea);
     }
 
-    protected abstract Screenshot cropScreenshot(BufferedImage image, Coords cropArea);
+    protected abstract Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare);
 
 
 }

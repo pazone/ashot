@@ -12,7 +12,7 @@
 
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
 
     <organization>
         <name>Yandex</name>
@@ -77,8 +77,6 @@
             <version>1.8.4</version>
             <scope>test</scope>
         </dependency>
-
-
     </dependencies>
 
 

@@ -5,6 +5,7 @@ import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Set;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -13,27 +14,29 @@ import java.awt.image.BufferedImage;
 public class DefaultCropper extends ImageCropper {
 
     @Override
-    public Screenshot cropScreenshot(BufferedImage image, Coords cropArea) {
-        double width = Math.min(cropArea.width, image.getWidth() - cropArea.x);
-        double height = Math.min(cropArea.height, image.getHeight() - cropArea.y);
+    public Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare) {
+        Coords cropArea = Coords.unity(coordsToCompare);
 
-        //Если кординаты не пересекаются с картинкой, возвращаем исходное изображение
-        if (width <= 0 || height <= 0) {
+        Coords imageIntersection = Coords.ofImage(image).intersection(cropArea);
+
+        if (imageIntersection.isEmpty()) {
             return new Screenshot(image);
         }
 
-        BufferedImage cropped = new BufferedImage((int) width, (int) height, image.getType());
+        BufferedImage cropped = new BufferedImage(imageIntersection.width, imageIntersection.height, image.getType());
         Graphics g = cropped.getGraphics();
         g.drawImage(
                 image,
                 0, 0,
-                (int) width, (int) height,
-                (int) cropArea.getX(), (int) cropArea.getY(),
-                (int) (cropArea.getX() + width), (int) (cropArea.getY() + height),
+                imageIntersection.width, imageIntersection.height,
+                cropArea.x, cropArea.y,
+                cropArea.x + imageIntersection.width, cropArea.y + imageIntersection.height,
                 null
         );
         g.dispose();
-        return new Screenshot(cropped);
+        Screenshot screenshot = new Screenshot(cropped);
+        screenshot.setCoordsToCompare(Coords.setReferenceCoords(cropArea, coordsToCompare));
+        return screenshot;
     }
 
 
