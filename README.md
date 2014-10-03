@@ -103,7 +103,7 @@ Sometimes we need to take screenshot of several independent elements. In this ca
  ```
 As result we receive screenshot like this
 ![complex comparison area](/doc/img/complex_elements.png)
-As you see, only selected elements are not filtered and only not filtered areas will be compared.
+As you see at this picture, only selected elements(header and popup) are not filtered and only not filtered areas will be compared.
 
  
 
