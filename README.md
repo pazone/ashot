@@ -93,6 +93,7 @@ To get a diff between two images use ImageDiffer:
 ```
 
 #####Several elements comparison
+(since 1.2)
 Sometimes we need to take screenshot of several independent elements. In this case AShot constructs complex comparison area.
 ```java
     List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #myPopupElement"));
