@@ -17,8 +17,8 @@ import java.io.IOException;
 
 public class ImageTool {
 
-    public static BufferedImage subimage(BufferedImage origin, Coords crop) {
-        Coords intersection = new Coords(new Coords(origin).intersection(crop));
+    public static BufferedImage subImage(BufferedImage origin, Coords crop) {
+        Coords intersection = Coords.ofImage(origin).intersection(crop);
         return origin.getSubimage(intersection.x, intersection.y, intersection.width, intersection.height);
     }
 
@@ -48,7 +48,7 @@ public class ImageTool {
 
             @Override
             protected boolean matchesSafely(BufferedImage first) {
-                if (!new Coords(first).equals(new Coords(second))) {
+                if (!Coords.ofImage(first).equals(Coords.ofImage(second))) {
                     return false;
                 }
                 for (int x = 0; x < first.getWidth(); x++) {
@@ -68,6 +68,7 @@ public class ImageTool {
         };
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public static byte[] toByteArray(Screenshot screenshot) throws IOException {
         return toByteArray(screenshot.getImage());
     }

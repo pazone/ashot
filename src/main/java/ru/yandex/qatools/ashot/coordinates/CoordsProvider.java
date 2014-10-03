@@ -4,8 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -15,23 +14,21 @@ public abstract class CoordsProvider {
 
     public abstract Coords ofElement(WebDriver driver, WebElement element);
 
-    public Coords ofElements(WebDriver driver, Iterable<WebElement> elements) {
-        Iterator<WebElement> iterator = elements.iterator();
-        if (!iterator.hasNext()) return null;
-
-        Coords coords = ofElement(driver, iterator.next());
-        while (iterator.hasNext()) {
-            coords = new Coords(coords.union(ofElement(driver, iterator.next())));
+    public Set<Coords> ofElements(WebDriver driver, Iterable<WebElement> elements) {
+        Set<Coords> elementsCoords = new HashSet<>();
+        for (WebElement element : elements) {
+            elementsCoords.add(ofElement(driver, element));
         }
-
-        return coords;
+        return elementsCoords;
     }
 
-    public Coords ofElements(WebDriver driver, WebElement... elements) {
+    @SuppressWarnings("UnusedDeclaration")
+    public Set<Coords> ofElements(WebDriver driver, WebElement... elements) {
         return ofElements(driver, Arrays.asList(elements));
     }
 
-    public Coords locatedBy(WebDriver driver, By locator) {
+    @SuppressWarnings("UnusedDeclaration")
+    public Set<Coords> locatedBy(WebDriver driver, By locator) {
         return ofElements(driver, driver.findElements(locator));
     }
 

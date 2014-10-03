@@ -7,10 +7,10 @@ import ru.yandex.qatools.ashot.util.ImageTool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
-import static ru.yandex.qatools.ashot.util.ImageTool.spreadCoordsInsideImage;
+import static java.util.Arrays.asList;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -19,7 +19,6 @@ import static ru.yandex.qatools.ashot.util.ImageTool.spreadCoordsInsideImage;
 public class IndentCropper extends DefaultCropper {
 
     public static final int DEFAULT_INDENT = 50;
-    public static final int FILTER_INDENT = 0;
 
     private int indent = DEFAULT_INDENT;
 
@@ -34,33 +33,55 @@ public class IndentCropper extends DefaultCropper {
     }
 
     @Override
-    public Screenshot cropScreenshot(BufferedImage image, Coords cropArea) {
-        Coords coordsWithIndent = new Coords(cropArea);
-        Coords indentMask = new Coords(cropArea);
+    public Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare) {
+        Coords cropArea = createCropArea(coordsToCompare);
+        Coords indentMask = createIndentMask(cropArea, image);
+        Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
 
-        indentMask.x = Math.min(indent, cropArea.x);
-        indentMask.y = Math.min(indent, cropArea.y);
-        indentMask.width = Math.min(indent, image.getWidth() - cropArea.x - cropArea.width);
-        indentMask.height = Math.min(indent, image.getHeight() - cropArea.y - cropArea.height);
-
-        coordsWithIndent.x = cropArea.x - indentMask.x;
-        coordsWithIndent.y = cropArea.y - indentMask.y;
-        coordsWithIndent.height = indentMask.y + cropArea.height + indentMask.height;
-        coordsWithIndent.width = indentMask.x + cropArea.width + indentMask.width;
-
-        Screenshot cropped = super.cropScreenshot(image, coordsWithIndent);
-        cropped.setCoordsToCompare(createCoordsToCompare(cropped.getImage(), indentMask));
-        cropped.setImage(applyIndentFilters(cropped.getImage(), cropped.getCoordsToCompare()));
+        Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
+        cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped.getImage(),cropped.getCoordsToCompare());
+        cropped.setImage(applyFilters(cropped.getImage()));
+        pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
         return cropped;
     }
 
-    protected Coords createCoordsToCompare(BufferedImage cropped, Coords indentMask) {
-        return new Coords(new Rectangle(
-                indentMask.x,
-                indentMask.y,
-                cropped.getWidth() - indentMask.width - indentMask.x,
-                cropped.getHeight() - indentMask.height - indentMask.y
-        ));
+    protected Coords applyIndentMask(Coords origin, Coords mask) {
+        Coords spreadCoords = new Coords(0, 0);
+        spreadCoords.x = origin.x - mask.x;
+        spreadCoords.y = origin.y - mask.y;
+        spreadCoords.height = mask.y + origin.height + mask.height;
+        spreadCoords.width = mask.x + origin.width + mask.width;
+        return spreadCoords;
+    }
+
+    protected Coords createIndentMask(Coords originCoords, BufferedImage image) {
+        Coords indentMask = new Coords(originCoords);
+        indentMask.x = Math.min(indent, originCoords.x);
+        indentMask.y = Math.min(indent, originCoords.y);
+        indentMask.width = Math.min(indent, image.getWidth() - originCoords.x - originCoords.width);
+        indentMask.height = Math.min(indent, image.getHeight() - originCoords.y - originCoords.height);
+        return indentMask;
+    }
+
+    protected List<NoFilteringArea> createNotFilteringAreas(BufferedImage image, Set<Coords> coordsToCompare) {
+        List<NoFilteringArea> noFilteringAreas = new ArrayList<>();
+        for (Coords noFilteringCoords : coordsToCompare) {
+            noFilteringAreas.add(new NoFilteringArea(image, noFilteringCoords));
+        }
+        return noFilteringAreas;
+    }
+
+    protected void pasteAreasToCompare(BufferedImage filtered, List<NoFilteringArea> noFilteringAreas) {
+        Graphics graphics = filtered.getGraphics();
+        for (NoFilteringArea noFilteringArea : noFilteringAreas) {
+            graphics.drawImage(
+                    noFilteringArea.getSubimage(),
+                    noFilteringArea.getCoords().x,
+                    noFilteringArea.getCoords().y,
+                    null);
+        }
+        graphics.dispose();
     }
 
     public IndentCropper addIndentFilter(IndentFilter filter) {
@@ -68,17 +89,28 @@ public class IndentCropper extends DefaultCropper {
         return this;
     }
 
-
-    protected BufferedImage applyIndentFilters(BufferedImage image, Coords coordsToCompare) {
-        Coords noBlurCoords = spreadCoordsInsideImage(coordsToCompare, FILTER_INDENT, image);
-        BufferedImage noBlurImage = ImageTool.subimage(image, noBlurCoords);
+    protected BufferedImage applyFilters(BufferedImage image) {
         for (IndentFilter filter : filters) {
             image = filter.apply(image);
         }
-
-        Graphics graphics = image.getGraphics();
-        graphics.drawImage(noBlurImage, noBlurCoords.x, noBlurCoords.y, null);
-        graphics.dispose();
         return image;
+    }
+
+    private static class NoFilteringArea {
+        private BufferedImage subimage;
+        private Coords coords;
+
+        private NoFilteringArea(BufferedImage origin, Coords noFilterCoords) {
+            this.subimage = ImageTool.subImage(origin, noFilterCoords);
+            this.coords = noFilterCoords;
+        }
+
+        public BufferedImage getSubimage() {
+            return subimage;
+        }
+
+        public Coords getCoords() {
+            return coords;
+        }
     }
 }
