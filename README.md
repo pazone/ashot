@@ -75,6 +75,7 @@ So, let's take a simple screenshot of weather snippet at Yandex.com.
   ![indent blur weather snippet](/doc/img/weather_indent_blur.png)
   This screenshot provides more information about element's position relatively his siblings and blurs indent to focus view on web element.
   
+  
 #####Comparison of screenshots
 As you noticed, the ```.takeScreenshot()``` returns a Screenshot object, containing screenshot image and data for comparison.
 
@@ -90,3 +91,22 @@ To get a diff between two images use ImageDiffer:
   ImageDiff diff = new ImageDiffer().makeDiff(myScreenshot, anotherScreenshot);
   BufferedImage diffImage = diff.getMarkedImage(); //megred image with marked diff areas
 ```
+
+#####Several elements comparison
+Sometimes we need to take screenshot of several independent elements. In this case AShot constructs complex comparison area.
+```java
+    List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #myPopupElement"));
+    new AShot()
+        .withCropper(new IndentCropper() //overwriting cropper
+                        .addIndentFilter(blur())) //adding filter for indent
+        .takeScreenshot(webDriver, elements);
+ ```
+As result we receive screenshot like this
+![complex comparison area](/doc/img/complex_elements.png)
+As you see, only selected elements are not filtered and only not filtered areas will be compared.
+
+ 
+
+
+
+
