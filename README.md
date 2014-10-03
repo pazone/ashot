@@ -17,6 +17,15 @@ The objective of taking web element looks simply and consists of three goals:
 As result aShot provides he image with WebElement
 ![images snippet](/doc/img/images_intent_blur.png)
 
+#### Maven dependency
+```xml
+<dependency>
+    <groupId>ru.yandex.qatools.ashot</groupId>
+    <artifactId>ashot</artifactId>
+    <version>1.1</version>
+</dependency>
+``` 
+
 #####Taking screenshot of page
 
 Different webDrivers have a different behaviour with screenshot taking. Some of them provides screenshot of whole page or viewport only. AShot cam be configured according to exact behaviour. This example configuration allows to take screenshot of whole page when driver provides viewport image only, for example, Chrome, Mobile Safari and etc. 
