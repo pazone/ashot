@@ -34,9 +34,9 @@ public class IndentCropper extends DefaultCropper {
 
     @Override
     public Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare) {
-        Coords cropArea = Coords.unity(coordsToCompare);
+        Coords cropArea = createCropArea(coordsToCompare);
         Coords indentMask = createIndentMask(cropArea, image);
-        Coords coordsWithIndent = applyIndentMAsk(cropArea, indentMask);
+        Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
 
         Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
         cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
@@ -46,7 +46,7 @@ public class IndentCropper extends DefaultCropper {
         return cropped;
     }
 
-    protected Coords applyIndentMAsk(Coords origin, Coords mask) {
+    protected Coords applyIndentMask(Coords origin, Coords mask) {
         Coords spreadCoords = new Coords(0, 0);
         spreadCoords.x = origin.x - mask.x;
         spreadCoords.y = origin.y - mask.y;
@@ -80,7 +80,6 @@ public class IndentCropper extends DefaultCropper {
                     noFilteringArea.getCoords().x,
                     noFilteringArea.getCoords().y,
                     null);
-
         }
         graphics.dispose();
     }

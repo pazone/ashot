@@ -39,5 +39,7 @@ public class DefaultCropper extends ImageCropper {
         return screenshot;
     }
 
-
+    protected Coords createCropArea(Set<Coords> coordsToCompare) {
+        return Coords.unity(coordsToCompare);
+    }
 }
