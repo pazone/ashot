@@ -17,7 +17,10 @@ public abstract class CoordsProvider {
     public Set<Coords> ofElements(WebDriver driver, Iterable<WebElement> elements) {
         Set<Coords> elementsCoords = new HashSet<>();
         for (WebElement element : elements) {
-            elementsCoords.add(ofElement(driver, element));
+            Coords elementCoords = ofElement(driver, element);
+            if (!elementCoords.isEmpty()) {
+                elementsCoords.add(ofElement(driver, element));
+            }
         }
         return elementsCoords;
     }

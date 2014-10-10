@@ -40,7 +40,7 @@ public class IndentCropper extends DefaultCropper {
 
         Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
         cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
-        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped.getImage(),cropped.getCoordsToCompare());
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped.getImage(), cropped.getCoordsToCompare());
         cropped.setImage(applyFilters(cropped.getImage()));
         pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
         return cropped;
@@ -67,7 +67,9 @@ public class IndentCropper extends DefaultCropper {
     protected List<NoFilteringArea> createNotFilteringAreas(BufferedImage image, Set<Coords> coordsToCompare) {
         List<NoFilteringArea> noFilteringAreas = new ArrayList<>();
         for (Coords noFilteringCoords : coordsToCompare) {
-            noFilteringAreas.add(new NoFilteringArea(image, noFilteringCoords));
+            if (noFilteringCoords.intersects(Coords.ofImage(image))) {
+                noFilteringAreas.add(new NoFilteringArea(image, noFilteringCoords));
+            }
         }
         return noFilteringAreas;
     }
