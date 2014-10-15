@@ -79,7 +79,7 @@ public class ImageDiffer {
     private void setSharedPoint(int i, int j, Screenshot expected, Screenshot actual, ImageDiff diff) {
         if (Coords.ofImage(expected.getImage()).contains(i, j)) {
             diff.getDiffImage().setRGB(i, j, expected.getImage().getRGB(i, j));
-        } else {
+        } else if (Coords.ofImage(actual.getImage()).contains(i, j)) {
             diff.getDiffImage().setRGB(i, j, actual.getImage().getRGB(i, j));
         }
     }
