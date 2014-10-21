@@ -18,7 +18,7 @@ The objective of taking web element looks simply and consists of three goals:
 * Find element's size and position   
 * Crop origin screenshot image
 
-As result aShot provides he image with WebElement
+As result aShot provides image with WebElement
 ![images snippet](/doc/img/images_intent_blur.png)
 
 #### Maven dependency
@@ -26,7 +26,7 @@ As result aShot provides he image with WebElement
 <dependency>
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.2</version>
+    <version>1.3</version>
 </dependency>
 ``` 
 
@@ -97,7 +97,7 @@ To get a diff between two images use ImageDiffer:
 ```
 
 #####Several elements comparison
-(since 1.2)
+`(since 1.2)`  
 Sometimes we need to take screenshot of several independent elements. In this case AShot constructs complex comparison area.
 ```java
     List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #myPopupElement"));
