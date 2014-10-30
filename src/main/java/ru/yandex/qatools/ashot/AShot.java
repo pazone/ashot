@@ -13,6 +13,7 @@ import ru.yandex.qatools.ashot.screentaker.ScreenTaker;
 import ru.yandex.qatools.ashot.screentaker.ShootingStrategy;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.*;
 
 import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.intersectingWith;
@@ -21,7 +22,7 @@ import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.inte
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class AShot {
+public class AShot implements Serializable {
 
     private ScreenTaker taker = new ScreenTaker();
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
@@ -149,7 +150,6 @@ public class AShot {
             }
         }
         return ignoredCoords;
-
     }
 
     public List<By> getIgnoredLocators() {

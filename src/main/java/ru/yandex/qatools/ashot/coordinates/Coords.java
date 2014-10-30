@@ -2,9 +2,11 @@ package ru.yandex.qatools.ashot.coordinates;
 
 import com.google.gson.Gson;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -27,7 +29,7 @@ public class Coords extends Rectangle {
 
     public static Set<Coords> setReferenceCoords(Coords reference, Set<Coords> coordsSet) {
         Set<Coords> referencedCoords = new HashSet<>();
-        for (Coords coords: coordsSet) {
+        for (Coords coords : coordsSet) {
             referencedCoords.add(new Coords(
                             coords.x - reference.x,
                             coords.y - reference.y,
@@ -60,6 +62,15 @@ public class Coords extends Rectangle {
 
     public Coords(int width, int height) {
         super(width, height);
+    }
+
+    public void reduceBy(int pixels) {
+        if (pixels < getWidth() / 2 && pixels < getHeight() / 2) {
+            this.x += pixels;
+            this.y += pixels;
+            this.width -= pixels;
+            this.height -= pixels;
+        }
     }
 
 

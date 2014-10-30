@@ -4,12 +4,13 @@ import org.openqa.selenium.WebDriver;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class ScreenTaker {
+public class ScreenTaker implements Serializable {
 
     public static final int STANDARD_DRP = 1;
 
