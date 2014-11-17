@@ -24,6 +24,7 @@ public class DifferTest {
 
     public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
+    public static final ImageDiffer IMAGE_DIFFER = new ImageDiffer().withColorDistortion(10);
 
     public static BufferedImage loadImage(String path) {
         try {
@@ -35,13 +36,13 @@ public class DifferTest {
 
     @Test
     public void testSameSizeDiff() throws Exception {
-        ImageDiff diff = new ImageDiffer().makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/same_size_diff.png")));
     }
 
     @Test
     public void testEqualImagesDiff() throws Exception {
-        ImageDiff diff = new ImageDiffer().makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
         assertFalse(diff.hasDiff());
     }
 
@@ -49,7 +50,7 @@ public class DifferTest {
     public void testIgnoredCoordsSame() throws Exception {
         Screenshot a = createScreenshotWithSameIgnoredAreas(IMAGE_A_SMALL);
         Screenshot b = createScreenshotWithSameIgnoredAreas(IMAGE_B_SMALL);
-        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_same.png")));
     }
 
@@ -57,7 +58,7 @@ public class DifferTest {
     public void testIgnoredCoordsNotSame() throws Exception {
         Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(50, 50))));
         Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
-        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_not_same.png")));
     }
 
@@ -67,7 +68,7 @@ public class DifferTest {
         a.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
         Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
         b.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
-        ImageDiff diff = new ImageDiffer().makeDiff(a, b);
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
     }
 

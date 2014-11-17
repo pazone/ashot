@@ -29,6 +29,4 @@ public abstract class CoordsPreparationStrategy {
     }
 
     public abstract Set<Coords> prepare(Collection<Coords> coordinates);
-
-
 }
