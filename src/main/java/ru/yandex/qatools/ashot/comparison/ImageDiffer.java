@@ -14,7 +14,7 @@ import static ru.yandex.qatools.ashot.util.ImageTool.rgbCompare;
 
 public class ImageDiffer {
 
-    public static final int DEFAULT_COLOR_DISTORTION = 10;
+    public static final int DEFAULT_COLOR_DISTORTION = 15;
     public static final int DEFAULT_DIFF_SIZE_TRIGGER = 10;
 
 
@@ -25,6 +25,11 @@ public class ImageDiffer {
     @SuppressWarnings("UnusedDeclaration")
     public ImageDiffer withDiffSizeTrigger(final int diffSizeTrigger) {
         this.diffSizeTrigger = diffSizeTrigger;
+        return this;
+    }
+
+    public ImageDiffer withColorDistortion(int distortion) {
+        this.colorDistortion = distortion;
         return this;
     }
 

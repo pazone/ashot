@@ -9,12 +9,13 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public abstract class ShootingStrategy {
+public abstract class ShootingStrategy implements Serializable {
 
     public static ShootingStrategy simple() {
         return new ShootingStrategy() {

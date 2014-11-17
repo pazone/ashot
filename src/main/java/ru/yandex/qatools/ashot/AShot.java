@@ -13,20 +13,23 @@ import ru.yandex.qatools.ashot.screentaker.ScreenTaker;
 import ru.yandex.qatools.ashot.screentaker.ShootingStrategy;
 
 import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.*;
 
+import static java.util.Arrays.asList;
 import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.intersectingWith;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class AShot {
+public class AShot implements Serializable {
 
     private ScreenTaker taker = new ScreenTaker();
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
-    private List<By> ignoredLocators = new ArrayList<>();
+    private Set<By> ignoredLocators = new HashSet<>();
+    private Set<Coords> ignoredAreas = new HashSet<>();
 
     public AShot coordsProvider(final CoordsProvider coordsProvider) {
         this.coordsProvider = coordsProvider;
@@ -57,7 +60,7 @@ public class AShot {
      * @param ignoredElements list of By
      * @return this
      */
-    public AShot ignoredElements(final List<By> ignoredElements) {
+    public AShot ignoredElements(final Set<By> ignoredElements) {
         this.ignoredLocators = ignoredElements;
         return this;
     }
@@ -70,6 +73,26 @@ public class AShot {
      */
     public AShot addIgnoredElement(final By selector) {
         this.ignoredLocators.add(selector);
+        return this;
+    }
+
+    /**
+     * Sets a collection of wittingly ignored coords.
+     * @param ignoredAreas Set of ignored areas
+     * @return aShot
+     */
+    public AShot ignoredAreas(final Set<Coords> ignoredAreas) {
+        this.ignoredAreas = ignoredAreas;
+        return this;
+    }
+
+    /**
+     * Adds coordinated to set of wittingly ignored coords.
+     * @param area coords of wittingly ignored coords
+     * @return aShot;
+     */
+    public AShot addIgnoredArea(Coords area) {
+        this.ignoredAreas.add(area);
         return this;
     }
 
@@ -124,7 +147,7 @@ public class AShot {
      * @see Screenshot
      */
     public Screenshot takeScreenshot(WebDriver driver, WebElement element) {
-        return takeScreenshot(driver, Arrays.asList(element));
+        return takeScreenshot(driver, asList(element));
     }
 
     /**
@@ -148,11 +171,13 @@ public class AShot {
                 ignoredCoords.addAll(preparationStrategy.prepare(coordsProvider.ofElements(driver, ignoredElements)));
             }
         }
+        for (Coords ignoredArea : ignoredAreas) {
+            ignoredCoords.addAll(preparationStrategy.prepare(asList(ignoredArea)));
+        }
         return ignoredCoords;
-
     }
 
-    public List<By> getIgnoredLocators() {
+    public Set<By> getIgnoredLocators() {
         return ignoredLocators;
     }
 }

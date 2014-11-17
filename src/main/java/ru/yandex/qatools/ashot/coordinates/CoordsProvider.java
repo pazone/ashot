@@ -4,13 +4,14 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public abstract class CoordsProvider {
+public abstract class CoordsProvider implements Serializable {
 
     public abstract Coords ofElement(WebDriver driver, WebElement element);
 
