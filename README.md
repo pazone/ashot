@@ -1,6 +1,10 @@
 aShot
 =====
 
+
+[![release](http://github-release-version.herokuapp.com/github/yandex-qatools/ashot/release.svg?style=flat)](https://github.com/yandex-qatools/ashot/releases/latest) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.ashot/ashot/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.ashot/ashot)
+
+
 WebDriver Screenshot utility
 
 * Takes screenshot of web element from different device types
@@ -14,7 +18,7 @@ The objective of taking web element looks simply and consists of three goals:
 * Find element's size and position   
 * Crop origin screenshot image
 
-As result aShot provides he image with WebElement
+As result aShot provides image with WebElement
 ![images snippet](/doc/img/images_intent_blur.png)
 
 #### Maven dependency
@@ -22,7 +26,11 @@ As result aShot provides he image with WebElement
 <dependency>
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
+<<<<<<< HEAD
     <version>1.4.3</version>
+=======
+    <version>1.3</version>
+>>>>>>> 2da554d55c8f671cc3011a3c5587f9b24641de00
 </dependency>
 ``` 
 
@@ -93,7 +101,7 @@ To get a diff between two images use ImageDiffer:
 ```
 
 #####Several elements comparison
-(since 1.2)
+`(since 1.2)`  
 Sometimes we need to take screenshot of several independent elements. In this case AShot constructs complex comparison area.
 ```java
     List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #myPopupElement"));
