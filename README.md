@@ -22,7 +22,7 @@ As result aShot provides he image with WebElement
 <dependency>
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.2</version>
+    <version>1.4.3</version>
 </dependency>
 ``` 
 
