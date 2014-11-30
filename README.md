@@ -7,18 +7,18 @@ aShot
 
 WebDriver Screenshot utility
 
-* Takes screenshot of web element from different device types
-* Prettifying screenshot images
-* Provides configurable screenshot comparison
+* Takes a screenshot of the WebElement on different platforms (i.e. desktop browsers, iOS Simulator Mobile Safari, Android Emulator Browser)
+* Decorates screenshots
+* Provides flexible screenshot comparison
 
 #####WebElement view
 
-The objective of taking web element looks simply and consists of three goals:
-* Take screenshot of the page
+aShot takes a screenshot in three simple steps:
+* Capture the entire page screenshot
 * Find element's size and position   
-* Crop origin screenshot image
+* Crop the original screenshot
 
-As result aShot provides image with WebElement
+As a result aShot provides an image of the WebElement
 ![images snippet](/doc/img/images_intent_blur.png)
 
 #### Maven dependency
@@ -30,88 +30,82 @@ As result aShot provides image with WebElement
 </dependency>
 ``` 
 
-#####Taking screenshot of page
+#####Capturing the entire page
 
-Different webDrivers have a different behaviour with screenshot taking. Some of them provides screenshot of whole page or viewport only. AShot cam be configured according to exact behaviour. This example configuration allows to take screenshot of whole page when driver provides viewport image only, for example, Chrome, Mobile Safari and etc. 
+Different WebDrivers take screenshots in different ways. Some WebDrivers provide a screenshot of the entire page while others handle the viewport only. aShot might be configured to handle browsers with the viewport problem. This example configuration gives a screenshot of the entire page even for Chrome, Mobile Safari, etc. 
 ```java
-new AShot()
-  .shootingStrategy(new ViewportPastingStrategy())
-  .takeScreenshot(webDriver);
+  new AShot()
+    .shootingStrategy(new ViewportPastingStrategy())
+    .takeScreenshot(webDriver);
 ```
 
-#####Taking screenshot of web element
+#####Capturing the WebElement
 
-To take screenshot of element we just need to specify our element or collection of web elements.
- ```java
- WebElement myWebElement = webDriver.findElement(By.cssSelector("#my_element"));
- new AShot()
-   .takeScreenshot(webDriver, myWebElement);
- ```
- 
- In this case aShot will find element's location and position and will crop origin image. WebDriver API gives an opportunity to find coordinates of web element, but also different WebDriver implementations provides differently. In my opinion the most universal way to find coordinates is to use jQuery for it. AShot uses jQuery by default. But some drivers have a problems with Javascript execution such as Opera. In this case it's better to use another way to find web element coordinates.
-  ```java
-   new AShot()
-     .coordsProvider(new WebDriverCoordsProvider()) //find coordinated using WebDriver API
-     .takeScreenshot(webDriver, myWebElement);
-   ```
- Of course, if you don't like to use jQuery, you can implement you own CoordsProvider and contribute this project.
- 
-#####Prettifying web element screenshot
-
-So, let's take a simple screenshot of weather snippet at Yandex.com.
-
- ```java
- new AShot()
-   .takeScreenshot(webDriver, yandexWeatherElement);
- ```
- AShot cropped origin images and we can see this result.
- ![simple weather snippet](/doc/img/def_crop.png)
- 
- In default case DefaultCropper is using. But there is a way to use another cropper
- 
- ```java
+One can take a screenshot of the particular WebElement(s). Just specify the element(s).
+```java
+  WebElement myWebElement = webDriver.findElement(By.cssSelector("#my_element"));
   new AShot()
-    .withCropper(new IndentCropper() //overwriting cropper
-                    .addIndentFilter(blur())) //adding filter for indent
+    .takeScreenshot(webDriver, myWebElement);
+```
+ 
+As noted earlier aShot will find element's size and position and crop original image. WebDriver API provides a method to find the WebElement's coordinates but different WebDriver implementations behave differently. In my opinion the most general approach to find coordinates is to use jQuery. So aShot uses jQuery by default. But some drivers have problems with Javascript execution such as OperaDriver. In this case there is another way to find the WebElement's coordinates.
+```java
+  new AShot()
+    .coordsProvider(new WebDriverCoordsProvider()) //find coordinates with WebDriver API
+    .takeScreenshot(webDriver, myWebElement);
+```
+Feel free to implement own CoordsProvider. Pull requests are welcome.
+ 
+#####Prettifying the screenshot
+
+So, let's take a simple screenshot of the weather snippet at Yandex.com.
+
+```java
+  new AShot()
+    .takeScreenshot(webDriver, yandexWeatherElement);
+```
+Here is the result.
+![simple weather snippet](/doc/img/def_crop.png)
+ 
+```DefaultCropper``` is used by default. Can we do better? Yes, we can.
+ 
+```java
+  new AShot()
+    .withCropper(new IndentCropper()           // set custom cropper with indentation
+                   .addIndentFilter(blur()))   // add filter for indented areas
     .takeScreenshot(driver, yandexWeatherElement);
-  ```
+```
   
-  ![indent blur weather snippet](/doc/img/weather_indent_blur.png)
-  This screenshot provides more information about element's position relatively his siblings and blurs indent to focus view on web element.
+![indent blur weather snippet](/doc/img/weather_indent_blur.png)
+This screenshot provides more information about position relative other elements and blurs indent in order to focus on the WebElement.  
   
-  
-#####Comparison of screenshots
-As you noticed, the ```.takeScreenshot()``` returns a Screenshot object, containing screenshot image and data for comparison.
+#####Screenshot comparison
+```.takeScreenshot()``` returns a ```Screenshot``` object which contains an image and data for comparison. One can ignore some WebElements from comparison.
 
 ```java
   Screenshot myScreenshot = new AShot()
-    .addIgnoredElement(By.cssSelector(".#weather .blinking_element")) //ignored element
+    .addIgnoredElement(By.cssSelector("#weather .blinking_element")) // ignored element(s)
     .takeScreenshot(driver, yandexWeatherElement);
 ```
 
-To get a diff between two images use ImageDiffer:
+Use ```ImageDiffer``` to get a difference between two images.
 
 ```java
   ImageDiff diff = new ImageDiffer().makeDiff(myScreenshot, anotherScreenshot);
-  BufferedImage diffImage = diff.getMarkedImage(); //megred image with marked diff areas
+  BufferedImage diffImage = diff.getMarkedImage(); // comparison result with marked differences
 ```
 
 #####Several elements comparison
 `(since 1.2)`  
-Sometimes we need to take screenshot of several independent elements. In this case AShot constructs complex comparison area.
+Sometimes one need to take a screenshot of several independent elements. In this case aShot computes complex comparison area.
 ```java
-    List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #myPopupElement"));
-    new AShot()
-        .withCropper(new IndentCropper() //overwriting cropper
-                        .addIndentFilter(blur())) //adding filter for indent
-        .takeScreenshot(webDriver, elements);
+  List<WebElement> elements = webDriver.findElements(By.cssSelector("#my_element, #popup"));
+  new AShot()
+    .withCropper(new IndentCropper() 
+                   .addIndentFilter(blur()))
+    .takeScreenshot(webDriver, elements);
  ```
-As result we receive screenshot like this
+Here is the result.
 ![complex comparison area](/doc/img/complex_elements.png)
-As you see at this picture, only selected elements(header and popup) are not filtered and only not filtered areas will be compared.
 
- 
-
-
-
-
+One can see only specified elements (the header and the popup) are focused and will be compared if needed.
