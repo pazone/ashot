@@ -53,6 +53,7 @@ public class ImageDiff {
      */
     public ImageDiff withDiffColor(final Color diffColor) {
         this.diffColor = diffColor;
+        this.marked = false;
         return this;
     }
 
@@ -84,14 +85,12 @@ public class ImageDiff {
      * @return marked diff image
      */
     public BufferedImage getMarkedImage() {
-        if (marked) {
-            return diffImage;
+        if (!marked) {
+            for (Point dot : diffPoints) {
+                diffImage.setRGB((int) dot.getX(), (int) dot.getY(), pickDiffColor(dot).getRGB());
+            }
+            marked = true;
         }
-
-        for (Point dot : diffPoints) {
-            diffImage.setRGB((int) dot.getX(), (int) dot.getY(), pickDiffColor(dot).getRGB());
-        }
-        marked = true;
         return diffImage;
     }
 
