@@ -17,12 +17,20 @@ public class ImageDiff {
 
     private Set<Point> diffPoints = new LinkedHashSet<>();
 
+    /**
+     * The color which marks the differences between the images.
+     *
+     * @see java.awt.Color
+     */
     private Color diffColor = Color.RED;
 
     private BufferedImage diffImage;
 
     private boolean marked = false;
 
+    /**
+     * Images are considered the same if the number of distinguished pixels does not exceed this value.
+     */
     private int diffSizeTrigger;
 
     public ImageDiff(BufferedImage expected, BufferedImage actual) {
@@ -34,6 +42,26 @@ public class ImageDiff {
     private ImageDiff() {
     }
 
+    /**
+     * Sets the color which marks the differences between the images.
+     * This color will be used with <code>Color.WHITE</code> in the checkerboard pattern.
+     * The default value is <code>Color.RED</code>.
+     *
+     * @param diffColor the color which marks the differences
+     * @return self for fluent style
+     * @see java.awt.Color
+     */
+    public ImageDiff withDiffColor(final Color diffColor) {
+        this.diffColor = diffColor;
+        return this;
+    }
+
+    /**
+     * Sets the maximum number of distinguished pixels when images are still considered the same.
+     *
+     * @param diffSizeTrigger the number of different pixels
+     * @return self for fluent style
+     */
     public ImageDiff withDiffSizeTrigger(final int diffSizeTrigger) {
         this.diffSizeTrigger = diffSizeTrigger;
         return this;
@@ -72,6 +100,11 @@ public class ImageDiff {
         return ((dot.getX() + dot.getY()) % 2 == 0) ? diffColor : Color.WHITE;
     }
 
+    /**
+     * Returns <tt>true</tt> if there are differences between images.
+     *
+     * @return <tt>true</tt> if there are differences between images.
+     */
     public boolean hasDiff() {
         return diffPoints.size() > diffSizeTrigger;
     }
