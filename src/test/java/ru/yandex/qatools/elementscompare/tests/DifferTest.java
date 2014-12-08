@@ -8,11 +8,13 @@ import ru.yandex.qatools.ashot.coordinates.Coords;
 import ru.yandex.qatools.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -38,6 +40,19 @@ public class DifferTest {
     public void testSameSizeDiff() throws Exception {
         ImageDiff diff = IMAGE_DIFFER.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/same_size_diff.png")));
+    }
+
+    @Test
+    public void testSetDiffColor() throws Exception {
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        assertThat(diff.withDiffColor(Color.GREEN).getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/green_diff.png")));
+    }
+
+    @Test
+    public void testSetDiffSizeTrigger() throws Exception {
+        ImageDiff diff = IMAGE_DIFFER.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        assertThat(diff.withDiffSizeTrigger(624).hasDiff(), is(false));
+        assertThat(diff.withDiffSizeTrigger(623).hasDiff(), is(true));
     }
 
     @Test
