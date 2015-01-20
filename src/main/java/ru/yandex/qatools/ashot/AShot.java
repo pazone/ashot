@@ -1,5 +1,6 @@
 package ru.yandex.qatools.ashot;
 
+import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -28,8 +29,8 @@ public class AShot implements Serializable {
     private ScreenTaker taker = new ScreenTaker();
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
-    private Set<By> ignoredLocators = new HashSet<>();
-    private Set<Coords> ignoredAreas = new HashSet<>();
+    private Set<By> ignoredLocators = new ConcurrentHashSet<>();
+    private Set<Coords> ignoredAreas = new ConcurrentHashSet<>();
 
     public AShot coordsProvider(final CoordsProvider coordsProvider) {
         this.coordsProvider = coordsProvider;
