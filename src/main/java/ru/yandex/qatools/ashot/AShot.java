@@ -15,6 +15,7 @@ import ru.yandex.qatools.ashot.screentaker.ShootingStrategy;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.util.Arrays.asList;
 import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.intersectingWith;
@@ -28,8 +29,9 @@ public class AShot implements Serializable {
     private ScreenTaker taker = new ScreenTaker();
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
-    private Set<By> ignoredLocators = new HashSet<>();
-    private Set<Coords> ignoredAreas = new HashSet<>();
+
+    private Set<By> ignoredLocators = Collections.newSetFromMap(new ConcurrentHashMap<By, Boolean>());
+    private Set<Coords> ignoredAreas = Collections.newSetFromMap(new ConcurrentHashMap<Coords, Boolean>());
 
     public AShot coordsProvider(final CoordsProvider coordsProvider) {
         this.coordsProvider = coordsProvider;
@@ -61,7 +63,8 @@ public class AShot implements Serializable {
      * @return this
      */
     public synchronized AShot ignoredElements(final Set<By> ignoredElements) {
-        this.ignoredLocators = ignoredElements;
+        this.ignoredLocators.clear();
+        this.ignoredLocators.addAll(ignoredElements);
         return this;
     }
 
@@ -71,7 +74,7 @@ public class AShot implements Serializable {
      * @param selector By
      * @return this
      */
-    public synchronized AShot addIgnoredElement(final By selector) {
+    public AShot addIgnoredElement(final By selector) {
         this.ignoredLocators.add(selector);
         return this;
     }
@@ -82,7 +85,8 @@ public class AShot implements Serializable {
      * @return aShot
      */
     public synchronized AShot ignoredAreas(final Set<Coords> ignoredAreas) {
-        this.ignoredAreas = ignoredAreas;
+        this.ignoredAreas.clear();
+        this.ignoredAreas.addAll(ignoredAreas);
         return this;
     }
 
@@ -91,7 +95,7 @@ public class AShot implements Serializable {
      * @param area coords of wittingly ignored coords
      * @return aShot;
      */
-    public synchronized AShot addIgnoredArea(Coords area) {
+    public AShot addIgnoredArea(Coords area) {
         this.ignoredAreas.add(area);
         return this;
     }
@@ -163,7 +167,7 @@ public class AShot implements Serializable {
         return screenshot;
     }
 
-    protected synchronized Set<Coords> compileIgnoredAreas(WebDriver driver, CoordsPreparationStrategy preparationStrategy) {
+    protected Set<Coords> compileIgnoredAreas(WebDriver driver, CoordsPreparationStrategy preparationStrategy) {
         Set<Coords> ignoredCoords = new HashSet<>();
         for (By ignoredLocator : ignoredLocators) {
             List<WebElement> ignoredElements = driver.findElements(ignoredLocator);
@@ -177,7 +181,7 @@ public class AShot implements Serializable {
         return ignoredCoords;
     }
 
-    public synchronized Set<By> getIgnoredLocators() {
+    public Set<By> getIgnoredLocators() {
         return ignoredLocators;
     }
 }
