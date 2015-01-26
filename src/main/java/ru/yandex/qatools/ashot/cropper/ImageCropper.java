@@ -21,10 +21,4 @@ public abstract class ImageCropper implements Serializable {
 
     protected abstract Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare);
 
-    public Set<Coords> prepareCoords(BufferedImage image, Set<Coords> cropArea) {
-        return cropArea;
-    }
-
-
-
 }

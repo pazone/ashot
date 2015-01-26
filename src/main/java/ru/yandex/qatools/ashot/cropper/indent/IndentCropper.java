@@ -34,19 +34,15 @@ public class IndentCropper extends DefaultCropper {
 
     @Override
     public Screenshot cropScreenshot(BufferedImage image, Set<Coords> coordsToCompare) {
-        //todo refact
         Coords cropArea = createCropArea(coordsToCompare);
         Coords indentMask = createIndentMask(cropArea, image);
         Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
-        coordsToCompare = Coords.setReferenceCoords(coordsWithIndent, coordsToCompare);
         Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
-        cropped.setCoordsToCompare(coordsToCompare);
-        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped.getImage(), cropped.getCoordsToCompare());
+        cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped);
         cropped.setImage(applyFilters(cropped.getImage()));
         pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
         return cropped;
-
-
     }
 
     protected Coords applyIndentMask(Coords origin, Coords mask) {
@@ -67,11 +63,11 @@ public class IndentCropper extends DefaultCropper {
         return indentMask;
     }
 
-    protected List<NoFilteringArea> createNotFilteringAreas(BufferedImage image, Set<Coords> coordsToCompare) {
+    protected List<NoFilteringArea> createNotFilteringAreas(Screenshot screenshot) {
         List<NoFilteringArea> noFilteringAreas = new ArrayList<>();
-        for (Coords noFilteringCoords : coordsToCompare) {
-            if (noFilteringCoords.intersects(Coords.ofImage(image))) {
-                noFilteringAreas.add(new NoFilteringArea(image, noFilteringCoords));
+        for (Coords noFilteringCoords : screenshot.getCoordsToCompare()) {
+            if (noFilteringCoords.intersects(Coords.ofImage(screenshot.getImage()))) {
+                noFilteringAreas.add(new NoFilteringArea(screenshot.getImage(), noFilteringCoords));
             }
         }
         return noFilteringAreas;
@@ -99,15 +95,6 @@ public class IndentCropper extends DefaultCropper {
             image = filter.apply(image);
         }
         return image;
-    }
-
-    @Override
-    public Set<Coords> prepareCoords(BufferedImage image, Set<Coords> coordsToCompare) {
-        if (coordsToCompare.isEmpty()) return coordsToCompare;
-        Coords cropArea = createCropArea(coordsToCompare);
-        Coords indentMask = createIndentMask(cropArea, image);
-        Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
-        return Coords.setReferenceCoords(coordsWithIndent, coordsToCompare);
     }
 
     private static class NoFilteringArea {
