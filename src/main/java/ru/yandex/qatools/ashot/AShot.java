@@ -36,6 +36,7 @@ public class AShot implements Serializable {
         return this;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public AShot imageCropper(ImageCropper cropper) {
         this.cropper = cropper;
         return this;
@@ -49,6 +50,7 @@ public class AShot implements Serializable {
      * @return this;
      * @see ru.yandex.qatools.ashot.screentaker.ScreenTaker
      */
+    @SuppressWarnings("UnusedDeclaration")
     public AShot screenTaker(ScreenTaker taker) {
         this.taker = taker;
         return this;
@@ -60,6 +62,7 @@ public class AShot implements Serializable {
      * @param ignoredElements list of By
      * @return this
      */
+    @SuppressWarnings("UnusedDeclaration")
     public synchronized AShot ignoredElements(final Set<By> ignoredElements) {
         this.ignoredLocators = ignoredElements;
         return this;
@@ -81,6 +84,7 @@ public class AShot implements Serializable {
      * @param ignoredAreas Set of ignored areas
      * @return aShot
      */
+    @SuppressWarnings("UnusedDeclaration")
     public synchronized AShot ignoredAreas(final Set<Coords> ignoredAreas) {
         this.ignoredAreas = ignoredAreas;
         return this;
@@ -91,6 +95,7 @@ public class AShot implements Serializable {
      * @param area coords of wittingly ignored coords
      * @return aShot;
      */
+    @SuppressWarnings("UnusedDeclaration")
     public synchronized AShot addIgnoredArea(Coords area) {
         this.ignoredAreas.add(area);
         return this;
@@ -133,9 +138,7 @@ public class AShot implements Serializable {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = taker.take(driver);
         Screenshot screenshot = cropper.crop(shot, elementCoords);
-        //todo refact
-        elementCoords = cropper.prepareCoords(shot, elementCoords);
-        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(elementCoords));
+        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot.getCoordsToCompare()));
         screenshot.setIgnoredAreas(ignoredAreas);
         return screenshot;
     }
@@ -179,6 +182,7 @@ public class AShot implements Serializable {
         return ignoredCoords;
     }
 
+    @SuppressWarnings("UnusedDeclaration")
     public synchronized Set<By> getIgnoredLocators() {
         return ignoredLocators;
     }
