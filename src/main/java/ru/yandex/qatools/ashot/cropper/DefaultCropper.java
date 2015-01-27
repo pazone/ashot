@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 
+import static ru.yandex.qatools.ashot.coordinates.Coords.setReferenceCoords;
+
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
@@ -35,7 +37,8 @@ public class DefaultCropper extends ImageCropper {
         );
         g.dispose();
         Screenshot screenshot = new Screenshot(cropped);
-        screenshot.setCoordsToCompare(Coords.setReferenceCoords(cropArea, coordsToCompare));
+        screenshot.setOriginShift(cropArea);
+        screenshot.setCoordsToCompare(setReferenceCoords(screenshot.getOriginShift(), coordsToCompare));
         return screenshot;
     }
 

@@ -18,13 +18,23 @@ import static java.util.Arrays.asList;
  * @author <a href="eoff@yandex-team.ru">Maksim Mukosey</a>
  */
 
-//todo docs
+/**
+ * Result of screen capture.
+ * Contains final processed image and all required information for image comparison.
+ */
 public class Screenshot implements Serializable {
     private static final long serialVersionUID = 1241241256734156872L;
 
     private transient BufferedImage image;
     private Set<Coords> ignoredAreas = new HashSet<>();
     private Set<Coords> coordsToCompare;
+
+    /**
+     * Coords, containing x and y shift from origin image coordinates system
+     * Actually it is coordinates of cropped area on origin image.
+     * Should be set if image is cropped.
+     */
+    private Coords originShift = new Coords(0, 0);
 
     public BufferedImage getImage() {
         return image;
@@ -53,6 +63,14 @@ public class Screenshot implements Serializable {
 
     public void setIgnoredAreas(Set<Coords> ignoredAreas) {
         this.ignoredAreas = ignoredAreas;
+    }
+
+    public Coords getOriginShift() {
+        return originShift;
+    }
+
+    public void setOriginShift(Coords originShift) {
+        this.originShift = originShift;
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

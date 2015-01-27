@@ -1,8 +1,13 @@
 package ru.yandex.qatools.ashot.coordinates;
 
+import ru.yandex.qatools.ashot.Screenshot;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
+import static ru.yandex.qatools.ashot.coordinates.Coords.intersection;
+import static ru.yandex.qatools.ashot.coordinates.Coords.setReferenceCoords;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -19,11 +24,12 @@ public abstract class CoordsPreparationStrategy {
         };
     }
 
-    public static CoordsPreparationStrategy intersectingWith(final Collection<Coords> intersectWith) {
+    public static CoordsPreparationStrategy intersectingWith(final Screenshot screenshot) {
         return new CoordsPreparationStrategy() {
             @Override
             public Set<Coords> prepare(Collection<Coords> coordinates) {
-                return Coords.intersection(intersectWith, coordinates);
+                return setReferenceCoords(screenshot.getOriginShift(),
+                        intersection(screenshot.getCoordsToCompare(), coordinates));
             }
         };
     }

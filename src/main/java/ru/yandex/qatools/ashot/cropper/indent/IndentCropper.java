@@ -11,6 +11,7 @@ import java.util.*;
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static ru.yandex.qatools.ashot.coordinates.Coords.setReferenceCoords;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -37,12 +38,13 @@ public class IndentCropper extends DefaultCropper {
         Coords cropArea = createCropArea(coordsToCompare);
         Coords indentMask = createIndentMask(cropArea, image);
         Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
-        Screenshot cropped = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
-        cropped.setCoordsToCompare(Coords.setReferenceCoords(coordsWithIndent, coordsToCompare));
-        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(cropped);
-        cropped.setImage(applyFilters(cropped.getImage()));
-        pasteAreasToCompare(cropped.getImage(), noFilteringAreas);
-        return cropped;
+        Screenshot croppedShot = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
+        croppedShot.setOriginShift(coordsWithIndent);
+        croppedShot.setCoordsToCompare(setReferenceCoords(coordsWithIndent, coordsToCompare));
+        List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(croppedShot);
+        croppedShot.setImage(applyFilters(croppedShot.getImage()));
+        pasteAreasToCompare(croppedShot.getImage(), noFilteringAreas);
+        return croppedShot;
     }
 
     protected Coords applyIndentMask(Coords origin, Coords mask) {
