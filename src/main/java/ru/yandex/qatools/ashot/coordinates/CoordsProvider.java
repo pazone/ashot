@@ -20,7 +20,7 @@ public abstract class CoordsProvider implements Serializable {
         for (WebElement element : elements) {
             Coords elementCoords = ofElement(driver, element);
             if (!elementCoords.isEmpty()) {
-                elementsCoords.add(ofElement(driver, element));
+                elementsCoords.add(elementCoords);
             }
         }
         return elementsCoords;
