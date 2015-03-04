@@ -28,8 +28,8 @@ public abstract class CoordsPreparationStrategy {
         return new CoordsPreparationStrategy() {
             @Override
             public Set<Coords> prepare(Collection<Coords> coordinates) {
-                return setReferenceCoords(screenshot.getOriginShift(),
-                        intersection(screenshot.getCoordsToCompare(), coordinates));
+                return intersection(screenshot.getCoordsToCompare(),
+                        setReferenceCoords(screenshot.getOriginShift(), new HashSet<>(coordinates)));
             }
         };
     }
