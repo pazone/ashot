@@ -2,8 +2,10 @@ package ru.yandex.qatools.ashot.comparison;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+
+import static ch.lambdaj.Lambda.min;
+import static ch.lambdaj.Lambda.on;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -16,6 +18,11 @@ public class ImageDiff {
 
 
     private Set<Point> diffPoints = new LinkedHashSet<>();
+
+    /**
+     * Deposed diff points relatively the least diff area.
+     */
+    private Set<Point> deposedPoints = new LinkedHashSet<>();
 
     /**
      * The color which marks the differences between the images.
@@ -82,6 +89,7 @@ public class ImageDiff {
     /**
      * Marks diff on inner image and returns it.
      * Idempotent.
+     *
      * @return marked diff image
      */
     public BufferedImage getMarkedImage() {
@@ -93,7 +101,6 @@ public class ImageDiff {
         }
         return diffImage;
     }
-
 
     private Color pickDiffColor(Point dot) {
         return ((dot.getX() + dot.getY()) % 2 == 0) ? diffColor : Color.WHITE;
@@ -110,12 +117,50 @@ public class ImageDiff {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof ImageDiff && diffPoints.equals(((ImageDiff) obj).diffPoints);
+        if (obj instanceof ImageDiff) {
+            ImageDiff item = (ImageDiff) obj;
+            if (diffPoints.size() != item.diffPoints.size()) {
+                return false;
+            }
+
+            Set<Point> referencedPoints = getDeposedPoints();
+            Set<Point> itemReferencedPoints = item.getDeposedPoints();
+
+            for (Point point : referencedPoints) {
+                if(!itemReferencedPoints.contains(point)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return diffPoints.hashCode();
+        return getDeposedPoints().hashCode();
+    }
+
+    private Set<Point> getDeposedPoints() {
+        if (deposedPoints.isEmpty()) {
+            deposedPoints = deposeReference(this);
+        }
+        return deposedPoints;
+    }
+
+    private Point getReferenceCorner(ImageDiff diff) {
+        double x = min(diff.diffPoints, on(Point.class).getX());
+        double y = min(diff.diffPoints, on(Point.class).getY());
+        return new Point((int) x, (int) y);
+    }
+
+    private Set<Point> deposeReference(ImageDiff diff) {
+        Point reference = getReferenceCorner(diff);
+        Set<Point> referenced = new HashSet<>();
+        for (Point point : diff.diffPoints) {
+            referenced.add(new Point(point.x - reference.x, point.y - reference.y));
+        }
+        return referenced;
     }
 
 
