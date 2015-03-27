@@ -26,7 +26,7 @@ As a result aShot provides an image of the WebElement
 <dependency>
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.8</version>
 </dependency>
 ``` 
 
