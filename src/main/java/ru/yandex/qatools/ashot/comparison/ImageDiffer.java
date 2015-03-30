@@ -4,6 +4,7 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.image.BufferedImage;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static ru.yandex.qatools.ashot.util.ImageTool.rgbCompare;
@@ -17,19 +18,41 @@ public class ImageDiffer {
     private static final int DEFAULT_COLOR_DISTORTION = 15;
 
     private int colorDistortion = DEFAULT_COLOR_DISTORTION;
+    private DiffStorage diffStorage = new PointsDiffStorage();
 
     public ImageDiffer withColorDistortion(int distortion) {
         this.colorDistortion = distortion;
         return this;
     }
 
+    /**
+     * Sets the diff storage strategy and copies all values from the previous one.
+     *
+     * @param diffStorage diff storage strategy instance
+     * @return self for fluent style
+     * @see ImageDiffStorage
+     * @see PointsDiffStorage
+     */
+    public ImageDiffer withDiffStorage(final DiffStorage diffStorage) {
+        this.diffStorage = diffStorage;
+        return this;
+    }
+
     public ImageDiff makeDiff(Screenshot expected, Screenshot actual) {
-        ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage());
+        ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffStorage);
+
+        Coords expectedImageCoords = Coords.ofImage(expected.getImage());
+        Coords actualImageCoords = Coords.ofImage(actual.getImage());
+
+        CoordsSet compareCoordsSet = new CoordsSet(CoordsSet.union(actual.getCoordsToCompare(), expected.getCoordsToCompare()));
+        CoordsSet ignoreCoordsSet = new CoordsSet(CoordsSet.intersection(actual.getIgnoredAreas(), expected.getIgnoredAreas()));
 
         for (int i = 0; i < diff.getDiffImage().getWidth(); i++) {
             for (int j = 0; j < diff.getDiffImage().getHeight(); j++) {
-                if (insideBothImages(i, j, expected.getImage(), actual.getImage())) {
-                    if (shouldCompare(i, j, expected, actual) && !rgbCompare(expected.getImage().getRGB(i, j), actual.getImage().getRGB(i, j), colorDistortion)) {
+                if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)) {
+                    if (!ignoreCoordsSet.contains(i, j)
+                            && compareCoordsSet.contains(i, j)
+                            && hasDiffInChannel(expected, actual, i, j)) {
                         diff.addDiffPoint(i, j);
                     } else {
                         diff.getDiffImage().setRGB(i, j, expected.getImage().getRGB(i, j));
@@ -42,33 +65,12 @@ public class ImageDiffer {
         return diff;
     }
 
+    private boolean hasDiffInChannel(Screenshot expected, Screenshot actual, int i, int j) {
+        return !rgbCompare(expected.getImage().getRGB(i, j), actual.getImage().getRGB(i, j), colorDistortion);
+    }
 
     public ImageDiff makeDiff(BufferedImage expected, BufferedImage actual) {
         return makeDiff(new Screenshot(expected), new Screenshot(actual));
-    }
-
-
-    private boolean shouldCompare(int i, int j, Screenshot expected, Screenshot actual) {
-        return notIgnoredInBoth(i, j, expected, actual) && isToCompareInBoth(i, j, expected, actual);
-    }
-
-    private boolean notIgnoredInBoth(int i, int j, Screenshot expected, Screenshot actual) {
-        return !isIgnored(i, j, expected.getIgnoredAreas()) || !isIgnored(i, j, actual.getIgnoredAreas());
-    }
-
-    private boolean isToCompareInBoth(int i, int j, Screenshot expected, Screenshot actual) {
-        return isToCompare(i, j, expected.getCoordsToCompare()) || isToCompare(i, j, actual.getCoordsToCompare());
-    }
-
-    private boolean isIgnored(int i, int j, Set<Coords> ignoredCoords) {
-        boolean isIgnored = false;
-        for (Coords coords : ignoredCoords) {
-            if (coords.contains(i, j)) {
-                isIgnored = true;
-                break;
-            }
-        }
-        return isIgnored;
     }
 
     private void setSharedPoint(int i, int j, Screenshot expected, Screenshot actual, ImageDiff diff) {
@@ -79,20 +81,62 @@ public class ImageDiffer {
         }
     }
 
-    private boolean isToCompare(int i, int j, Set<Coords> coordsToCompare) {
-        boolean isToCompare = false;
-        for (Coords coords : coordsToCompare) {
-            if (coords.contains(i, j)) {
-                isToCompare = true;
-                break;
+    private boolean insideBothImages(int i, int j, Coords expected, Coords actual) {
+        return expected.contains(i, j) && actual.contains(i, j);
+    }
+
+    private static class CoordsSet {
+
+        private final boolean isSingle;
+        private final Coords minRectangle;
+        private Set<Coords> coordsSet;
+
+        public CoordsSet(Set<Coords> coordsSet) {
+            isSingle = coordsSet.size() == 1;
+            this.coordsSet = coordsSet;
+            int minX = Integer.MAX_VALUE;
+            int minY = Integer.MAX_VALUE;
+            int maxX = 0;
+            int maxY = 0;
+            for (Coords coords : coordsSet) {
+                minX = Math.min(minX, (int) coords.getMinX());
+                minY = Math.min(minY, (int) coords.getMinY());
+                maxX = Math.max(maxX, (int) coords.getMaxX());
+                maxY = Math.max(maxY, (int) coords.getMaxY());
+            }
+            minRectangle = new Coords(minX, minY, maxX - minX, maxY - minY);
+        }
+
+        private boolean contains(int i, int j) {
+            return inaccurateContains(i, j) && accurateContains(i, j);
+        }
+
+        private boolean inaccurateContains(int i, int j) {
+            return minRectangle.contains(i, j);
+        }
+
+        private boolean accurateContains(int i, int j) {
+            if (isSingle) {
+                return true;
+            } else {
+                for (Coords coords : coordsSet) {
+                    if (coords.contains(i, j)) {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
-        return isToCompare;
+
+        private static Set<Coords> intersection(Set<Coords> coordsPool1, Set<Coords> coordsPool2) {
+            return Coords.intersection(coordsPool1, coordsPool2);
+        }
+
+        private static Set<Coords> union(Set<Coords> coordsPool1, Set<Coords> coordsPool2) {
+            Set<Coords> coordsPool = new LinkedHashSet<>();
+            coordsPool.addAll(coordsPool1);
+            coordsPool.addAll(coordsPool2);
+            return coordsPool;
+        }
     }
-
-    private boolean insideBothImages(int i, int j, BufferedImage expected, BufferedImage actual) {
-        return Coords.ofImage(expected).contains(i, j) && Coords.ofImage(actual).contains(i, j);
-    }
-
-
 }

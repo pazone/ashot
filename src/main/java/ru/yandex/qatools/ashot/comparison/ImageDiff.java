@@ -2,10 +2,6 @@ package ru.yandex.qatools.ashot.comparison;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
-
-import static ch.lambdaj.Lambda.min;
-import static ch.lambdaj.Lambda.on;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -16,37 +12,17 @@ public class ImageDiff {
     @SuppressWarnings("UnusedDeclaration")
     public static final ImageDiff EMPTY_DIFF = new ImageDiff();
 
+    private DiffStorage diffStorage;
 
-    private Set<Point> diffPoints = new LinkedHashSet<>();
-
-    /**
-     * Deposed diff points relatively the least diff area.
-     */
-    private Set<Point> deposedPoints = new LinkedHashSet<>();
-
-    /**
-     * The color which marks the differences between the images.
-     *
-     * @see java.awt.Color
-     */
-    private Color diffColor = Color.RED;
-
-    private BufferedImage diffImage;
-
-    private boolean marked = false;
-
-    /**
-     * Images are considered the same if the number of distinguished pixels does not exceed this value.
-     */
-    private int diffSizeTrigger;
-
-    public ImageDiff(BufferedImage expected, BufferedImage actual) {
+    public ImageDiff(BufferedImage expected, BufferedImage actual, DiffStorage diffStorage) {
+        this.diffStorage = diffStorage;
         int width = Math.max(expected.getWidth(), actual.getWidth());
         int height = Math.max(expected.getHeight(), actual.getHeight());
-        this.diffImage = new BufferedImage(width, height, actual.getType());
+        this.diffStorage.setDiffImage(new BufferedImage(width, height, actual.getType()));
     }
 
     private ImageDiff() {
+        diffStorage = new PointsDiffStorage();
     }
 
     /**
@@ -59,8 +35,8 @@ public class ImageDiff {
      * @see java.awt.Color
      */
     public ImageDiff withDiffColor(final Color diffColor) {
-        this.diffColor = diffColor;
-        this.marked = false;
+        diffStorage.setDiffColor(diffColor);
+        diffStorage.setMarked(false);
         return this;
     }
 
@@ -71,7 +47,7 @@ public class ImageDiff {
      * @return self for fluent style
      */
     public ImageDiff withDiffSizeTrigger(final int diffSizeTrigger) {
-        this.diffSizeTrigger = diffSizeTrigger;
+        this.diffStorage.setDiffSizeTrigger(diffSizeTrigger);
         return this;
     }
 
@@ -79,11 +55,11 @@ public class ImageDiff {
      * @return Diff image with empty spaces in diff areas.
      */
     public BufferedImage getDiffImage() {
-        return diffImage;
+        return diffStorage.getDiffImage();
     }
 
     public void addDiffPoint(int x, int y) {
-        diffPoints.add(new Point(x, y));
+        diffStorage.addDifPoint(x, y);
     }
 
     /**
@@ -93,17 +69,7 @@ public class ImageDiff {
      * @return marked diff image
      */
     public BufferedImage getMarkedImage() {
-        if (!marked) {
-            for (Point dot : diffPoints) {
-                diffImage.setRGB((int) dot.getX(), (int) dot.getY(), pickDiffColor(dot).getRGB());
-            }
-            marked = true;
-        }
-        return diffImage;
-    }
-
-    private Color pickDiffColor(Point dot) {
-        return ((dot.getX() + dot.getY()) % 2 == 0) ? diffColor : Color.WHITE;
+        return diffStorage.getMarkedImage();
     }
 
     /**
@@ -112,56 +78,20 @@ public class ImageDiff {
      * @return <tt>true</tt> if there are differences between images.
      */
     public boolean hasDiff() {
-        return diffPoints.size() > diffSizeTrigger;
+        return diffStorage.hasDiff();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ImageDiff) {
             ImageDiff item = (ImageDiff) obj;
-            if (diffPoints.size() != item.diffPoints.size()) {
-                return false;
-            }
-
-            Set<Point> referencedPoints = getDeposedPoints();
-            Set<Point> itemReferencedPoints = item.getDeposedPoints();
-
-            for (Point point : referencedPoints) {
-                if(!itemReferencedPoints.contains(point)) {
-                    return false;
-                }
-            }
-            return true;
+            return this.diffStorage.equals(item.diffStorage);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return getDeposedPoints().hashCode();
+        return this.diffStorage.hashCode();
     }
-
-    private Set<Point> getDeposedPoints() {
-        if (deposedPoints.isEmpty()) {
-            deposedPoints = deposeReference(this);
-        }
-        return deposedPoints;
-    }
-
-    private Point getReferenceCorner(ImageDiff diff) {
-        double x = min(diff.diffPoints, on(Point.class).getX());
-        double y = min(diff.diffPoints, on(Point.class).getY());
-        return new Point((int) x, (int) y);
-    }
-
-    private Set<Point> deposeReference(ImageDiff diff) {
-        Point reference = getReferenceCorner(diff);
-        Set<Point> referenced = new HashSet<>();
-        for (Point point : diff.diffPoints) {
-            referenced.add(new Point(point.x - reference.x, point.y - reference.y));
-        }
-        return referenced;
-    }
-
-
 }
