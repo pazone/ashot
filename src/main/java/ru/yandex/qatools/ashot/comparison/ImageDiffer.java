@@ -18,7 +18,7 @@ public class ImageDiffer {
     private static final int DEFAULT_COLOR_DISTORTION = 15;
 
     private int colorDistortion = DEFAULT_COLOR_DISTORTION;
-    private DiffStorage diffStorage = new PointsDiffStorage();
+    private DiffMarkupPolicy diffMarkupPolicy = new PointsMarkupPolicy();
 
     public ImageDiffer withColorDistortion(int distortion) {
         this.colorDistortion = distortion;
@@ -26,20 +26,20 @@ public class ImageDiffer {
     }
 
     /**
-     * Sets the diff storage strategy and copies all values from the previous one.
+     * Sets the diff markup policy.
      *
-     * @param diffStorage diff storage strategy instance
+     * @param diffMarkupPolicy diff markup policy instance
      * @return self for fluent style
-     * @see ImageDiffStorage
-     * @see PointsDiffStorage
+     * @see ImageMarkupPolicy
+     * @see PointsMarkupPolicy
      */
-    public ImageDiffer withDiffStorage(final DiffStorage diffStorage) {
-        this.diffStorage = diffStorage;
+    public ImageDiffer withDiffMarkupPolicy(final DiffMarkupPolicy diffMarkupPolicy) {
+        this.diffMarkupPolicy = diffMarkupPolicy;
         return this;
     }
 
     public ImageDiff makeDiff(Screenshot expected, Screenshot actual) {
-        ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffStorage);
+        ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffMarkupPolicy);
 
         Coords expectedImageCoords = Coords.ofImage(expected.getImage());
         Coords actualImageCoords = Coords.ofImage(actual.getImage());

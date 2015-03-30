@@ -43,19 +43,19 @@ public class DifferTest {
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
         return asList(new Object[][] {
-                {PointsDiffStorage.class},
-                {ImageDiffStorage.class}
+                {PointsMarkupPolicy.class},
+                {ImageMarkupPolicy.class}
         });
     }
 
     @Parameterized.Parameter
-    public Class<? extends DiffStorage> diffStorageClass;
+    public Class<? extends DiffMarkupPolicy> diffStorageClass;
 
     @Before
     public void setUp() throws IllegalAccessException, InstantiationException {
         imageDiffer = new ImageDiffer()
                 .withColorDistortion(10)
-                .withDiffStorage(diffStorageClass.newInstance());
+                .withDiffMarkupPolicy(diffStorageClass.newInstance());
     }
 
     @Test

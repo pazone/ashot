@@ -14,7 +14,7 @@ import static ch.lambdaj.Lambda.on;
  *
  */
 
-public class PointsDiffStorage extends DiffStorage {
+public class PointsMarkupPolicy extends DiffMarkupPolicy {
 
     private Set<Point> diffPoints = new LinkedHashSet<>();
     private Set<Point> deposedPoints = new LinkedHashSet<>();
@@ -49,8 +49,8 @@ public class PointsDiffStorage extends DiffStorage {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof PointsDiffStorage) {
-            PointsDiffStorage item = (PointsDiffStorage) obj;
+        if (obj instanceof PointsMarkupPolicy) {
+            PointsMarkupPolicy item = (PointsMarkupPolicy) obj;
             if (diffPoints.size() != item.diffPoints.size()) {
                 return false;
             }
@@ -85,13 +85,13 @@ public class PointsDiffStorage extends DiffStorage {
         return deposedPoints;
     }
 
-    private Point getReferenceCorner(PointsDiffStorage diff) {
+    private Point getReferenceCorner(PointsMarkupPolicy diff) {
         double x = min(diff.diffPoints, on(Point.class).getX());
         double y = min(diff.diffPoints, on(Point.class).getY());
         return new Point((int) x, (int) y);
     }
 
-    private Set<Point> deposeReference(PointsDiffStorage diff) {
+    private Set<Point> deposeReference(PointsMarkupPolicy diff) {
         Point reference = getReferenceCorner(diff);
         Set<Point> referenced = new HashSet<>();
         for (Point point : diff.diffPoints) {

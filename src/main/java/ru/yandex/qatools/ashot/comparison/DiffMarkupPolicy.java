@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
  * @author Rovniakov Viacheslav rovner@yandex-team.ru
  */
 
-public abstract class DiffStorage {
+public abstract class DiffMarkupPolicy {
 
     protected boolean marked = false;
     protected Color diffColor = Color.RED;

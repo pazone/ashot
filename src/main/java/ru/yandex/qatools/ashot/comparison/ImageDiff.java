@@ -12,17 +12,17 @@ public class ImageDiff {
     @SuppressWarnings("UnusedDeclaration")
     public static final ImageDiff EMPTY_DIFF = new ImageDiff();
 
-    private DiffStorage diffStorage;
+    private DiffMarkupPolicy diffMarkupPolicy;
 
-    public ImageDiff(BufferedImage expected, BufferedImage actual, DiffStorage diffStorage) {
-        this.diffStorage = diffStorage;
+    public ImageDiff(BufferedImage expected, BufferedImage actual, DiffMarkupPolicy diffMarkupPolicy) {
+        this.diffMarkupPolicy = diffMarkupPolicy;
         int width = Math.max(expected.getWidth(), actual.getWidth());
         int height = Math.max(expected.getHeight(), actual.getHeight());
-        this.diffStorage.setDiffImage(new BufferedImage(width, height, actual.getType()));
+        this.diffMarkupPolicy.setDiffImage(new BufferedImage(width, height, actual.getType()));
     }
 
     private ImageDiff() {
-        diffStorage = new PointsDiffStorage();
+        diffMarkupPolicy = new PointsMarkupPolicy();
     }
 
     /**
@@ -35,8 +35,8 @@ public class ImageDiff {
      * @see java.awt.Color
      */
     public ImageDiff withDiffColor(final Color diffColor) {
-        diffStorage.setDiffColor(diffColor);
-        diffStorage.setMarked(false);
+        diffMarkupPolicy.setDiffColor(diffColor);
+        diffMarkupPolicy.setMarked(false);
         return this;
     }
 
@@ -47,7 +47,7 @@ public class ImageDiff {
      * @return self for fluent style
      */
     public ImageDiff withDiffSizeTrigger(final int diffSizeTrigger) {
-        this.diffStorage.setDiffSizeTrigger(diffSizeTrigger);
+        this.diffMarkupPolicy.setDiffSizeTrigger(diffSizeTrigger);
         return this;
     }
 
@@ -55,11 +55,11 @@ public class ImageDiff {
      * @return Diff image with empty spaces in diff areas.
      */
     public BufferedImage getDiffImage() {
-        return diffStorage.getDiffImage();
+        return diffMarkupPolicy.getDiffImage();
     }
 
     public void addDiffPoint(int x, int y) {
-        diffStorage.addDifPoint(x, y);
+        diffMarkupPolicy.addDifPoint(x, y);
     }
 
     /**
@@ -69,7 +69,7 @@ public class ImageDiff {
      * @return marked diff image
      */
     public BufferedImage getMarkedImage() {
-        return diffStorage.getMarkedImage();
+        return diffMarkupPolicy.getMarkedImage();
     }
 
     /**
@@ -78,20 +78,20 @@ public class ImageDiff {
      * @return <tt>true</tt> if there are differences between images.
      */
     public boolean hasDiff() {
-        return diffStorage.hasDiff();
+        return diffMarkupPolicy.hasDiff();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ImageDiff) {
             ImageDiff item = (ImageDiff) obj;
-            return this.diffStorage.equals(item.diffStorage);
+            return this.diffMarkupPolicy.equals(item.diffMarkupPolicy);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        return this.diffStorage.hashCode();
+        return this.diffMarkupPolicy.hashCode();
     }
 }
