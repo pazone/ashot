@@ -140,7 +140,7 @@ public class DifferTest {
         testImageDiffer.makeDiff(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_indexed.png"));
 
         verify(testImageDiffer, times(1)).areImagesEqual(any(Screenshot.class), any(Screenshot.class));
-        verify(testImageDiffer, times(0)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
+        verify(testImageDiffer, times(1)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
     }
 
     @Test
