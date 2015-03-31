@@ -21,6 +21,7 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     public void setDiffImage(BufferedImage diffImage) {
         super.setDiffImage(diffImage);
         transparentDiffImage = new BufferedImage(diffImage.getWidth(), diffImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        fillTransparentAlpha(transparentDiffImage.getWidth(), transparentDiffImage.getHeight(), transparentDiffImage);
     }
 
     @Override
@@ -35,13 +36,18 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     }
 
     @Override
+    public BufferedImage getTransparentMarkedImage() {
+        return transparentDiffImage;
+    }
+
+    @Override
     public void addDiffPoint(int x, int y) {
         diffPointCount++;
         xReference = Math.min(xReference, x);
         yReference = Math.min(yReference, y);
         xSum += x;
         ySum += y;
-        transparentDiffImage.setRGB(x, y, pickDiffColor(x, y).getRGB());
+        transparentDiffImage.setRGB(x, y, diffColor.getRGB());
     }
 
     @Override
@@ -67,4 +73,10 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     public boolean hasDiff() {
         return diffPointCount > diffSizeTrigger;
     }
+
+    @Override
+    public int getDiffSize() {
+        return diffPointCount;
+    }
+
 }

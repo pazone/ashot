@@ -18,18 +18,27 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
 
     private Set<Point> diffPoints = new LinkedHashSet<>();
     private Set<Point> deposedPoints = new LinkedHashSet<>();
+    private BufferedImage transparentMarkedImage = null;
 
     @Override
     public BufferedImage getMarkedImage() {
         if (!marked) {
-            for (Point dot : diffPoints) {
-                int x = (int) dot.getX();
-                int y = (int) dot.getY();
-                diffImage.setRGB(x, y, pickDiffColor(x, y).getRGB());
-            }
+            markDiffPoints(diffImage);
             marked = true;
         }
         return diffImage;
+    }
+
+    @Override
+    public BufferedImage getTransparentMarkedImage() {
+        if (transparentMarkedImage == null) {
+            int width = diffImage.getWidth();
+            int height = diffImage.getHeight();
+            transparentMarkedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            fillTransparentAlpha(width, height, transparentMarkedImage);
+            markDiffPoints(transparentMarkedImage);
+        }
+        return transparentMarkedImage;
     }
 
     @Override
@@ -76,6 +85,20 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     @Override
     public boolean hasDiff() {
         return diffPoints.size() > diffSizeTrigger;
+    }
+
+    @Override
+    public int getDiffSize() {
+        return diffPoints.size();
+    }
+
+    protected void markDiffPoints(BufferedImage image) {
+        int rgb = diffColor.getRGB();
+        for (Point dot : diffPoints) {
+            int x = (int) dot.getX();
+            int y = (int) dot.getY();
+            image.setRGB(x, y, rgb);
+        }
     }
 
     private Set<Point> getDeposedPoints() {

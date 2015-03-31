@@ -18,6 +18,7 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
@@ -99,7 +100,7 @@ public class DifferTest {
 
     @Test
     public void testIgnoredCoordsNotSame() throws Exception {
-        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(50, 50))));
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(55, 55))));
         Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
         ImageDiff diff = imageDiffer.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_not_same.png")));
@@ -113,6 +114,28 @@ public class DifferTest {
         b.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
         ImageDiff diff = imageDiffer.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
+    }
+
+    @Test
+    public void testTransparentImageWithMarkedDiff() {
+        ImageDiff imageDiff = imageDiffer.makeDiff(loadImage("img/A_s.png"), loadImage("img/B_s.png"));
+        assertThat(imageDiff.getTransparentMarkedImage(), ImageTool.equalImage(loadImage("img/expected/transparent_diff.png")));
+    }
+
+    @Test
+    public void testDiffSize() {
+        String path = "img/A_s.png";
+        BufferedImage image1 = loadImage(path);
+        BufferedImage image2 = loadImage(path);
+
+        int rgb = Color.GREEN.getRGB();
+        int diffSize = 10;
+        for (int i = 0; i < diffSize; i++) {
+            image2.setRGB(i, 1, rgb);
+        }
+
+        ImageDiff imageDiff = imageDiffer.makeDiff(image1, image2);
+        assertEquals("Should have diff size " + diffSize, diffSize, imageDiff.getDiffSize());
     }
 
     private Screenshot createScreenshotWithSameIgnoredAreas(BufferedImage image) {
