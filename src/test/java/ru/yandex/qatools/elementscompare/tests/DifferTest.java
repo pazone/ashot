@@ -4,13 +4,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
 import ru.yandex.qatools.ashot.Screenshot;
-import ru.yandex.qatools.ashot.comparison.*;
+import ru.yandex.qatools.ashot.comparison.DiffMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.ImageDiff;
+import ru.yandex.qatools.ashot.comparison.ImageDiffer;
+import ru.yandex.qatools.ashot.comparison.ImageMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.PointsMarkupPolicy;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 import ru.yandex.qatools.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,6 +25,9 @@ import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -31,6 +39,7 @@ public class DifferTest {
     public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
     public ImageDiffer imageDiffer;
+    private TestImageDiffer testImageDiffer;
 
     public static BufferedImage loadImage(String path) {
         try {
@@ -56,6 +65,7 @@ public class DifferTest {
         imageDiffer = new ImageDiffer()
                 .withColorDistortion(10)
                 .withDiffMarkupPolicy(diffStorageClass.newInstance());
+        testImageDiffer = Mockito.spy(new TestImageDiffer().withDiffMarkupPolicy(diffStorageClass.newInstance()));
     }
 
     @Test
@@ -109,6 +119,38 @@ public class DifferTest {
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
     }
 
+    @Test
+    public void testImageDifferentSizes() {
+        testImageDiffer.makeDiff(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_scaled.png"));
+
+        verify(testImageDiffer, times(1)).areImagesEqual(any(Screenshot.class), any(Screenshot.class));
+        verify(testImageDiffer, times(1)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
+    }
+
+    @Test
+    public void testOnePixelDifference() {
+        testImageDiffer.makeDiff(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_1px_red.png"));
+
+        verify(testImageDiffer, times(1)).areImagesEqual(any(Screenshot.class), any(Screenshot.class));
+        verify(testImageDiffer, times(1)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
+    }
+
+    @Test
+    public void testColorModeDifference() {
+        testImageDiffer.makeDiff(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_indexed.png"));
+
+        verify(testImageDiffer, times(1)).areImagesEqual(any(Screenshot.class), any(Screenshot.class));
+        verify(testImageDiffer, times(0)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
+    }
+
+    @Test
+    public void testEqualImages() {
+        testImageDiffer.makeDiff(loadImage("img/SolidColor.png"), loadImage("img/SolidColor.png"));
+
+        verify(testImageDiffer, times(1)).areImagesEqual(any(Screenshot.class), any(Screenshot.class));
+        verify(testImageDiffer, times(0)).markDiffPoints(any(Screenshot.class), any(Screenshot.class), any(ImageDiff.class));
+    }
+
     private Screenshot createScreenshotWithSameIgnoredAreas(BufferedImage image) {
         return createScreenshotWithIgnoredAreas(image, new HashSet<>(asList(new Coords(50, 50))));
     }
@@ -120,4 +162,23 @@ public class DifferTest {
     }
 
 
+    private static class TestImageDiffer extends ImageDiffer {
+
+        @Override
+        public void markDiffPoints(Screenshot expected, Screenshot actual, ImageDiff diff) {
+            super.markDiffPoints(expected, actual, diff);
+        }
+
+        @Override
+        public boolean areImagesEqual(Screenshot expected, Screenshot actual) {
+            return super.areImagesEqual(expected, actual);
+        }
+
+        @Override
+        public TestImageDiffer withDiffMarkupPolicy(final DiffMarkupPolicy diffMarkupPolicy) {
+            super.withDiffMarkupPolicy(diffMarkupPolicy);
+            return this;
+        }
+
+    }
 }

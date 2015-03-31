@@ -4,6 +4,10 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferUShort;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -41,6 +45,16 @@ public class ImageDiffer {
     public ImageDiff makeDiff(Screenshot expected, Screenshot actual) {
         ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffMarkupPolicy);
 
+        if (areImagesEqual(expected, actual)) {
+            diff.setDiffImage(actual.getImage());
+        } else {
+            markDiffPoints(expected, actual, diff);
+        }
+
+        return diff;
+    }
+
+    protected void markDiffPoints(Screenshot expected, Screenshot actual, ImageDiff diff) {
         Coords expectedImageCoords = Coords.ofImage(expected.getImage());
         Coords actualImageCoords = Coords.ofImage(actual.getImage());
 
@@ -62,7 +76,43 @@ public class ImageDiffer {
                 }
             }
         }
-        return diff;
+    }
+
+    protected boolean areImagesEqual(Screenshot expected, Screenshot actual) {
+        BufferedImage imageExpected = expected.getImage();
+        BufferedImage imageActual = actual.getImage();
+
+        return  imageExpected.getHeight() == imageActual.getHeight() &&
+                imageExpected.getWidth() == imageActual.getWidth() &&
+                imageActual.getColorModel().equals(imageExpected.getColorModel()) &&
+                areImagesBuffersEqual(imageExpected, imageActual);
+    }
+
+    private boolean areImagesBuffersEqual(BufferedImage imageExpected, BufferedImage imageActual) {
+        DataBuffer dataBufferActual = imageActual.getRaster().getDataBuffer();
+        DataBuffer dataBufferExpected = imageExpected.getRaster().getDataBuffer();
+
+        return dataBufferActual.getDataType() == dataBufferExpected.getDataType() &&
+                dataBufferActual.getNumBanks() == dataBufferExpected.getNumBanks() &&
+                areImagesBytesEqual(dataBufferActual, dataBufferExpected);
+    }
+
+    private boolean areImagesBytesEqual(DataBuffer dataBufferActual, DataBuffer dataBufferExpected) {
+        boolean areBytesEqual = true;
+        boolean isByteBuffer = dataBufferActual.getDataType() == DataBuffer.TYPE_BYTE;
+
+        for (int i = 0; i < dataBufferExpected.getNumBanks(); i++) {
+            if (isByteBuffer) {
+                areBytesEqual = areBytesEqual && Arrays.equals(
+                        ((DataBufferByte) dataBufferActual).getData(i),
+                        ((DataBufferByte) dataBufferExpected).getData(i));
+            } else {
+                areBytesEqual = areBytesEqual && Arrays.equals(
+                        ((DataBufferUShort) dataBufferActual).getData(i),
+                        ((DataBufferUShort) dataBufferExpected).getData(i));
+            }
+        }
+        return areBytesEqual;
     }
 
     private boolean hasDiffInChannel(Screenshot expected, Screenshot actual, int i, int j) {
