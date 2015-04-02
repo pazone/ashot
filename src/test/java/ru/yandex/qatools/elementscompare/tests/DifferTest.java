@@ -55,7 +55,8 @@ public class DifferTest {
     public void setUp() throws IllegalAccessException, InstantiationException {
         imageDiffer = new ImageDiffer()
                 .withColorDistortion(10)
-                .withDiffMarkupPolicy(diffStorageClass.newInstance());
+                .withDiffMarkupPolicy(diffStorageClass.newInstance()
+                        .withDiffColor(Color.RED));
     }
 
     @Test
@@ -66,8 +67,13 @@ public class DifferTest {
 
     @Test
     public void testSetDiffColor() throws Exception {
-        ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
-        assertThat(diff.withDiffColor(Color.GREEN).getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/green_diff.png")));
+        ImageDiffer greenDiffer = new ImageDiffer()
+                .withDiffMarkupPolicy(
+                        new ImageMarkupPolicy()
+                                .withDiffColor(Color.GREEN)
+                );
+        ImageDiff diff = greenDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/green_diff.png")));
     }
 
     @Test

@@ -43,7 +43,7 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     }
 
     @Override
-    public void addDifPoint(int x, int y) {
+    public void addDiffPoint(int x, int y) {
         diffPoints.add(new Point(x, y));
     }
 

@@ -20,6 +20,8 @@ public class ImageDiffer {
     private int colorDistortion = DEFAULT_COLOR_DISTORTION;
     private DiffMarkupPolicy diffMarkupPolicy = new PointsMarkupPolicy();
 
+
+
     public ImageDiffer withColorDistortion(int distortion) {
         this.colorDistortion = distortion;
         return this;
