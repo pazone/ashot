@@ -118,6 +118,4 @@ public class DifferTest {
         screenshot.setIgnoredAreas(ignored);
         return screenshot;
     }
-
-
 }

@@ -58,6 +58,13 @@ public class ImageDiff {
         return diffMarkupPolicy.getDiffImage();
     }
 
+    /**
+     * Sets Diff image.
+     */
+    public void setDiffImage(BufferedImage image) {
+        diffMarkupPolicy.setDiffImage(image);
+    }
+
     public void addDiffPoint(int x, int y) {
         diffMarkupPolicy.addDifPoint(x, y);
     }

@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static ru.yandex.qatools.ashot.util.ImageBytesDiffer.areImagesEqual;
 import static ru.yandex.qatools.ashot.util.ImageTool.rgbCompare;
 
 /**
@@ -41,6 +42,16 @@ public class ImageDiffer {
     public ImageDiff makeDiff(Screenshot expected, Screenshot actual) {
         ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffMarkupPolicy);
 
+        if (areImagesEqual(expected, actual)) {
+            diff.setDiffImage(actual.getImage());
+        } else {
+            markDiffPoints(expected, actual, diff);
+        }
+
+        return diff;
+    }
+
+    protected void markDiffPoints(Screenshot expected, Screenshot actual, ImageDiff diff) {
         Coords expectedImageCoords = Coords.ofImage(expected.getImage());
         Coords actualImageCoords = Coords.ofImage(actual.getImage());
 
@@ -62,7 +73,6 @@ public class ImageDiffer {
                 }
             }
         }
-        return diff;
     }
 
     private boolean hasDiffInChannel(Screenshot expected, Screenshot actual, int i, int j) {
