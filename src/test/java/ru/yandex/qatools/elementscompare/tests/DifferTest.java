@@ -5,12 +5,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import ru.yandex.qatools.ashot.Screenshot;
-import ru.yandex.qatools.ashot.comparison.*;
+import ru.yandex.qatools.ashot.comparison.DiffMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.ImageDiff;
+import ru.yandex.qatools.ashot.comparison.ImageDiffer;
+import ru.yandex.qatools.ashot.comparison.ImageMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.PointsMarkupPolicy;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 import ru.yandex.qatools.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashSet;
@@ -118,6 +122,4 @@ public class DifferTest {
         screenshot.setIgnoredAreas(ignored);
         return screenshot;
     }
-
-
 }
