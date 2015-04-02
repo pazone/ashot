@@ -1,7 +1,8 @@
 package ru.yandex.qatools.ashot.screentaker;
 
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+
+import static ru.yandex.qatools.ashot.util.InnerScript.*;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -19,19 +20,16 @@ public class ViewportPastingStrategy extends VerticalPastingShootingStrategy {
 
     @Override
     public int getFullHeight(WebDriver driver) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        return ((Long) js.executeScript("return $(document).height()")).intValue();
+        return ((Number) execute(PAGE_HEIGHT_JS, driver)).intValue();
     }
 
     @Override
     public int getFullWidth(WebDriver driver) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        return  ((Long) js.executeScript("return $(window).width()")).intValue();
+        return ((Number) execute(VIEWPORT_WIDTH_JS, driver)).intValue();
     }
 
     @Override
     public int getWindowHeight(WebDriver driver) {
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        return  ((Long) js.executeScript("return $(window).height()")).intValue();
+        return ((Number) execute(VIEWPORT_HEIGHT_JS, driver)).intValue();
     }
 }
