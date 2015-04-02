@@ -1,6 +1,5 @@
 package ru.yandex.qatools.ashot.comparison;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -26,21 +25,6 @@ public class ImageDiff {
     }
 
     /**
-     * Sets the color which marks the differences between the images.
-     * This color will be used with <code>Color.WHITE</code> in the checkerboard pattern.
-     * The default value is <code>Color.RED</code>.
-     *
-     * @param diffColor the color which marks the differences
-     * @return self for fluent style
-     * @see java.awt.Color
-     */
-    public ImageDiff withDiffColor(final Color diffColor) {
-        diffMarkupPolicy.setDiffColor(diffColor);
-        diffMarkupPolicy.setMarked(false);
-        return this;
-    }
-
-    /**
      * Sets the maximum number of distinguished pixels when images are still considered the same.
      *
      * @param diffSizeTrigger the number of different pixels
@@ -59,7 +43,7 @@ public class ImageDiff {
     }
 
     public void addDiffPoint(int x, int y) {
-        diffMarkupPolicy.addDifPoint(x, y);
+        diffMarkupPolicy.addDiffPoint(x, y);
     }
 
     /**

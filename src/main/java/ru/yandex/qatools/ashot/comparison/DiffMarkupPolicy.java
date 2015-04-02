@@ -10,13 +10,18 @@ import java.awt.image.BufferedImage;
 public abstract class DiffMarkupPolicy {
 
     protected boolean marked = false;
-    protected Color diffColor = Color.RED;
     protected int diffSizeTrigger;
     protected BufferedImage diffImage;
+    protected Color diffColor = Color.RED;
+
+    public DiffMarkupPolicy withDiffColor(final Color diffColor) {
+        this.diffColor = diffColor;
+        return this;
+    }
 
     public abstract BufferedImage getMarkedImage();
 
-    public abstract void addDifPoint(int x, int y);
+    public abstract void addDiffPoint(int x, int y);
 
     public abstract boolean equals(Object obj);
 
@@ -30,10 +35,6 @@ public abstract class DiffMarkupPolicy {
 
     public void setMarked(final boolean marked) {
         this.marked = marked;
-    }
-
-    public void setDiffColor(final Color diffColor) {
-        this.diffColor = diffColor;
     }
 
     public void setDiffSizeTrigger(final int diffSizeTrigger) {

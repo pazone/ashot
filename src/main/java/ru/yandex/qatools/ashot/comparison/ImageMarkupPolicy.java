@@ -24,18 +24,6 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     }
 
     @Override
-    public void setDiffColor(final Color diffColor) {
-        for (int i = 0; i < transparentDiffImage.getWidth(); i++) {
-            for (int j = 0; j < transparentDiffImage.getHeight(); j++) {
-                if (transparentDiffImage.getRGB(i, j) == this.diffColor.getRGB()) {
-                    transparentDiffImage.setRGB(i, j, diffColor.getRGB());
-                }
-            }
-        }
-        super.setDiffColor(diffColor);
-    }
-
-    @Override
     public BufferedImage getMarkedImage() {
         if (!marked) {
             Graphics graphics = diffImage.getGraphics();
@@ -47,7 +35,7 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     }
 
     @Override
-    public void addDifPoint(int x, int y) {
+    public void addDiffPoint(int x, int y) {
         diffPointCount++;
         xReference = Math.min(xReference, x);
         yReference = Math.min(yReference, y);

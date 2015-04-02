@@ -68,7 +68,7 @@ public class DiffMarkupPolicyTest {
     public void testNotEqualityByNumber() throws Exception {
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 0, 0);
         addDiffPoints(getDiffPointsB(), diffMarkupPolicyA, 0, 0);
-        diffMarkupPolicyB.addDifPoint(0, 0);
+        diffMarkupPolicyB.addDiffPoint(0, 0);
         assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(false));
         assertThat(diffMarkupPolicyA.hashCode() == diffMarkupPolicyB.hashCode(), is(false));
     }
@@ -97,7 +97,7 @@ public class DiffMarkupPolicyTest {
 
     private void addDiffPoints(Set<Point> points, DiffMarkupPolicy diffMarkupPolicy, int xShift, int yShift) {
         for (Point point : points) {
-            diffMarkupPolicy.addDifPoint((int) point.getX() - xShift, (int) point.getY() - yShift);
+            diffMarkupPolicy.addDiffPoint((int) point.getX() - xShift, (int) point.getY() - yShift);
         }
     }
 }
