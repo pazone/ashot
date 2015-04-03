@@ -10,7 +10,7 @@
 
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.4.11-SNAPSHOT</version>
+    <version>1.4.12</version>
 
     <organization>
         <name>Yandex</name>
