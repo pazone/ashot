@@ -64,12 +64,31 @@ public class ImageDiff {
     }
 
     /**
+     * Marks diff points on transparent canvas and returns it.
+     * Idempotent.
+     *
+     * @return marked diff image
+     */
+    public BufferedImage getTransparentMarkedImage() {
+        return diffMarkupPolicy.getTransparentMarkedImage();
+    }
+
+    /**
      * Returns <tt>true</tt> if there are differences between images.
      *
      * @return <tt>true</tt> if there are differences between images.
      */
     public boolean hasDiff() {
         return diffMarkupPolicy.hasDiff();
+    }
+
+    /**
+     * Returns number of points that differ.
+     *
+     * @return int - number of points that differ.
+     */
+    public int getDiffSize() {
+        return diffMarkupPolicy.getDiffSize();
     }
 
     @Override

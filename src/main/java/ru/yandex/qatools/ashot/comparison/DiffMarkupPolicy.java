@@ -21,6 +21,8 @@ public abstract class DiffMarkupPolicy {
 
     public abstract BufferedImage getMarkedImage();
 
+    public abstract BufferedImage getTransparentMarkedImage();
+
     public abstract void addDiffPoint(int x, int y);
 
     public abstract boolean equals(Object obj);
@@ -29,12 +31,10 @@ public abstract class DiffMarkupPolicy {
 
     public abstract boolean hasDiff();
 
+    public abstract int getDiffSize();
+
     public void setDiffImage(BufferedImage diffImage) {
         this.diffImage = diffImage;
-    }
-
-    public void setMarked(final boolean marked) {
-        this.marked = marked;
     }
 
     public void setDiffSizeTrigger(final int diffSizeTrigger) {
@@ -45,8 +45,10 @@ public abstract class DiffMarkupPolicy {
         return diffImage;
     }
 
-    protected Color pickDiffColor(int x, int y) {
-        return ((x + y) % 2 == 0) ? diffColor : Color.WHITE;
-
+    protected void fillTransparentAlpha(int width, int height, BufferedImage transparentImage) {
+        final Graphics2D graphics = transparentImage.createGraphics();
+        graphics.setComposite(AlphaComposite.Clear);
+        graphics.fillRect(0, 0, width, height);
     }
+
 }
