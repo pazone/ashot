@@ -42,7 +42,7 @@ public class ImageDiffer {
     }
 
     public ImageDiff makeDiff(Screenshot expected, Screenshot actual) {
-        ImageDiff diff = new ImageDiff(expected.getImage(), actual.getImage(), diffMarkupPolicy);
+        ImageDiff diff = new ImageDiff(diffMarkupPolicy);
 
         if (areImagesEqual(expected, actual)) {
             diff.setDiffImage(actual.getImage());
@@ -60,8 +60,12 @@ public class ImageDiffer {
         CoordsSet compareCoordsSet = new CoordsSet(CoordsSet.union(actual.getCoordsToCompare(), expected.getCoordsToCompare()));
         CoordsSet ignoreCoordsSet = new CoordsSet(CoordsSet.intersection(actual.getIgnoredAreas(), expected.getIgnoredAreas()));
 
-        for (int i = 0; i < diff.getDiffImage().getWidth(); i++) {
-            for (int j = 0; j < diff.getDiffImage().getHeight(); j++) {
+        int width = Math.max(expected.getImage().getWidth(), actual.getImage().getWidth());
+        int height = Math.max(expected.getImage().getHeight(), actual.getImage().getHeight());
+        diff.setDiffImage(new BufferedImage(width, height, actual.getImage().getType()));
+
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
                 if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)) {
                     if (!ignoreCoordsSet.contains(i, j)
                             && compareCoordsSet.contains(i, j)

@@ -42,16 +42,6 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     }
 
     @Override
-    public BufferedImage getDiffImage() {
-        return diffImage;
-    }
-
-    @Override
-    public void setDiffImage(BufferedImage diffImage) {
-        this.diffImage = diffImage;
-    }
-
-    @Override
     public void addDiffPoint(int x, int y) {
         diffPoints.add(new Point(x, y));
     }
