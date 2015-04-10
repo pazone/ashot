@@ -34,8 +34,7 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
         if (transparentMarkedImage == null) {
             int width = diffImage.getWidth();
             int height = diffImage.getHeight();
-            transparentMarkedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            fillTransparentAlpha(width, height, transparentMarkedImage);
+            transparentMarkedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
             markDiffPoints(transparentMarkedImage);
         }
         return transparentMarkedImage;

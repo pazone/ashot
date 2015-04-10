@@ -3,6 +3,7 @@ package ru.yandex.qatools.ashot.comparison;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -62,20 +63,15 @@ public class ImageDiffer {
 
         int width = Math.max(expected.getImage().getWidth(), actual.getImage().getWidth());
         int height = Math.max(expected.getImage().getHeight(), actual.getImage().getHeight());
-        diff.setDiffImage(new BufferedImage(width, height, actual.getImage().getType()));
+        diff.setDiffImage(createDiffImage(expected.getImage(), actual.getImage(), width, height));
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)) {
-                    if (!ignoreCoordsSet.contains(i, j)
-                            && compareCoordsSet.contains(i, j)
-                            && hasDiffInChannel(expected, actual, i, j)) {
-                        diff.addDiffPoint(i, j);
-                    } else {
-                        diff.getDiffImage().setRGB(i, j, expected.getImage().getRGB(i, j));
-                    }
-                } else {
-                    setSharedPoint(i, j, expected, actual, diff);
+                if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)
+                        && !ignoreCoordsSet.contains(i, j)
+                        && compareCoordsSet.contains(i, j)
+                        && hasDiffInChannel(expected, actual, i, j)) {
+                    diff.addDiffPoint(i, j);
                 }
             }
         }
@@ -89,12 +85,17 @@ public class ImageDiffer {
         return makeDiff(new Screenshot(expected), new Screenshot(actual));
     }
 
-    private void setSharedPoint(int i, int j, Screenshot expected, Screenshot actual, ImageDiff diff) {
-        if (Coords.ofImage(expected.getImage()).contains(i, j)) {
-            diff.getDiffImage().setRGB(i, j, expected.getImage().getRGB(i, j));
-        } else if (Coords.ofImage(actual.getImage()).contains(i, j)) {
-            diff.getDiffImage().setRGB(i, j, actual.getImage().getRGB(i, j));
-        }
+    private BufferedImage createDiffImage(BufferedImage expectedImage, BufferedImage actualImage, int width, int height) {
+        BufferedImage diffImage = new BufferedImage(width, height, actualImage.getType());
+        paintImage(actualImage, diffImage);
+        paintImage(expectedImage, diffImage);
+        return diffImage;
+    }
+
+    private void paintImage(BufferedImage image, BufferedImage diffImage) {
+        Graphics graphics = diffImage.getGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
     }
 
     private boolean insideBothImages(int i, int j, Coords expected, Coords actual) {
