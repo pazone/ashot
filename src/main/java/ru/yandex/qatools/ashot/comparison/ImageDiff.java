@@ -13,11 +13,8 @@ public class ImageDiff {
 
     private DiffMarkupPolicy diffMarkupPolicy;
 
-    public ImageDiff(BufferedImage expected, BufferedImage actual, DiffMarkupPolicy diffMarkupPolicy) {
+    public ImageDiff(DiffMarkupPolicy diffMarkupPolicy) {
         this.diffMarkupPolicy = diffMarkupPolicy;
-        int width = Math.max(expected.getWidth(), actual.getWidth());
-        int height = Math.max(expected.getHeight(), actual.getHeight());
-        this.diffMarkupPolicy.setDiffImage(new BufferedImage(width, height, actual.getType()));
     }
 
     private ImageDiff() {
