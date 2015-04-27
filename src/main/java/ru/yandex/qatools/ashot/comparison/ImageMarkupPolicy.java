@@ -20,8 +20,7 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     @Override
     public void setDiffImage(BufferedImage diffImage) {
         super.setDiffImage(diffImage);
-        transparentDiffImage = new BufferedImage(diffImage.getWidth(), diffImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        fillTransparentAlpha(transparentDiffImage.getWidth(), transparentDiffImage.getHeight(), transparentDiffImage);
+        transparentDiffImage = new BufferedImage(diffImage.getWidth(), diffImage.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
     }
 
     @Override

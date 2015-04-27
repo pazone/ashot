@@ -45,10 +45,4 @@ public abstract class DiffMarkupPolicy {
         return diffImage;
     }
 
-    protected void fillTransparentAlpha(int width, int height, BufferedImage transparentImage) {
-        final Graphics2D graphics = transparentImage.createGraphics();
-        graphics.setComposite(AlphaComposite.Clear);
-        graphics.fillRect(0, 0, width, height);
-    }
-
 }
