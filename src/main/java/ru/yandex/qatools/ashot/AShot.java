@@ -136,7 +136,7 @@ public class AShot implements Serializable {
      */
     public Screenshot takeScreenshot(WebDriver driver, Collection<WebElement> elements) {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
-        BufferedImage shot = taker.take(driver);
+        BufferedImage shot = taker.take(driver, elementCoords);
         Screenshot screenshot = cropper.crop(shot, elementCoords);
         Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
         screenshot.setIgnoredAreas(ignoredAreas);

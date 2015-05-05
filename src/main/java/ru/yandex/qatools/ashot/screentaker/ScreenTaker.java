@@ -1,10 +1,12 @@
 package ru.yandex.qatools.ashot.screentaker;
 
 import org.openqa.selenium.WebDriver;
+import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -21,6 +23,11 @@ public class ScreenTaker implements Serializable {
 
     public BufferedImage take(WebDriver driver) {
         BufferedImage screen = shootingStrategy.getScreenshot(driver);
+        return scale(screen);
+    }
+
+    public BufferedImage take(WebDriver driver, Set<Coords> coords) {
+        BufferedImage screen = shootingStrategy.getScreenshot(driver, coords);
         return scale(screen);
     }
 

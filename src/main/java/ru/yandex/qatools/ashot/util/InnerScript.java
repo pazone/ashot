@@ -16,12 +16,11 @@ public class InnerScript {
     public static final String VIEWPORT_HEIGHT_JS = "js/viewport_height.js";
     public static final String VIEWPORT_WIDTH_JS = "js/viewport_width.js";
 
-
-    public static <T> T execute(String path, WebDriver driver) {
+    public static <T> T execute(String path, WebDriver driver, Object... args) {
         try {
             String script = IOUtils.toString(currentThread().getContextClassLoader().getResourceAsStream(path));
             //noinspection unchecked
-            return (T) ((JavascriptExecutor) driver).executeScript(script);
+            return (T) ((JavascriptExecutor) driver).executeScript(script, args);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
