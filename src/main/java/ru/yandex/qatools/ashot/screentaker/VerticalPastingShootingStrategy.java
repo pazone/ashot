@@ -2,9 +2,11 @@ package ru.yandex.qatools.ashot.screentaker;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Set;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -28,34 +30,30 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
 
     @Override
     public BufferedImage getScreenshot(WebDriver wd) {
+        return getScreenshot(wd, null);
+    }
+
+    @Override
+    public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coordsSet) {
         JavascriptExecutor js = (JavascriptExecutor) wd;
+        int pageHeight = getFullHeight(wd);
+        int pageWidth = getFullWidth(wd);
+        int viewportHeight = getWindowHeight(wd);
+        Coords shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
+        shiftCoords(coordsSet, shootingArea);
 
-        int allH = getFullHeight(wd);
-        int allW = getFullWidth(wd);
-        int winH = getWindowHeight(wd);
-
-        int scrollTimes = allH / winH;
-        int tail = allH - winH * scrollTimes;
-
-        BufferedImage finalImage = new BufferedImage(allW, allH, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D graphics = finalImage.createGraphics();
 
+        int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
         for (int n = 0; n < scrollTimes; n++) {
-            js.executeScript("scrollTo(0, arguments[0])", winH * n);
+            scrollVertically(js, shootingArea.y + viewportHeight * n);
             waitForScrolling();
             BufferedImage part = super.getScreenshot(wd);
-            graphics.drawImage(part, 0, n * winH, null);
+            graphics.drawImage(part, 0, getCurrentScrollY(js, shootingArea.y), null);
         }
 
-        if (tail > 0) {
-            js.executeScript("scrollTo(0, document.body.scrollHeight)");
-            waitForScrolling();
-            BufferedImage last = super.getScreenshot(wd);
-            BufferedImage tailImage = last.getSubimage(0, last.getHeight() - tail, last.getWidth(), tail);
-            graphics.drawImage(tailImage, 0, scrollTimes * winH, null);
-        }
         graphics.dispose();
-
         return finalImage;
     }
 
@@ -72,5 +70,32 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
 
     public abstract int getWindowHeight(WebDriver driver);
 
+    private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
+        if (coords == null || coords.isEmpty()) {
+            return new Coords(0, 0, pageWidth, pageHeight);
+        } else {
+            return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
+        }
+    }
 
+    private int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
+        return ((Number) js.executeScript("return window.scrollY;")).intValue() - offsetY;
+    }
+
+    private void scrollVertically(JavascriptExecutor js, int scrollY) {
+        js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
+    }
+
+    private void shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
+        for (Coords coords : coordsSet) {
+            coords.y -= shootingArea.y;
+        }
+    }
+
+    private Coords extendShootingArea(Coords shootingCoords, int viewportHeight, int pageHeight) {
+        int halfViewport = viewportHeight / 2;
+        shootingCoords.y = Math.max(shootingCoords.y - halfViewport / 2, 0);
+        shootingCoords.height = Math.min(shootingCoords.height + halfViewport, pageHeight);
+        return shootingCoords;
+    }
 }
