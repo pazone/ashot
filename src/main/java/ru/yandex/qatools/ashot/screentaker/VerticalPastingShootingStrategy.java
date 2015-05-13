@@ -78,11 +78,11 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         }
     }
 
-    private int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
+    protected int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
         return ((Number) js.executeScript("return window.scrollY;")).intValue() - offsetY;
     }
 
-    private void scrollVertically(JavascriptExecutor js, int scrollY) {
+    protected void scrollVertically(JavascriptExecutor js, int scrollY) {
         js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
     }
 
