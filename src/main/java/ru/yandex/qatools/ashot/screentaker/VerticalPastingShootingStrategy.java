@@ -87,8 +87,10 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
     }
 
     private void shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
-        for (Coords coords : coordsSet) {
-            coords.y -= shootingArea.y;
+        if (coordsSet != null && !coordsSet.isEmpty()) {
+            for (Coords coords : coordsSet) {
+                coords.y -= shootingArea.y;
+            }
         }
     }
 
