@@ -42,7 +42,7 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         Coords shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
         shiftCoords(coordsSet, shootingArea);
 
-        BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_4BYTE_ABGR);
+        BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = finalImage.createGraphics();
 
         int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
