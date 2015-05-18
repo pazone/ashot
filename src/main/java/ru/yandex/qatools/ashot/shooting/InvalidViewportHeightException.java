@@ -1,4 +1,4 @@
-package ru.yandex.qatools.ashot.screentaker;
+package ru.yandex.qatools.ashot.shooting;
 
 /**
  * @author <a href="frolic@yandex-team.ru">Vyacheslav Frolov</a>

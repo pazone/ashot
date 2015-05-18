@@ -1,4 +1,4 @@
-package ru.yandex.qatools.ashot.screentaker;
+package ru.yandex.qatools.ashot.shooting;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -8,29 +8,24 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 
-/**
- * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
- *         <p/>
- *         Pastes together parts of screenshots
- *         Used when driver shoots viewport only
- */
+import static ru.yandex.qatools.ashot.util.InnerScript.*;
 
-public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootingStrategy {
+/**
+ * Will scroll viewport and shoot to get an image of full page.
+ * Useful for browsers on portable devices.
+ * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
+ */
+public class ViewportPastingDecorator extends ShootingDecorator {
 
     protected int scrollTimeout = 0;
 
-    protected VerticalPastingShootingStrategy(int scrollTimeout, int headerToCut) {
-        super(headerToCut);
-        this.scrollTimeout = scrollTimeout;
+    public ViewportPastingDecorator(ShootingStrategy strategy) {
+        super(strategy);
     }
 
-    protected VerticalPastingShootingStrategy(int scrollTimeout, HeaderDetectionStrategy headerDetectionStrategy) {
-        super(headerDetectionStrategy);
+    public ViewportPastingDecorator withScrollTimeout(int scrollTimeout) {
         this.scrollTimeout = scrollTimeout;
-    }
-
-    public void setScrollTimeout(int scrollTimeout) {
-        this.scrollTimeout = scrollTimeout;
+        return this;
     }
 
     @Override
@@ -54,26 +49,13 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         for (int n = 0; n < scrollTimes; n++) {
             scrollVertically(js, shootingArea.y + viewportHeight * n);
             waitForScrolling();
-            BufferedImage part = super.getScreenshot(wd);
-            graphics.drawImage(part, 0, getCurrentScrollY(js, shootingArea.y), null);
+            BufferedImage part = getShootingStrategy().getScreenshot(wd);
+            graphics.drawImage(part, 0, getCurrentScrollY(js) - shootingArea.y, null);
         }
 
         graphics.dispose();
         return finalImage;
     }
-
-    private void waitForScrolling() {
-        try {
-            Thread.sleep(scrollTimeout);
-        } catch (InterruptedException ignored) {
-        }
-    }
-
-    public abstract int getFullHeight(WebDriver driver);
-
-    public abstract int getFullWidth(WebDriver driver);
-
-    public abstract int getWindowHeight(WebDriver driver);
 
     private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
         if (coords == null || coords.isEmpty()) {
@@ -83,8 +65,8 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         }
     }
 
-    protected int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
-        return ((Number) js.executeScript("return window.scrollY;")).intValue() - offsetY;
+    protected int getCurrentScrollY(JavascriptExecutor js) {
+        return ((Number) js.executeScript("return window.scrollY;")).intValue();
     }
 
     protected void scrollVertically(JavascriptExecutor js, int scrollY) {
@@ -104,5 +86,25 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         shootingCoords.y = Math.max(shootingCoords.y - halfViewport / 2, 0);
         shootingCoords.height = Math.min(shootingCoords.height + halfViewport, pageHeight);
         return shootingCoords;
+    }
+
+    private void waitForScrolling() {
+        try {
+            Thread.sleep(scrollTimeout);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Exception while waiting for scrolling", e);
+        }
+    }
+
+    public int getFullHeight(WebDriver driver) {
+        return ((Number) execute(PAGE_HEIGHT_JS, driver)).intValue();
+    }
+
+    public int getFullWidth(WebDriver driver) {
+        return ((Number) execute(VIEWPORT_WIDTH_JS, driver)).intValue();
+    }
+
+    public int getWindowHeight(WebDriver driver) {
+        return ((Number) execute(VIEWPORT_HEIGHT_JS, driver)).intValue();
     }
 }

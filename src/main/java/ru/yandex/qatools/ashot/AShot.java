@@ -9,8 +9,8 @@ import ru.yandex.qatools.ashot.coordinates.CoordsProvider;
 import ru.yandex.qatools.ashot.coordinates.JqueryCoordsProvider;
 import ru.yandex.qatools.ashot.cropper.DefaultCropper;
 import ru.yandex.qatools.ashot.cropper.ImageCropper;
-import ru.yandex.qatools.ashot.screentaker.ScreenTaker;
-import ru.yandex.qatools.ashot.screentaker.ShootingStrategy;
+import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
+import ru.yandex.qatools.ashot.shooting.SimpleShootingStrategy;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
@@ -25,11 +25,11 @@ import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.inte
 
 public class AShot implements Serializable {
 
-    private ScreenTaker taker = new ScreenTaker();
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
     private Set<By> ignoredLocators = new HashSet<>();
     private Set<Coords> ignoredAreas = new HashSet<>();
+    private ShootingStrategy shootingStrategy = new SimpleShootingStrategy();
 
     public AShot coordsProvider(final CoordsProvider coordsProvider) {
         this.coordsProvider = coordsProvider;
@@ -39,20 +39,6 @@ public class AShot implements Serializable {
     @SuppressWarnings("UnusedDeclaration")
     public AShot imageCropper(ImageCropper cropper) {
         this.cropper = cropper;
-        return this;
-    }
-
-    /**
-     * Sets taker impl.
-     * Usually is not used.
-     *
-     * @param taker ScreenTaker
-     * @return this;
-     * @see ru.yandex.qatools.ashot.screentaker.ScreenTaker
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public AShot screenTaker(ScreenTaker taker) {
-        this.taker = taker;
         return this;
     }
 
@@ -106,22 +92,10 @@ public class AShot implements Serializable {
      *
      * @param strategy shooting strategy
      * @return this
-     * @see ru.yandex.qatools.ashot.screentaker.ShootingStrategy
+     * @see ru.yandex.qatools.ashot.shooting.ShootingStrategy
      */
     public AShot shootingStrategy(ShootingStrategy strategy) {
-        this.taker.withShootingStrategy(strategy);
-        return this;
-    }
-
-    /**
-     * Sets device pixel ratio.
-     * for example, Retina = 2.
-     *
-     * @param dpr device pixel ratio
-     * @return this
-     */
-    public AShot dpr(float dpr) {
-        this.taker.withDpr(dpr);
+        this.shootingStrategy = strategy;
         return this;
     }
 
@@ -136,7 +110,7 @@ public class AShot implements Serializable {
      */
     public Screenshot takeScreenshot(WebDriver driver, Collection<WebElement> elements) {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
-        BufferedImage shot = taker.take(driver, elementCoords);
+        BufferedImage shot = shootingStrategy.getScreenshot(driver, elementCoords);
         Screenshot screenshot = cropper.crop(shot, elementCoords);
         Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
         screenshot.setIgnoredAreas(ignoredAreas);
@@ -163,7 +137,7 @@ public class AShot implements Serializable {
      * @see Screenshot
      */
     public Screenshot takeScreenshot(WebDriver driver) {
-        Screenshot screenshot = new Screenshot(taker.take(driver));
+        Screenshot screenshot = new Screenshot(shootingStrategy.getScreenshot(driver));
         screenshot.setIgnoredAreas(compileIgnoredAreas(driver, CoordsPreparationStrategy.simple()));
         return screenshot;
     }

@@ -26,7 +26,7 @@ As a result aShot provides an image of the WebElement
 <dependency>
     <groupId>ru.yandex.qatools.ashot</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.4.12</version>
+    <version>1.5.1</version>
 </dependency>
 ``` 
 
@@ -36,33 +36,6 @@ Different WebDrivers take screenshots in different ways. Some WebDrivers provide
 ```java
 new AShot()
   .shootingStrategy(new ViewportPastingStrategy())
-  .takeScreenshot(webDriver);
-```
-
-#####Capturing shots when a browser has fixed or variable header height
-When using AShot to capture screen of a device (iOS, Android) or it's simulator, then resulting image is returned with browser's header.
-
-For example to capture page on iOS 7 device we will use fixed header's height of 98px.
-
-```java
-int browserHeaderHeight = 98;
-new AShot()
-  .shootingStrategy(new ViewportPastingStrategy(browserHeaderHeight))
-  .takeScreenshot(webDriver);
-```
-
-In iOS 8 Safari introduces a feature when browser's header might be 65px or 41px (with address bar hidden).
-
-For example to capture pages on iPad 2 we will use a strategy that can detect current height of browser's header.
-
-```java
-int minHeader = 41;
-int maxHeader = 65;
-int minViewPortHeight = 960;
-HeaderDetectionStrategy strategy =
-    new VariableHeaderDetectionStrategy(minHeader, maxHeader, minViewPortHeight);
-new AShot()
-  .shootingStrategy(new ViewportPastingStrategy(strategy))
   .takeScreenshot(webDriver);
 ```
 
@@ -82,7 +55,7 @@ new AShot()
   .takeScreenshot(webDriver, myWebElement);
 ```
 Feel free to implement own CoordsProvider. Pull requests are welcome.
- 
+
 #####Prettifying the screenshot
 
 So, let's take a simple screenshot of the weather snippet at Yandex.com.
