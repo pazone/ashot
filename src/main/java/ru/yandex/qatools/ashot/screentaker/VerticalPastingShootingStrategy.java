@@ -44,10 +44,12 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         int pageHeight = getFullHeight(wd);
         int pageWidth = getFullWidth(wd);
         int viewportHeight = getWindowHeight(wd);
+        double dpr = getDevicePixelRatio(js);
         Coords shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
         shiftCoords(coordsSet, shootingArea);
 
-        BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage finalImage = new BufferedImage(
+                (int) (pageWidth * dpr), (int) (shootingArea.height * dpr), BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = finalImage.createGraphics();
 
         int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
@@ -55,18 +57,11 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
             scrollVertically(js, shootingArea.y + viewportHeight * n);
             waitForScrolling();
             BufferedImage part = super.getScreenshot(wd);
-            graphics.drawImage(part, 0, getCurrentScrollY(js, shootingArea.y), null);
+            graphics.drawImage(part, 0, (int) ((getCurrentScrollY(js) - shootingArea.y) * dpr), null);
         }
 
         graphics.dispose();
         return finalImage;
-    }
-
-    private void waitForScrolling() {
-        try {
-            Thread.sleep(scrollTimeout);
-        } catch (InterruptedException ignored) {
-        }
     }
 
     public abstract int getFullHeight(WebDriver driver);
@@ -83,12 +78,17 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         }
     }
 
-    protected int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
-        return ((Number) js.executeScript("return window.scrollY;")).intValue() - offsetY;
+    protected int getCurrentScrollY(JavascriptExecutor js) {
+        return ((Number) js.executeScript("return window.scrollY;")).intValue();
     }
 
     protected void scrollVertically(JavascriptExecutor js, int scrollY) {
         js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
+    }
+
+    protected double getDevicePixelRatio(JavascriptExecutor js) {
+        return ((Number) js.executeScript(
+                "return window.devicePixelRatio || screen.deviceXDPI / screen.logicalXDPI || 1;")).doubleValue();
     }
 
     private void shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
@@ -104,5 +104,13 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
         shootingCoords.y = Math.max(shootingCoords.y - halfViewport / 2, 0);
         shootingCoords.height = Math.min(shootingCoords.height + halfViewport, pageHeight);
         return shootingCoords;
+    }
+
+    private void waitForScrolling() {
+        try {
+            Thread.sleep(scrollTimeout);
+        } catch (InterruptedException e) {
+            throw new IllegalStateException("Exception while waiting for scrolling", e);
+        }
     }
 }
