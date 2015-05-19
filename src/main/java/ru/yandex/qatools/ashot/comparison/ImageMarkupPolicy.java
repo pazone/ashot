@@ -1,6 +1,5 @@
 package ru.yandex.qatools.ashot.comparison;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
@@ -20,15 +19,20 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
     @Override
     public void setDiffImage(BufferedImage diffImage) {
         super.setDiffImage(diffImage);
-        transparentDiffImage = new BufferedImage(diffImage.getWidth(), diffImage.getHeight(), BufferedImage.TYPE_INT_ARGB_PRE);
+        transparentDiffImage = getTransparentDiffImage(diffImage);
     }
 
     @Override
     public BufferedImage getMarkedImage() {
         if (!marked) {
-            Graphics graphics = diffImage.getGraphics();
-            graphics.drawImage(transparentDiffImage, 0, 0, null);
-            graphics.dispose();
+            final int rgb = diffColor.getRGB();
+            for (int x = 0; x < diffImage.getWidth(); x++) {
+                for (int y = 0; y < diffImage.getHeight(); y++) {
+                    if (transparentDiffImage.getRGB(x, y) == rgb) {
+                        diffImage.setRGB(x, y, rgb);
+                    }
+                }
+            }
             marked = true;
         }
         return diffImage;

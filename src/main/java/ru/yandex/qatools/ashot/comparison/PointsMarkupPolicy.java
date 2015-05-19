@@ -32,9 +32,7 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     @Override
     public BufferedImage getTransparentMarkedImage() {
         if (transparentMarkedImage == null) {
-            int width = diffImage.getWidth();
-            int height = diffImage.getHeight();
-            transparentMarkedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB_PRE);
+            transparentMarkedImage = getTransparentDiffImage(diffImage);
             markDiffPoints(transparentMarkedImage);
         }
         return transparentMarkedImage;
@@ -84,9 +82,7 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     protected void markDiffPoints(BufferedImage image) {
         int rgb = diffColor.getRGB();
         for (Point dot : diffPoints) {
-            int x = (int) dot.getX();
-            int y = (int) dot.getY();
-            image.setRGB(x, y, rgb);
+            image.setRGB(dot.x, dot.y, rgb);
         }
     }
 
