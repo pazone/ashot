@@ -70,7 +70,8 @@ public class ImageDiffer {
                 if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)
                         && !ignoreCoordsSet.contains(i, j)
                         && compareCoordsSet.contains(i, j)
-                        && hasDiffInChannel(expected, actual, i, j)) {
+                        && hasDiffInChannel(expected, actual, i, j) ||
+                        !insideBothImages(i, j, expectedImageCoords, actualImageCoords)) {
                     diff.addDiffPoint(i, j);
                 }
             }
