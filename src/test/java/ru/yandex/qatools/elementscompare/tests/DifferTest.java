@@ -5,12 +5,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import ru.yandex.qatools.ashot.Screenshot;
-import ru.yandex.qatools.ashot.comparison.*;
+import ru.yandex.qatools.ashot.comparison.DiffMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.ImageDiff;
+import ru.yandex.qatools.ashot.comparison.ImageDiffer;
+import ru.yandex.qatools.ashot.comparison.ImageMarkupPolicy;
+import ru.yandex.qatools.ashot.comparison.PointsMarkupPolicy;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 import ru.yandex.qatools.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashSet;
@@ -31,6 +35,7 @@ public class DifferTest {
 
     public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
+    public static final BufferedImage IMAGE_B_BIG = loadImage("img/B_b.png");
     public ImageDiffer imageDiffer;
 
     public static BufferedImage loadImage(String path) {
@@ -64,6 +69,12 @@ public class DifferTest {
     public void testSameSizeDiff() throws Exception {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/same_size_diff.png")));
+    }
+
+    @Test
+    public void testDifferentSizeDiff() throws Exception {
+        ImageDiff diff = imageDiffer.makeDiff(IMAGE_B_SMALL, IMAGE_B_BIG);
+        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/different_size_diff.png")));
     }
 
     @Test
