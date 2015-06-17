@@ -67,11 +67,11 @@ public class ImageDiffer {
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                if (insideBothImages(i, j, expectedImageCoords, actualImageCoords)
-                        && !ignoreCoordsSet.contains(i, j)
-                        && compareCoordsSet.contains(i, j)
-                        && hasDiffInChannel(expected, actual, i, j) ||
-                        !insideBothImages(i, j, expectedImageCoords, actualImageCoords)) {
+                if (ignoreCoordsSet.contains(i, j)) {
+                    continue;
+                }
+                if (!isInsideBothImages(i, j, expectedImageCoords, actualImageCoords)
+                        || compareCoordsSet.contains(i, j) && hasDiffInChannel(expected, actual, i, j)) {
                     diff.addDiffPoint(i, j);
                 }
             }
@@ -99,7 +99,7 @@ public class ImageDiffer {
         graphics.dispose();
     }
 
-    private boolean insideBothImages(int i, int j, Coords expected, Coords actual) {
+    private boolean isInsideBothImages(int i, int j, Coords expected, Coords actual) {
         return expected.contains(i, j) && actual.contains(i, j);
     }
 
