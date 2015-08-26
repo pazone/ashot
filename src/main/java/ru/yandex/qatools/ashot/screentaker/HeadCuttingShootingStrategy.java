@@ -12,10 +12,22 @@ import java.util.Set;
 
 public class HeadCuttingShootingStrategy extends ShootingStrategy {
 
-    protected int headerToCut;
+    private HeaderDetectionStrategy headerDetectionStrategy;
 
+    /**
+     * Constructor for fixed height header.
+     * @param headerToCut - height of header in pixels
+     */
     public HeadCuttingShootingStrategy(int headerToCut) {
-        this.headerToCut = headerToCut;
+        this.headerDetectionStrategy = new FixedHeaderDetectionStrategy(headerToCut);
+    }
+
+    /**
+     * For variable header height use this constructor with {@see VariableHeaderCuttingStrategy}.
+     * @param headerDetectionStrategy - strategy to get height of browser's header
+     */
+    public HeadCuttingShootingStrategy(HeaderDetectionStrategy headerDetectionStrategy) {
+        this.headerDetectionStrategy = headerDetectionStrategy;
     }
 
     @Override
@@ -23,11 +35,16 @@ public class HeadCuttingShootingStrategy extends ShootingStrategy {
         BufferedImage baseImage = simple().getScreenshot(wd);
         int h = baseImage.getHeight();
         int w = baseImage.getWidth();
+        final int headerToCut = getHeaderToCut(wd);
         return baseImage.getSubimage(0, headerToCut, w, h - headerToCut);
     }
 
     @Override
     public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coords) {
         return getScreenshot(wd);
+    }
+
+    protected int getHeaderToCut(WebDriver wd) {
+        return headerDetectionStrategy.getHeaderHeight(wd);
     }
 }

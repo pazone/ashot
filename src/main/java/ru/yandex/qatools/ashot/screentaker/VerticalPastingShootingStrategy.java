@@ -19,12 +19,17 @@ public abstract class VerticalPastingShootingStrategy extends HeadCuttingShootin
 
     protected int scrollTimeout = 0;
 
-    public void setScrollTimeout(int scrollTimeout) {
+    protected VerticalPastingShootingStrategy(int scrollTimeout, int headerToCut) {
+        super(headerToCut);
         this.scrollTimeout = scrollTimeout;
     }
 
-    protected VerticalPastingShootingStrategy(int scrollTimeout, int headerToCut) {
-        super(headerToCut);
+    protected VerticalPastingShootingStrategy(int scrollTimeout, HeaderDetectionStrategy headerDetectionStrategy) {
+        super(headerDetectionStrategy);
+        this.scrollTimeout = scrollTimeout;
+    }
+
+    public void setScrollTimeout(int scrollTimeout) {
         this.scrollTimeout = scrollTimeout;
     }
 
