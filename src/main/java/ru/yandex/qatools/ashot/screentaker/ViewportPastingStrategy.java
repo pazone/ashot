@@ -10,6 +10,10 @@ import static ru.yandex.qatools.ashot.util.InnerScript.*;
 
 public class ViewportPastingStrategy extends VerticalPastingShootingStrategy {
 
+    public ViewportPastingStrategy(int scrollTimeout, HeaderDetectionStrategy headerDetectionStrategy) {
+        super(scrollTimeout, headerDetectionStrategy);
+    }
+
     public ViewportPastingStrategy(int scrollTimeout, int headerToCut) {
         super(scrollTimeout, headerToCut);
     }
