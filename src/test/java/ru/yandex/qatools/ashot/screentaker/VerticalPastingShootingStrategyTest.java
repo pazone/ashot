@@ -169,9 +169,13 @@ public class VerticalPastingShootingStrategyTest {
         }
 
         @Override
-        public int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
+        public int getCurrentScrollY(JavascriptExecutor js) {
             return currentScrollY;
         }
 
+        @Override
+        protected double getDevicePixelRatio(JavascriptExecutor js) {
+            return 1;
+        }
     }
 }
