@@ -15,7 +15,11 @@ import java.io.IOException;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class ImageTool {
+public final class ImageTool {
+
+    private ImageTool() {
+        throw new UnsupportedOperationException();
+    }
 
     public static BufferedImage subImage(BufferedImage origin, Coords crop) {
         Coords intersection = Coords.ofImage(origin).intersection(crop);
