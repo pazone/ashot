@@ -10,11 +10,15 @@ import static java.lang.Thread.currentThread;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class InnerScript {
+public final class InnerScript {
 
     public static final String PAGE_HEIGHT_JS = "js/page_height.js";
     public static final String VIEWPORT_HEIGHT_JS = "js/viewport_height.js";
     public static final String VIEWPORT_WIDTH_JS = "js/viewport_width.js";
+
+    private InnerScript() {
+        throw new UnsupportedOperationException();
+    }
 
     public static <T> T execute(String path, WebDriver driver, Object... args) {
         try {

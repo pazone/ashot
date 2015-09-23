@@ -8,7 +8,11 @@ import java.awt.image.DataBuffer;
 /**
  * @author <a href="frolic@yandex-team.ru">Viacheslav Frolov</a>
  */
-public class ImageBytesDiffer {
+public final class ImageBytesDiffer {
+
+    private ImageBytesDiffer() {
+        throw new UnsupportedOperationException();
+    }
 
     public static boolean areImagesEqual(Screenshot expected, Screenshot actual) {
         return areImagesEqual(expected.getImage(), actual.getImage());

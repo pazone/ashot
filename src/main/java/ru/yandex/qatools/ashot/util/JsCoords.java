@@ -16,9 +16,13 @@ import static java.lang.Thread.currentThread;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class JsCoords {
+public final class JsCoords {
 
     public static final String COORDS_JS_PATH = "js/coords-single.js";
+
+    private JsCoords() {
+        throw new UnsupportedOperationException();
+    }
 
     public static Coords findCoordsWithJquery(WebDriver driver, WebElement element) {
         try {
