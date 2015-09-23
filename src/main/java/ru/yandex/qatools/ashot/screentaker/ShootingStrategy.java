@@ -1,5 +1,6 @@
 package ru.yandex.qatools.ashot.screentaker;
 
+import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -31,12 +32,7 @@ public abstract class ShootingStrategy implements Serializable {
                 } catch (IOException e) {
                     throw new RuntimeException("Can not parse screenshot data", e);
                 } finally {
-                    try {
-                        if (imageArrayStream != null) {
-                            imageArrayStream.close();
-                        }
-                    } catch (IOException ignored) {
-                    }
+                    IOUtils.closeQuietly(imageArrayStream);
                 }
             }
 
