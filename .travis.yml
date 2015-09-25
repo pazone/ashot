@@ -4,3 +4,4 @@ jdk:
  - oraclejdk7
 notifications:
  email: false
+sudo: false
