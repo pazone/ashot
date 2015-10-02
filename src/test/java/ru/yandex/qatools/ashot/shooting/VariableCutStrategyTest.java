@@ -61,7 +61,7 @@ public class VariableCutStrategyTest {
     }
 
     private void thenBrowserHeaderHeightIs(int headerHeight) {
-        assertThat("Header height should be detected correctly", headerHeight, is(headerHeight));
+        assertThat("Header height should be detected correctly", headerHeight, is(this.headerHeight));
     }
 
     private void whenGettingHeaderHeight() {
