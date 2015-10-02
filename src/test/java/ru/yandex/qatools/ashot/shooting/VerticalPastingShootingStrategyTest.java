@@ -1,4 +1,4 @@
-package ru.yandex.qatools.ashot.screentaker;
+package ru.yandex.qatools.ashot.shooting;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -41,13 +41,16 @@ public class VerticalPastingShootingStrategyTest {
     private BufferedImage viewPortShot = new BufferedImage(PAGE_WIDTH, VIEWPORT_HEIGHT, TYPE_4BYTE_ABGR_PRE);
     private Set<Coords> coordsSet;
     private BufferedImage screenshot;
-    private MockVerticalPastingShootingStrategy shootingStrategy;
+    private MockVerticalPastingShootingDecorator shootingStrategy;
     private Coords shootingCoords;
 
     @Before
     public void setUp() throws Exception {
         coordsSet = new HashSet<>();
-        shootingStrategy = spy(new MockVerticalPastingShootingStrategy(0, 0));
+        MockVerticalPastingShootingDecorator shootingStrategy =
+                new MockVerticalPastingShootingDecorator(new SimpleShootingStrategy());
+        shootingStrategy.withScrollTimeout(0);
+        this.shootingStrategy = spy(shootingStrategy);
         when(((TakesScreenshot) wd).getScreenshotAs(any(OutputType.class))).thenReturn(getImageAsBytes());
     }
 
@@ -142,15 +145,15 @@ public class VerticalPastingShootingStrategyTest {
         verify(((TakesScreenshot) wd), times(times)).getScreenshotAs(any(OutputType.class));
     }
 
-    class MockVerticalPastingShootingStrategy extends VerticalPastingShootingStrategy {
+    class MockVerticalPastingShootingDecorator extends ViewportPastingDecorator {
 
         int pageHeight = DEFAULT_PAGE_HEIGHT;
         int pageWidth = PAGE_WIDTH;
         int viewportHeight = VIEWPORT_HEIGHT;
         int currentScrollY = 0;
 
-        protected MockVerticalPastingShootingStrategy(int scrollTimeout, int headerToCut) {
-            super(scrollTimeout, headerToCut);
+        public MockVerticalPastingShootingDecorator(ShootingStrategy strategy) {
+            super(strategy);
         }
 
         @Override
@@ -169,7 +172,7 @@ public class VerticalPastingShootingStrategyTest {
         }
 
         @Override
-        public int getCurrentScrollY(JavascriptExecutor js, int offsetY) {
+        public int getCurrentScrollY(JavascriptExecutor js) {
             return currentScrollY;
         }
 
