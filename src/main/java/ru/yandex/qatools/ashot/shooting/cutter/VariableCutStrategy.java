@@ -63,7 +63,7 @@ public class VariableCutStrategy implements CutStrategy {
     private int getCutHeight(JavascriptExecutor driver, int heightMin, int heightMax) {
         final int innerHeight = getWindowInnerHeight(driver);
 
-        if (windowInnerHeightMin >= innerHeight) {
+        if (innerHeight > windowInnerHeightMin) {
             return heightMin;
         } else {
             return heightMax;
