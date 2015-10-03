@@ -7,6 +7,7 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -83,4 +84,21 @@ public final class ImageTool {
             return baos.toByteArray();
         }
     }
+
+    public static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
+        }
+
+        BufferedImage bufferedImage = new BufferedImage(
+            img.getWidth(null),
+            img.getHeight(null),
+            BufferedImage.TYPE_INT_ARGB
+        );
+        Graphics2D graphics = bufferedImage.createGraphics();
+        graphics.drawImage(img, 0, 0, null);
+        graphics.dispose();
+        return bufferedImage;
+    }
+
 }

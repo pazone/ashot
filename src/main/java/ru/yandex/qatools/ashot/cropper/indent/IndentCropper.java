@@ -7,10 +7,12 @@ import ru.yandex.qatools.ashot.util.ImageTool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
 import static ru.yandex.qatools.ashot.coordinates.Coords.setReferenceCoords;
 
 /**
@@ -30,7 +32,7 @@ public class IndentCropper extends DefaultCropper {
     }
 
     public IndentCropper() {
-        this.indent = DEFAULT_INDENT;
+        this(DEFAULT_INDENT);
     }
 
     @Override
@@ -38,7 +40,7 @@ public class IndentCropper extends DefaultCropper {
         Coords cropArea = createCropArea(coordsToCompare);
         Coords indentMask = createIndentMask(cropArea, image);
         Coords coordsWithIndent = applyIndentMask(cropArea, indentMask);
-        Screenshot croppedShot = super.cropScreenshot(image, new HashSet<>(asList(coordsWithIndent)));
+        Screenshot croppedShot = super.cropScreenshot(image, Collections.singleton(coordsWithIndent));
         croppedShot.setOriginShift(coordsWithIndent);
         croppedShot.setCoordsToCompare(setReferenceCoords(coordsWithIndent, coordsToCompare));
         List<NoFilteringArea> noFilteringAreas = createNotFilteringAreas(croppedShot);

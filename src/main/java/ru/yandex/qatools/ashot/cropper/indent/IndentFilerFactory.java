@@ -4,13 +4,19 @@ package ru.yandex.qatools.ashot.cropper.indent;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public class IndentFilerFactory {
+public final class IndentFilerFactory {
 
-    public static IndentFilter blur() {
+    private IndentFilerFactory() {
+        throw new UnsupportedOperationException();
+    }
+
+
+    public static BlurFilter blur() {
         return new BlurFilter();
     }
 
-    public static IndentFilter monochrome() {
+    public static MonochromeFilter monochrome() {
         return new MonochromeFilter();
     }
+
 }
