@@ -7,6 +7,8 @@ import java.io.Serializable;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 
-public abstract class IndentFilter implements Serializable {
-    public abstract BufferedImage apply(BufferedImage image);
+public interface IndentFilter extends Serializable {
+
+    BufferedImage apply(BufferedImage image);
+
 }
