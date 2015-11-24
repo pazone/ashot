@@ -40,15 +40,15 @@ public class RotatingDecorator implements ShootingStrategy {
     }
 
     private BufferedImage rotate(BufferedImage baseImage, WebDriver wd) {
-        int h = baseImage.getHeight();
-        int w = baseImage.getWidth();
-        BufferedImage rotated = new BufferedImage(h, w, TYPE_4BYTE_ABGR);
+        BufferedImage rotated = new BufferedImage(baseImage.getHeight(), baseImage.getWidth(), TYPE_4BYTE_ABGR);
         Graphics2D graphics = rotated.createGraphics();
-        graphics.rotate(3 * Math.PI / 2, w / 2, w / 2);
+        double theta = 3 * Math.PI / 2;
+        int origin = baseImage.getWidth() / 2;
+        graphics.rotate(theta, origin, origin);
         graphics.drawImage(baseImage, null, 0, 0);
-        int height = rotated.getHeight();
-        int width = rotated.getWidth();
+        int rotatedHeight = rotated.getHeight();
+        int rotatedWidth = rotated.getWidth();
         int headerToCut = cutStrategy.getHeaderHeight(wd);
-        return rotated.getSubimage(0, headerToCut, width, height - headerToCut);
+        return rotated.getSubimage(0, headerToCut, rotatedWidth, rotatedHeight - headerToCut);
     }
 }
