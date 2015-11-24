@@ -36,4 +36,12 @@ public class SimpleShootingStrategy implements ShootingStrategy {
     public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coords) {
         return getScreenshot(wd);
     }
+
+    /**
+     * Default behavior is not to change coords, because by default coordinates are not changed
+     */
+    @Override
+    public Set<Coords> prepareCoords(Set<Coords> coordsSet) {
+        return coordsSet;
+    }
 }

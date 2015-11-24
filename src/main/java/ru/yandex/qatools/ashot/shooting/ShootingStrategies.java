@@ -153,4 +153,26 @@ public final class ShootingStrategies {
                 new VariableCutStrategy(HEADER_IOS_8_MIN, HEADER_IOS_8_MAX, VIEWPORT_MIN_IOS_8_SIM);
         return viewportRetina(SCROLL_TIMEOUT_IOS, cutStrategy, 2F);
     }
+
+    /**
+     * Will create screenshot's of the whole page and rotate landscape images
+     *
+     * @param scrollTimeout time between scrolls in milliseconds
+     * @param cutStrategy strategy to cut header and footer from image
+     * @return {@code ShootingStrategy} witch will shoot whole page and rotate landscape images
+     */
+    public static ShootingStrategy iPadLandscapeOrientation(int scrollTimeout, CutStrategy cutStrategy) {
+        return new ViewportPastingDecorator(new RotatingDecorator(cutStrategy, simple()))
+                .withScrollTimeout(scrollTimeout);
+    }
+
+    /**
+     * Will rotate screenshot's made on iPad in landscape orientation
+     *
+     * @param cutStrategy strategy to cut header and footer from image
+     * @return {@code ShootingStrategy} witch will rotate image
+     */
+    public static ShootingStrategy iPadLandscapeOrientationSimple(CutStrategy cutStrategy) {
+        return new RotatingDecorator(cutStrategy, simple());
+    }
 }

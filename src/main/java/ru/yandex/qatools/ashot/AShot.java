@@ -14,9 +14,12 @@ import ru.yandex.qatools.ashot.shooting.SimpleShootingStrategy;
 
 import java.awt.image.BufferedImage;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.intersectingWith;
 
 /**
@@ -111,9 +114,9 @@ public class AShot implements Serializable {
     public Screenshot takeScreenshot(WebDriver driver, Collection<WebElement> elements) {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = shootingStrategy.getScreenshot(driver, elementCoords);
-        Screenshot screenshot = cropper.crop(shot, elementCoords);
+        Screenshot screenshot = cropper.crop(shot, shootingStrategy.prepareCoords(elementCoords));
         Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
-        screenshot.setIgnoredAreas(ignoredAreas);
+        screenshot.setIgnoredAreas(shootingStrategy.prepareCoords(ignoredAreas));
         return screenshot;
     }
 
@@ -126,7 +129,7 @@ public class AShot implements Serializable {
      * @see Screenshot
      */
     public Screenshot takeScreenshot(WebDriver driver, WebElement element) {
-        return takeScreenshot(driver, asList(element));
+        return takeScreenshot(driver, singletonList(element));
     }
 
     /**
@@ -151,7 +154,7 @@ public class AShot implements Serializable {
             }
         }
         for (Coords ignoredArea : ignoredAreas) {
-            ignoredCoords.addAll(preparationStrategy.prepare(asList(ignoredArea)));
+            ignoredCoords.addAll(preparationStrategy.prepare(singletonList(ignoredArea)));
         }
         return ignoredCoords;
     }
