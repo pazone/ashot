@@ -1,5 +1,6 @@
 package ru.yandex.qatools.ashot.shooting;
 
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockSettings;
@@ -17,16 +18,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR_PRE;
+import static java.util.Collections.singleton;
+import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.*;
 
 public class VerticalPastingShootingStrategyTest {
 
@@ -34,13 +30,14 @@ public class VerticalPastingShootingStrategyTest {
     private static final int DEFAULT_PAGE_HEIGHT = VIEWPORT_HEIGHT * 10 + VIEWPORT_HEIGHT / 2;
     private static final int PAGE_WIDTH = 100;
     private static final int DEFAULT_COORDS_INDENT = VIEWPORT_HEIGHT / 2;
-    private static final int DEFAULT_COORDS_SHIFT = DEFAULT_COORDS_INDENT / 2;
+    private static final double DEFAULT_COORDS_SHIFT = DEFAULT_COORDS_INDENT / 2;
     private static final int SHOOT_COORDS_OFFSET_Y = VIEWPORT_HEIGHT * 4;
     private MockSettings wdSettings = withSettings().extraInterfaces(JavascriptExecutor.class, TakesScreenshot.class);
     private WebDriver wd = mock(WebDriver.class, wdSettings);
     private BufferedImage viewPortShot = new BufferedImage(PAGE_WIDTH, VIEWPORT_HEIGHT, TYPE_4BYTE_ABGR_PRE);
     private Set<Coords> coordsSet;
     private BufferedImage screenshot;
+    private Set<Coords> preparedCoords;
     private MockVerticalPastingShootingDecorator shootingStrategy;
     private Coords shootingCoords;
 
@@ -58,6 +55,7 @@ public class VerticalPastingShootingStrategyTest {
     public void testCoordsShiftWithDefaultIndent() throws Exception {
         givenCoordsWithHeight(VIEWPORT_HEIGHT / 3);
         whenTakingScreenshot(shootingCoords);
+        whenPreparingCoords(singleton(shootingCoords));
         thenCoordsShiftedWith(DEFAULT_COORDS_SHIFT);
     }
 
@@ -126,8 +124,12 @@ public class VerticalPastingShootingStrategyTest {
         screenshot = shootingStrategy.getScreenshot(wd, coordsSet);
     }
 
-    private void thenCoordsShiftedWith(int shootCoordsOffsetY) {
-        assertThat("Coords should be shifted correctly", shootingCoords.y, is(shootCoordsOffsetY));
+    private void whenPreparingCoords(Set<Coords> coords) {
+        preparedCoords = shootingStrategy.prepareCoords(coords);
+    }
+
+    private void thenCoordsShiftedWith(double shootCoordsOffsetY) {
+        assertThat("Coords should be shifted correctly", preparedCoords, everyItem(Matchers.<Coords>hasProperty("y", Matchers.is(shootCoordsOffsetY))));
     }
 
     private void thenScreenshotIsHeight(int shotHeight) {

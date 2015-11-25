@@ -16,7 +16,7 @@ public interface ShootingStrategy extends Serializable {
      * Get's screenshot of whole page or viewport (depends on browser)
      *
      * @param wd WebDrvier
-     * @return
+     * @return image of the whole page or viewport
      */
     BufferedImage getScreenshot(WebDriver wd);
 
@@ -25,8 +25,16 @@ public interface ShootingStrategy extends Serializable {
      *
      * @param wd WebDriver
      * @param coords Set of coordinates to shoot
-     * @return
+     * @return minimal image with required coords
      */
     BufferedImage getScreenshot(WebDriver wd, Set<Coords> coords);
+
+    /**
+     * Prepares coordinated for cropper and ignored areas
+     *
+     * @param coordsSet to prepare
+     * @return New set of prepared coordinates
+     */
+    Set<Coords> prepareCoords(Set<Coords> coordsSet);
 
 }

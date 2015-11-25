@@ -23,7 +23,7 @@ public abstract class CoordsProvider implements Serializable {
                 elementsCoords.add(elementCoords);
             }
         }
-        return elementsCoords;
+        return Collections.unmodifiableSet(elementsCoords);
     }
 
     @SuppressWarnings("UnusedDeclaration")

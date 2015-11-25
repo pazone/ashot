@@ -6,6 +6,7 @@ import ru.yandex.qatools.ashot.coordinates.Coords;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
 import java.util.Set;
 
 import static ru.yandex.qatools.ashot.util.InnerScript.*;
@@ -18,6 +19,7 @@ import static ru.yandex.qatools.ashot.util.InnerScript.*;
 public class ViewportPastingDecorator extends ShootingDecorator {
 
     protected int scrollTimeout = 0;
+    private Coords shootingArea;
 
     public ViewportPastingDecorator(ShootingStrategy strategy) {
         super(strategy);
@@ -39,8 +41,7 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         int pageHeight = getFullHeight(wd);
         int pageWidth = getFullWidth(wd);
         int viewportHeight = getWindowHeight(wd);
-        Coords shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
-        shiftCoords(coordsSet, shootingArea);
+        shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
 
         BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = finalImage.createGraphics();
@@ -57,12 +58,21 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         return finalImage;
     }
 
-    private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
-        if (coords == null || coords.isEmpty()) {
-            return new Coords(0, 0, pageWidth, pageHeight);
-        } else {
-            return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
-        }
+    @Override
+    public Set<Coords> prepareCoords(Set<Coords> coordsSet) {
+        return shootingArea == null ? coordsSet : shiftCoords(coordsSet, shootingArea);
+    }
+
+    public int getFullHeight(WebDriver driver) {
+        return ((Number) execute(PAGE_HEIGHT_JS, driver)).intValue();
+    }
+
+    public int getFullWidth(WebDriver driver) {
+        return ((Number) execute(VIEWPORT_WIDTH_JS, driver)).intValue();
+    }
+
+    public int getWindowHeight(WebDriver driver) {
+        return ((Number) execute(VIEWPORT_HEIGHT_JS, driver)).intValue();
     }
 
     protected int getCurrentScrollY(JavascriptExecutor js) {
@@ -73,12 +83,23 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
     }
 
-    private void shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
-        if (coordsSet != null && !coordsSet.isEmpty()) {
+    private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
+        if (coords == null || coords.isEmpty()) {
+            return new Coords(0, 0, pageWidth, pageHeight);
+        } else {
+            return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
+        }
+    }
+
+    private Set<Coords> shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
+        Set<Coords> shiftedCoords = new HashSet<>();
+        if (coordsSet != null) {
             for (Coords coords : coordsSet) {
                 coords.y -= shootingArea.y;
+                shiftedCoords.add(coords);
             }
         }
+        return shiftedCoords;
     }
 
     private Coords extendShootingArea(Coords shootingCoords, int viewportHeight, int pageHeight) {
@@ -94,17 +115,5 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         } catch (InterruptedException e) {
             throw new IllegalStateException("Exception while waiting for scrolling", e);
         }
-    }
-
-    public int getFullHeight(WebDriver driver) {
-        return ((Number) execute(PAGE_HEIGHT_JS, driver)).intValue();
-    }
-
-    public int getFullWidth(WebDriver driver) {
-        return ((Number) execute(VIEWPORT_WIDTH_JS, driver)).intValue();
-    }
-
-    public int getWindowHeight(WebDriver driver) {
-        return ((Number) execute(VIEWPORT_HEIGHT_JS, driver)).intValue();
     }
 }
