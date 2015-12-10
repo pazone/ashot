@@ -109,3 +109,12 @@ Here is the result.
 ![complex comparison area](/doc/img/complex_elements.png)
 
 One can see only specified elements (the header and the popup) are focused and will be compared if needed.
+
+#####Ignoring of pixels with predefined color
+You can set the color of pixels which should be excluded from comparison of screenshots.
+```java
+ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
+ImageDiff diff = imageDifferWithIgnored.makeDiff(templateWithSomeMagentaPixels, actualScreenshot);
+assertFalse(diff.hasDiff());
+```
+Any pixels in template with color MAGENTA (255, 0, 255 in RGB) will be ignored during comparison.

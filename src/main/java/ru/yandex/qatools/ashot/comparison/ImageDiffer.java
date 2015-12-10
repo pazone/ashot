@@ -21,7 +21,13 @@ public class ImageDiffer {
 
     private int colorDistortion = DEFAULT_COLOR_DISTORTION;
     private DiffMarkupPolicy diffMarkupPolicy = new PointsMarkupPolicy();
+    private Color ignoredColor = null;
 
+
+    public ImageDiffer withIgnoredColor(final Color ignoreColor) {
+        this.ignoredColor = ignoreColor;
+        return this;
+    }
 
 
     public ImageDiffer withColorDistortion(int distortion) {
@@ -79,6 +85,10 @@ public class ImageDiffer {
     }
 
     private boolean hasDiffInChannel(Screenshot expected, Screenshot actual, int i, int j) {
+        if(ignoredColor != null && rgbCompare(expected.getImage().getRGB(i, j), ignoredColor.getRGB(), 0)) {
+           return false;
+        }
+
         return !rgbCompare(expected.getImage().getRGB(i, j), actual.getImage().getRGB(i, j), colorDistortion);
     }
 
