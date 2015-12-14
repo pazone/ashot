@@ -76,7 +76,8 @@ public class ViewportPastingDecorator extends ShootingDecorator {
     }
 
     protected int getCurrentScrollY(JavascriptExecutor js) {
-        return ((Number) js.executeScript("return window.scrollY;")).intValue();
+        return ((Number) js.executeScript("var scrY = window.scrollY;"
+        		+ "if(scrY){return scrY;} else {return 0;}")).intValue();
     }
 
     protected void scrollVertically(JavascriptExecutor js, int scrollY) {
