@@ -22,9 +22,7 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -36,6 +34,9 @@ public class DifferTest {
     public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
     public static final BufferedImage IMAGE_B_BIG = loadImage("img/B_b.png");
+    public static final BufferedImage IMAGE_IGNORED_TEMPLATE = loadImage("img/ignore_color_template.png");
+    public static final BufferedImage IMAGE_IGNORED_PASS = loadImage("img/ignore_color_pass.png");
+    public static final BufferedImage IMAGE_IGNORED_FAIL = loadImage("img/ignore_color_fail.png");
     public ImageDiffer imageDiffer;
 
     public static BufferedImage loadImage(String path) {
@@ -99,6 +100,27 @@ public class DifferTest {
     public void testEqualImagesDiff() throws Exception {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
         assertFalse(diff.hasDiff());
+    }
+
+    @Test
+    public void testEqualImagesWithIgnoredColorDiff() throws Exception {
+        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
+        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
+        assertFalse(diff.hasDiff());
+    }
+
+    @Test
+    public void testNonEqualImagesWithIgnoredColorDiff() throws Exception {
+        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
+        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_FAIL);
+        assertTrue(diff.hasDiff());
+    }
+
+    @Test
+    public void testEqualImagesWithWrongIgnoredColorDiff() throws Exception {
+        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.RED);
+        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
+        assertTrue(diff.hasDiff());
     }
 
     @Test
