@@ -35,7 +35,18 @@ As a result aShot provides an image of the WebElement
 Different WebDrivers take screenshots in different ways. Some WebDrivers provide a screenshot of the entire page while others handle the viewport only. aShot might be configured to handle browsers with the viewport problem. This example configuration gives a screenshot of the entire page even for Chrome, Mobile Safari, etc. 
 ```java
 new AShot()
-  .shootingStrategy(new ViewportPastingStrategy())
+  .shootingStrategy(ShootingStrategies.viewportPasting(100))
+  .takeScreenshot(webDriver);
+```
+
+There are more build in strategies in ```ShootingStrategies``` for different use cases. In case there are no suitable strategy it is possible to build it using existing strategies as decorators or implement your own.
+```
+CutStrategy cutting = new VariableCutStrategy(HEADER_IOS_8_MIN, HEADER_IOS_8_MAX, VIEWPORT_MIN_IOS_8_SIM);
+ShootingStrategy rotating = new RotatingDecorator(cutting, ShootingStrategies.simple());
+ShootingStrategy pasting = new ViewportPastingDecorator(rotating)
+    .withScrollTimeout(scrollTimeout);   
+new AShot()
+  .shootingStrategy(pasting)
   .takeScreenshot(webDriver);
 ```
 
