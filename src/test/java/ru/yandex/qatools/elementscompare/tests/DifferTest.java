@@ -38,6 +38,9 @@ public class DifferTest {
     public static final BufferedImage IMAGE_IGNORED_PASS = loadImage("img/ignore_color_pass.png");
     public static final BufferedImage IMAGE_IGNORED_FAIL = loadImage("img/ignore_color_fail.png");
     public ImageDiffer imageDiffer;
+    
+    @Parameterized.Parameter
+    public Class<? extends DiffMarkupPolicy> diffStorageClass;
 
     public static BufferedImage loadImage(String path) {
         try {
@@ -54,9 +57,6 @@ public class DifferTest {
                 {ImageMarkupPolicy.class}
         });
     }
-
-    @Parameterized.Parameter
-    public Class<? extends DiffMarkupPolicy> diffStorageClass;
 
     @Before
     public void setUp() throws IllegalAccessException, InstantiationException {

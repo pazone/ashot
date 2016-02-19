@@ -36,17 +36,17 @@ public class Screenshot implements Serializable {
      */
     private Coords originShift = new Coords(0, 0);
 
+    public Screenshot(BufferedImage image) {
+        this.image = image;
+        this.coordsToCompare = new HashSet<>(asList(Coords.ofImage(image)));
+    }
+
     public BufferedImage getImage() {
         return image;
     }
 
     public void setImage(BufferedImage image) {
         this.image = image;
-    }
-
-    public Screenshot(BufferedImage image) {
-        this.image = image;
-        this.coordsToCompare = new HashSet<>(asList(Coords.ofImage(image)));
     }
 
     public Set<Coords> getCoordsToCompare() {

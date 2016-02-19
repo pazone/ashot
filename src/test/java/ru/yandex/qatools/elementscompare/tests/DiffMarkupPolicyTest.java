@@ -24,6 +24,12 @@ import static ru.yandex.qatools.elementscompare.tests.DifferTest.loadImage;
 
 @RunWith(Parameterized.class)
 public class DiffMarkupPolicyTest {
+	
+	private DiffMarkupPolicy diffMarkupPolicyA;
+	private DiffMarkupPolicy diffMarkupPolicyB;
+	    
+	@Parameterized.Parameter
+    public Class<? extends DiffMarkupPolicy> diffStorageClass;
 
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
@@ -32,12 +38,6 @@ public class DiffMarkupPolicyTest {
                 {ImageMarkupPolicy.class}
         });
     }
-
-    @Parameterized.Parameter
-    public Class<? extends DiffMarkupPolicy> diffStorageClass;
-
-    private DiffMarkupPolicy diffMarkupPolicyA;
-    private DiffMarkupPolicy diffMarkupPolicyB;
 
     @Before
     public void setUp() throws IllegalAccessException, InstantiationException {
