@@ -1,13 +1,11 @@
 package ru.yandex.qatools.ashot.comparison;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static ch.lambdaj.Lambda.min;
-import static ch.lambdaj.Lambda.on;
 
 /**
  * @author Rovniakov Viacheslav rovner@yandex-team.ru
@@ -88,21 +86,28 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
 
     private Set<Point> getDeposedPoints() {
         if (deposedPoints.isEmpty()) {
-            deposedPoints = deposeReference(this);
+            deposedPoints = deposeReference();
         }
         return deposedPoints;
     }
 
-    private Point getReferenceCorner(PointsMarkupPolicy diff) {
-        double x = min(diff.diffPoints, on(Point.class).getX());
-        double y = min(diff.diffPoints, on(Point.class).getY());
+    private Point getReferenceCorner() {
+        Iterator<Point> iterator = diffPoints.iterator();
+        Point diffPoint = iterator.next();
+        double x = diffPoint.getX();
+        double y = diffPoint.getY();
+        while(iterator.hasNext()) {
+            diffPoint = iterator.next();
+            x = Math.min(x, diffPoint.getX());
+            y = Math.min(y, diffPoint.getY());
+        }
         return new Point((int) x, (int) y);
     }
 
-    private Set<Point> deposeReference(PointsMarkupPolicy diff) {
-        Point reference = getReferenceCorner(diff);
+    private Set<Point> deposeReference() {
+        Point reference = getReferenceCorner();
         Set<Point> referenced = new HashSet<>();
-        for (Point point : diff.diffPoints) {
+        for (Point point : diffPoints) {
             referenced.add(new Point(point.x - reference.x, point.y - reference.y));
         }
         return referenced;
