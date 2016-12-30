@@ -1,5 +1,7 @@
 package ru.yandex.qatools.ashot.util;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -22,7 +24,8 @@ public final class InnerScript {
 
     public static <T> T execute(String path, WebDriver driver, Object... args) {
         try {
-            String script = IOUtils.toString(currentThread().getContextClassLoader().getResourceAsStream(path));
+            String script = IOUtils.toString(currentThread().getContextClassLoader().getResourceAsStream(path),
+                    StandardCharsets.UTF_8);
             //noinspection unchecked
             return (T) ((JavascriptExecutor) driver).executeScript(script, args);
         } catch (Exception e) {
