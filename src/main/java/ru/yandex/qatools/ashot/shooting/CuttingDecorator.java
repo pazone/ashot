@@ -26,6 +26,7 @@ public class CuttingDecorator extends ShootingDecorator {
      * Will use {@link FixedCutStrategy} to cut off header and footer.
      * @param headerToCut - height of header in pixels
      * @param footerToCut - height of footer in pixels
+     * @return Cutting decorator
      */
     public CuttingDecorator withCut(int headerToCut, int footerToCut) {
         return withCutStrategy(new FixedCutStrategy(headerToCut, footerToCut));
@@ -34,6 +35,7 @@ public class CuttingDecorator extends ShootingDecorator {
     /**
      * Will use custom cut strategy, for example {@link VariableCutStrategy}.
      * @param cutStrategy - strategy to get height of browser's header
+     * @return Cutting decorator
      */
     public CuttingDecorator withCutStrategy(CutStrategy cutStrategy) {
         this.cutStrategy = cutStrategy;

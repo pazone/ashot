@@ -107,6 +107,7 @@ public class AShot implements Serializable {
      * If elements were not found screenshot of whole page will be returned
      *
      * @param driver WebDriver instance
+     * @param elements Web elements to screenshot
      * @return Screenshot with cropped image and list of ignored areas on screenshot
      * @throws RuntimeException when something goes wrong
      * @see Screenshot
@@ -124,6 +125,7 @@ public class AShot implements Serializable {
      * Takes the screenshot of given element
      *
      * @param driver WebDriver instance
+     * @param element Web element to screenshot
      * @return Screenshot with cropped image and list of ignored areas on screenshot
      * @throws RuntimeException when something goes wrong
      * @see Screenshot

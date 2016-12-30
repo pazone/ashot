@@ -41,6 +41,7 @@ public class ImageDiff {
 
     /**
      * Sets Diff image.
+     * @param image Image diff
      */
     public void setDiffImage(BufferedImage image) {
         diffMarkupPolicy.setDiffImage(image);
