@@ -9,9 +9,8 @@ import ru.yandex.qatools.ashot.util.JsCoords;
  */
 public class JqueryCoordsProvider extends CoordsProvider {
 
+    @Override
     public Coords ofElement(WebDriver driver, WebElement element) {
         return JsCoords.findCoordsWithJquery(driver, element);
     }
 }
-
-

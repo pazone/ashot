@@ -87,9 +87,8 @@ public class ViewportPastingDecorator extends ShootingDecorator {
     private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
         if (coords == null || coords.isEmpty()) {
             return new Coords(0, 0, pageWidth, pageHeight);
-        } else {
-            return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
         }
+        return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
     }
 
     private Set<Coords> shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {

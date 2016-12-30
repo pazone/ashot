@@ -51,19 +51,18 @@ public class ScalingDecorator extends ShootingDecorator {
     private BufferedImage scale(BufferedImage image) {
         if (STANDARD_DRP.equals(dprY) && STANDARD_DRP.equals(dprX)) {
             return image;
-        } else {
-            int scaledWidth = (int) (image.getWidth() / dprX);
-            int scaledHeight = (int) (image.getHeight() / dprY);
-
-            final BufferedImage bufferedImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_3BYTE_BGR);
-            final Graphics2D graphics2D = bufferedImage.createGraphics();
-            graphics2D.setComposite(AlphaComposite.Src);
-            graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics2D.drawImage(image, 0, 0, scaledWidth, scaledHeight, null);
-            graphics2D.dispose();
-            return bufferedImage;
         }
+        int scaledWidth = (int) (image.getWidth() / dprX);
+        int scaledHeight = (int) (image.getHeight() / dprY);
+
+        final BufferedImage bufferedImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_3BYTE_BGR);
+        final Graphics2D graphics2D = bufferedImage.createGraphics();
+        graphics2D.setComposite(AlphaComposite.Src);
+        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.drawImage(image, 0, 0, scaledWidth, scaledHeight, null);
+        graphics2D.dispose();
+        return bufferedImage;
     }
 }

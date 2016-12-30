@@ -31,8 +31,10 @@ public abstract class DiffMarkupPolicy {
 
     public abstract void addDiffPoint(int x, int y);
 
+    @Override
     public abstract boolean equals(Object obj);
 
+    @Override
     public abstract int hashCode();
 
     public abstract boolean hasDiff();
