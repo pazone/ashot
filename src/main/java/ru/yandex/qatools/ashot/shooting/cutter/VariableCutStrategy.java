@@ -55,19 +55,13 @@ public class VariableCutStrategy implements CutStrategy {
     public int getFooterHeight(WebDriver driver) {
         if (0 == footerMax && 0 == footerMin) {
             return 0;
-        } else {
-            return getCutHeight((JavascriptExecutor) driver, footerMin, footerMax);
         }
+        return getCutHeight((JavascriptExecutor) driver, footerMin, footerMax);
     }
 
     private int getCutHeight(JavascriptExecutor driver, int heightMin, int heightMax) {
         final int innerHeight = getWindowInnerHeight(driver);
-
-        if (innerHeight > windowInnerHeightMin) {
-            return heightMin;
-        } else {
-            return heightMax;
-        }
+        return innerHeight > windowInnerHeightMin ? heightMin : heightMax;
     }
 
     private int getWindowInnerHeight(JavascriptExecutor driver) {

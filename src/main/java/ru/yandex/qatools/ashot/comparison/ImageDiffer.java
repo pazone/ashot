@@ -146,14 +146,13 @@ public class ImageDiffer {
         private boolean accurateContains(int i, int j) {
             if (isSingle) {
                 return true;
-            } else {
-                for (Coords coords : coordsSet) {
-                    if (coords.contains(i, j)) {
-                        return true;
-                    }
-                }
-                return false;
             }
+            for (Coords coords : coordsSet) {
+                if (coords.contains(i, j)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private static Set<Coords> intersection(Set<Coords> coordsPool1, Set<Coords> coordsPool2) {
