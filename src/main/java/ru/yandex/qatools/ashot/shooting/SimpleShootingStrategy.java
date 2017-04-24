@@ -7,11 +7,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Set;
+import javax.imageio.ImageIO;
 
 /**
  * Gets screenshot from webdriver.
@@ -21,7 +21,12 @@ public class SimpleShootingStrategy implements ShootingStrategy {
     @Override
     public BufferedImage getScreenshot(WebDriver wd) {
         ByteArrayInputStream imageArrayStream = null;
-        TakesScreenshot takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
+        TakesScreenshot takesScreenshot;
+        try {
+            takesScreenshot = (TakesScreenshot) wd;
+        } catch (ClassCastException ignored){
+            takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
+        }
         try {
             imageArrayStream = new ByteArrayInputStream(takesScreenshot.getScreenshotAs(OutputType.BYTES));
             return ImageIO.read(imageArrayStream);
