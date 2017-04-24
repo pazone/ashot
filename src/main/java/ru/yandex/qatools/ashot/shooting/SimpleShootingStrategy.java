@@ -7,11 +7,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import ru.yandex.qatools.ashot.coordinates.Coords;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Set;
-import javax.imageio.ImageIO;
 
 /**
  * Gets screenshot from webdriver.
