@@ -21,7 +21,12 @@ public class SimpleShootingStrategy implements ShootingStrategy {
     @Override
     public BufferedImage getScreenshot(WebDriver wd) {
         ByteArrayInputStream imageArrayStream = null;
-        TakesScreenshot takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
+        TakesScreenshot takesScreenshot;
+        try {
+            takesScreenshot = (TakesScreenshot) wd;
+        } catch (ClassCastException ignored){
+            takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
+        }
         try {
             imageArrayStream = new ByteArrayInputStream(takesScreenshot.getScreenshotAs(OutputType.BYTES));
             return ImageIO.read(imageArrayStream);
