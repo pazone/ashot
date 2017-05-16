@@ -11,7 +11,7 @@ WebDriver Screenshot utility
 * Decorates screenshots
 * Provides flexible screenshot comparison
 
-#####WebElement view
+##### WebElement view
 
 aShot takes a screenshot in three simple steps:
 * Capture the entire page screenshot
@@ -30,7 +30,7 @@ As a result aShot provides an image of the WebElement
 </dependency>
 ``` 
 
-#####Capturing the entire page
+##### Capturing the entire page
 
 Different WebDrivers take screenshots in different ways. Some WebDrivers provide a screenshot of the entire page while others handle the viewport only. aShot might be configured to handle browsers with the viewport problem. This example configuration gives a screenshot of the entire page even for Chrome, Mobile Safari, etc. 
 ```java
@@ -50,7 +50,7 @@ new AShot()
   .takeScreenshot(webDriver);
 ```
 
-#####Capturing the WebElement
+##### Capturing the WebElement
 
 One can take a screenshot of the particular WebElement(s). Just specify the element(s).
 ```java
@@ -67,7 +67,7 @@ new AShot()
 ```
 Feel free to implement own CoordsProvider. Pull requests are welcome.
 
-#####Prettifying the screenshot
+##### Prettifying the screenshot
 
 So, let's take a simple screenshot of the weather snippet at Yandex.com.
 
@@ -90,7 +90,7 @@ new AShot()
 ![indent blur weather snippet](/doc/img/weather_indent_blur.png)
 This screenshot provides more information about position relative other elements and blurs indent in order to focus on the WebElement.  
   
-#####Screenshot comparison
+##### Screenshot comparison
 ```.takeScreenshot()``` returns a ```Screenshot``` object which contains an image and data for comparison. One can ignore some WebElements from comparison.
 
 ```java
@@ -106,7 +106,7 @@ ImageDiff diff = new ImageDiffer().makeDiff(myScreenshot, anotherScreenshot);
 BufferedImage diffImage = diff.getMarkedImage(); // comparison result with marked differences
 ```
 
-#####Several elements comparison
+##### Several elements comparison
 `(since 1.2)`  
 Sometimes one need to take a screenshot of several independent elements. In this case aShot computes complex comparison area.
 ```java
@@ -121,7 +121,7 @@ Here is the result.
 
 One can see only specified elements (the header and the popup) are focused and will be compared if needed.
 
-#####Ignoring of pixels with predefined color
+##### Ignoring of pixels with predefined color
 You can set the color of pixels which should be excluded from comparison of screenshots.
 ```java
 ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
