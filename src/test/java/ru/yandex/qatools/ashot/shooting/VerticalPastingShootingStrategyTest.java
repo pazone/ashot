@@ -44,10 +44,10 @@ public class VerticalPastingShootingStrategyTest {
     @Before
     public void setUp() throws Exception {
         coordsSet = new HashSet<>();
-        MockVerticalPastingShootingDecorator shootingStrategy =
+        MockVerticalPastingShootingDecorator shootingStrategyLocal =
                 new MockVerticalPastingShootingDecorator(new SimpleShootingStrategy());
-        shootingStrategy.withScrollTimeout(0);
-        this.shootingStrategy = spy(shootingStrategy);
+        shootingStrategyLocal.withScrollTimeout(0);
+        this.shootingStrategy = spy(shootingStrategyLocal);
         when(((TakesScreenshot) wd).getScreenshotAs(any(OutputType.class))).thenReturn(getImageAsBytes());
     }
 

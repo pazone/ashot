@@ -116,8 +116,8 @@ public class AShot implements Serializable {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = shootingStrategy.getScreenshot(driver, elementCoords);
         Screenshot screenshot = cropper.crop(shot, shootingStrategy.prepareCoords(elementCoords));
-        Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
-        screenshot.setIgnoredAreas(shootingStrategy.prepareCoords(ignoredAreas));
+        Set<Coords> ignoredAreasLocal = compileIgnoredAreas(driver, intersectingWith(screenshot));
+        screenshot.setIgnoredAreas(shootingStrategy.prepareCoords(ignoredAreasLocal));
         return screenshot;
     }
 
