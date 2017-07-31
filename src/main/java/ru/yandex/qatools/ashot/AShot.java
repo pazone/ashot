@@ -30,6 +30,7 @@ public class AShot implements Serializable {
 
     private CoordsProvider coordsProvider = new JqueryCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
+    private Set<WebElement> ignoredWebElements = new HashSet<>();
     private Set<By> ignoredLocators = new HashSet<>();
     private Set<Coords> ignoredAreas = new HashSet<>();
     private ShootingStrategy shootingStrategy = new SimpleShootingStrategy();
@@ -80,7 +81,32 @@ public class AShot implements Serializable {
     }
 
     /**
+     * Adds ignored web element.
+     *
+     * @param webElement web element
+     * @return this
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public synchronized AShot addIgnoredWebElement(final WebElement webElement) {
+        this.ignoredWebElements.add(webElement);
+        return this;
+    }
+
+    /**
+     * Sets a collection of wittingly ignored web elements.
+     *
+     * @param webElements Set of ignored elements
+     * @return aShot
+     */
+    @SuppressWarnings("UnusedDeclaration")
+    public synchronized AShot ignoredWebElements(final Set<WebElement> webElements) {
+        this.ignoredWebElements = webElements;
+        return this;
+    }
+
+    /**
      * Adds coordinated to set of wittingly ignored coords.
+     *
      * @param area coords of wittingly ignored coords
      * @return aShot;
      */
@@ -157,6 +183,9 @@ public class AShot implements Serializable {
         }
         for (Coords ignoredArea : ignoredAreas) {
             ignoredCoords.addAll(preparationStrategy.prepare(singletonList(ignoredArea)));
+        }
+        if (!ignoredWebElements.isEmpty()) {
+            ignoredCoords.addAll(preparationStrategy.prepare(coordsProvider.ofElements(driver, ignoredWebElements)));
         }
         return ignoredCoords;
     }
