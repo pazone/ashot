@@ -3,10 +3,7 @@ package ru.yandex.qatools.ashot;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import ru.yandex.qatools.ashot.coordinates.Coords;
-import ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy;
-import ru.yandex.qatools.ashot.coordinates.CoordsProvider;
-import ru.yandex.qatools.ashot.coordinates.JqueryCoordsProvider;
+import ru.yandex.qatools.ashot.coordinates.*;
 import ru.yandex.qatools.ashot.cropper.DefaultCropper;
 import ru.yandex.qatools.ashot.cropper.ImageCropper;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
@@ -27,8 +24,7 @@ import static ru.yandex.qatools.ashot.coordinates.CoordsPreparationStrategy.inte
  */
 
 public class AShot implements Serializable {
-
-    private CoordsProvider coordsProvider = new JqueryCoordsProvider();
+    private CoordsProvider coordsProvider = new WebDriverCoordsProvider();
     private ImageCropper cropper = new DefaultCropper();
     private Set<By> ignoredLocators = new HashSet<>();
     private Set<Coords> ignoredAreas = new HashSet<>();
