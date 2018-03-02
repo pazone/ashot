@@ -73,6 +73,12 @@ public class Coords extends Rectangle {
         }
     }
 
+    public void scale(float xFactor, float yFactor) {
+        this.x *= xFactor;
+        this.y *= yFactor;
+        this.width *= xFactor;
+        this.height *= yFactor;
+    }
 
     @SuppressWarnings("NullableProblems")
     @Override
