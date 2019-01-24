@@ -95,8 +95,11 @@ public class ViewportPastingDecorator extends ShootingDecorator {
 
     private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
         if (coords == null || coords.isEmpty()) {
+            System.out.printf("getShootingCoords: new Coords(%d, %d, %d, %d\n", 0, 0, pageWidth, pageHeight);
             return new Coords(0, 0, pageWidth, pageHeight);
         }
+        Coords c = Coords.unity(coords);
+        System.out.printf("getShootingCoords: extendShootingArea(Cords.unity(coords) = (%d, %d, %d, %d)\n", c.x, c.y, c.width, c.height);
         return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
     }
 
