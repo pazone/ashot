@@ -43,6 +43,15 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         int viewportHeight = getWindowHeight(wd);
         shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
 
+        System.out.printf("pageWidth = %d,pageHeight = %d,viewportHeight = %d, shootingArea.height = %d\n",
+                pageHeight, pageWidth, viewportHeight, shootingArea.height);
+        if (coordsSet == null)  {
+            System.out.println("coordsSet is null");
+        } else {
+            Coords c = Coords.unity(coordsSet);
+            System.out.printf("Coords.unity(coordsSet) = (%d,%d,%d,%d)\n", c.x, c.y, c.width, c.height);
+        }
+
         BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = finalImage.createGraphics();
 
