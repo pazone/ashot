@@ -43,8 +43,11 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         int viewportHeight = getWindowHeight(wd);
         shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
 
+        if (pageHeight > 2000) {
+            System.out.printf("pageHeightが %d なのは何かがおかしいです。\n", pageHeight);
+        }
         System.out.printf("pageWidth = %d,pageHeight = %d,viewportHeight = %d, shootingArea.height = %d\n",
-                pageHeight, pageWidth, viewportHeight, shootingArea.height);
+                pageWidth, pageHeight, viewportHeight, shootingArea.height);
         if (coordsSet == null)  {
             System.out.println("coordsSet is null");
         } else {
@@ -95,7 +98,7 @@ public class ViewportPastingDecorator extends ShootingDecorator {
 
     private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
         if (coords == null || coords.isEmpty()) {
-            System.out.printf("getShootingCoords: new Coords(%d, %d, %d, %d\n", 0, 0, pageWidth, pageHeight);
+            System.out.printf("getShootingCoords: new Coords(%d, %d, %d, %d)\n", 0, 0, pageWidth, pageHeight);
             return new Coords(0, 0, pageWidth, pageHeight);
         }
         Coords c = Coords.unity(coords);
