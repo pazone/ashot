@@ -1,6 +1,7 @@
 package ru.yandex.qatools.ashot;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import ru.yandex.qatools.ashot.coordinates.*;
@@ -111,6 +112,13 @@ public class AShot implements Serializable {
     public Screenshot takeScreenshot(WebDriver driver, Collection<WebElement> elements) {
         Set<Coords> elementCoords = coordsProvider.ofElements(driver, elements);
         BufferedImage shot = shootingStrategy.getScreenshot(driver, elementCoords);
+        final Dimension windowSize = driver.manage().window().getSize();
+        if (shot.getWidth() != windowSize.width || shot.getHeight() != windowSize.height) {
+            for (Coords coord : elementCoords) {
+                coord.scale((float) shot.getHeight() / windowSize.height,
+                        (float) shot.getWidth() / windowSize.width);
+            }
+        }
         Screenshot screenshot = cropper.crop(shot, shootingStrategy.prepareCoords(elementCoords));
         Set<Coords> ignoredAreas = compileIgnoredAreas(driver, intersectingWith(screenshot));
         screenshot.setIgnoredAreas(shootingStrategy.prepareCoords(ignoredAreas));
