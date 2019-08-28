@@ -8,14 +8,10 @@
         <version>9</version>
     </parent>
 
-    <groupId>ru.yandex.qatools.ashot</groupId>
+    <groupId>pazone</groupId>
     <artifactId>ashot</artifactId>
     <version>1.5.5-SNAPSHOT</version>
 
-    <organization>
-        <name>Yandex</name>
-        <url>http://company.yandex.com</url>
-    </organization>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -25,7 +21,7 @@
     </licenses>
     <issueManagement>
         <system>GitHub Issues</system>
-        <url>https://github.com/yandex-qatools/ashot/issues</url>
+        <url>https://github.com/pazone/ashot/issues</url>
     </issueManagement>
 
     <scm>
@@ -34,16 +30,7 @@
         <developerConnection>scm:git:git@github.com:yandex-qatools/ashot.git</developerConnection>
     </scm>
 
-    <name>Yandex QATools AShot WebDriver Utility</name>
-
-    <developers>
-        <developer>
-            <id>Pazone</id>
-            <name>Pavel Zorin</name>
-            <email>pazone@yandex-team.ru</email>
-            <organization>Yandex</organization>
-        </developer>
-    </developers>
+    <name>AShot WebDriver Utility</name>
 
     <dependencies>
         <dependency>

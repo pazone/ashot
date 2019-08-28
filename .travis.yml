@@ -1,7 +1,14 @@
-language: java
-jdk:
- - openjdk7
- - oraclejdk8
-notifications:
- email: false
 sudo: false
+language: java
+services:
+- docker
+cache:
+  directories:
+  - "$HOME/.cache"
+
+test:
+  provider: script
+  script: "./mvnw clean test"
+  skip_cleanup: true
+
+#todo deploy to oss
