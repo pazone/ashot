@@ -19,10 +19,10 @@ import static org.mockito.Mockito.mock;
 
 public class RotatingDecoratorTest {
 
-    private WebDriver wd = mock(WebDriver.class);
+    private final WebDriver wd = mock(WebDriver.class);
 
     @Test
-    public void testRotating() throws Exception {
+    public void testRotating() {
         RotatingDecorator strategy = new RotatingDecorator(new FixedCutStrategy(0, 0), new MockShootingStrategy());
         BufferedImage screenshot = strategy.getScreenshot(wd);
         ImageDiff diff = new ImageDiffer().makeDiff(DifferTest.loadImage("img/expected/rotated.png"), screenshot);

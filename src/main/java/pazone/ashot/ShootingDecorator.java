@@ -6,7 +6,7 @@ import java.util.Set;
 
 abstract class ShootingDecorator implements ShootingStrategy {
 
-    private ShootingStrategy shootingStrategy;
+    private final ShootingStrategy shootingStrategy;
 
     public ShootingDecorator(ShootingStrategy shootingStrategy) {
         this.shootingStrategy = shootingStrategy;

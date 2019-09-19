@@ -4,7 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import pazone.ashot.Screenshot;
 import pazone.ashot.comparison.DiffMarkupPolicy;
 import pazone.ashot.comparison.ImageDiff;
 import pazone.ashot.comparison.ImageDiffer;
@@ -14,10 +13,10 @@ import pazone.ashot.coordinates.Coords;
 import pazone.ashot.util.ImageTool;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
@@ -67,19 +66,19 @@ public class DifferTest {
     }
 
     @Test
-    public void testSameSizeDiff() throws Exception {
+    public void testSameSizeDiff() {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/same_size_diff.png")));
     }
 
     @Test
-    public void testDifferentSizeDiff() throws Exception {
+    public void testDifferentSizeDiff() {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_B_SMALL, IMAGE_B_BIG);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/different_size_diff.png")));
     }
 
     @Test
-    public void testSetDiffColor() throws Exception {
+    public void testSetDiffColor() {
         ImageDiffer greenDiffer = new ImageDiffer()
                 .withDiffMarkupPolicy(
                         new ImageMarkupPolicy()
@@ -90,41 +89,41 @@ public class DifferTest {
     }
 
     @Test
-    public void testSetDiffSizeTrigger() throws Exception {
+    public void testSetDiffSizeTrigger() {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
         assertThat(diff.withDiffSizeTrigger(624).hasDiff(), is(false));
         assertThat(diff.withDiffSizeTrigger(623).hasDiff(), is(true));
     }
 
     @Test
-    public void testEqualImagesDiff() throws Exception {
+    public void testEqualImagesDiff() {
         ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
         assertFalse(diff.hasDiff());
     }
 
     @Test
-    public void testEqualImagesWithIgnoredColorDiff() throws Exception {
+    public void testEqualImagesWithIgnoredColorDiff() {
         ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
         ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
         assertFalse(diff.hasDiff());
     }
 
     @Test
-    public void testNonEqualImagesWithIgnoredColorDiff() throws Exception {
+    public void testNonEqualImagesWithIgnoredColorDiff() {
         ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
         ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_FAIL);
         assertTrue(diff.hasDiff());
     }
 
     @Test
-    public void testEqualImagesWithWrongIgnoredColorDiff() throws Exception {
+    public void testEqualImagesWithWrongIgnoredColorDiff() {
         ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.RED);
         ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
         assertTrue(diff.hasDiff());
     }
 
     @Test
-    public void testIgnoredCoordsSame() throws Exception {
+    public void testIgnoredCoordsSame() {
         Screenshot a = createScreenshotWithSameIgnoredAreas(IMAGE_A_SMALL);
         Screenshot b = createScreenshotWithSameIgnoredAreas(IMAGE_B_SMALL);
         ImageDiff diff = imageDiffer.makeDiff(a, b);
@@ -132,19 +131,19 @@ public class DifferTest {
     }
 
     @Test
-    public void testIgnoredCoordsNotSame() throws Exception {
-        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(55, 55))));
-        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
+    public void testIgnoredCoordsNotSame() {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, Collections.singleton(new Coords(55, 55)));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, Collections.singleton(new Coords(80, 80)));
         ImageDiff diff = imageDiffer.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_not_same.png")));
     }
 
     @Test
-    public void testCoordsToCompareAndIgnoredCombine() throws Exception {
-        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new HashSet<>(asList(new Coords(60, 60))));
-        a.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
-        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new HashSet<>(asList(new Coords(80, 80))));
-        b.setCoordsToCompare(new HashSet<>(asList(new Coords(50, 50, 100, 100))));
+    public void testCoordsToCompareAndIgnoredCombine() {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, Collections.singleton(new Coords(60, 60)));
+        a.setCoordsToCompare(Collections.singleton(new Coords(50, 50, 100, 100)));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, Collections.singleton(new Coords(80, 80)));
+        b.setCoordsToCompare(Collections.singleton(new Coords(50, 50, 100, 100)));
         ImageDiff diff = imageDiffer.makeDiff(a, b);
         assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
     }
@@ -172,7 +171,7 @@ public class DifferTest {
     }
 
     private Screenshot createScreenshotWithSameIgnoredAreas(BufferedImage image) {
-        return createScreenshotWithIgnoredAreas(image, new HashSet<>(asList(new Coords(50, 50))));
+        return createScreenshotWithIgnoredAreas(image, Collections.singleton(new Coords(50, 50)));
     }
 
     private Screenshot createScreenshotWithIgnoredAreas(BufferedImage image, Set<Coords> ignored) {

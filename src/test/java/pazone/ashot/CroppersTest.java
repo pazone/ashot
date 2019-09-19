@@ -23,19 +23,19 @@ public class CroppersTest {
 
 
     @Test
-    public void testElementOutsideImageDefCropper() throws Exception {
+    public void testElementOutsideImageDefCropper() {
         Screenshot screenshot = new DefaultCropper().cropScreenshot(DifferTest.IMAGE_A_SMALL, OUTSIDE_IMAGE);
         assertThat(screenshot.getImage(), ImageTool.equalImage(DifferTest.loadImage("img/expected/outside_dc.png")));
     }
 
     @Test
-    public void testElementOutsideImageIndentCropper() throws Exception {
+    public void testElementOutsideImageIndentCropper() {
         Screenshot screenshot = new IndentCropper(10).cropScreenshot(DifferTest.IMAGE_A_SMALL, OUTSIDE_IMAGE);
         assertThat(screenshot.getImage(), ImageTool.equalImage(DifferTest.loadImage("img/expected/outside_ic.png")));
     }
 
     @Test
-    public void testElementInsideImageIndentCropperWithFilter() throws Exception {
+    public void testElementInsideImageIndentCropperWithFilter() {
         Screenshot screenshot = new IndentCropper()
             .addIndentFilter(IndentFilerFactory.blur())
             .addIndentFilter(IndentFilerFactory.monochrome())

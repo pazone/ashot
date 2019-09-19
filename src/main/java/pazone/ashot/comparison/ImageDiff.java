@@ -11,7 +11,7 @@ public class ImageDiff {
     @SuppressWarnings("UnusedDeclaration")
     public static final ImageDiff EMPTY_DIFF = new ImageDiff();
 
-    private DiffMarkupPolicy diffMarkupPolicy;
+    private final DiffMarkupPolicy diffMarkupPolicy;
 
     public ImageDiff(DiffMarkupPolicy diffMarkupPolicy) {
         this.diffMarkupPolicy = diffMarkupPolicy;

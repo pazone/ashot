@@ -30,27 +30,27 @@ public class VariableCutStrategyTest {
     private int headerHeight;
 
     @Test
-    public void testHeaderHeightIsMaximum() throws Exception {
+    public void testHeaderHeightIsMaximum() {
         givenViewportInnerHeight(MIN_INNER_HEIGHT);
         whenGettingHeaderHeight();
         thenBrowserHeaderHeightIs(MAX_HEADER_HEIGHT);
     }
 
     @Test
-    public void testHeaderHeightIsMinimum() throws Exception {
+    public void testHeaderHeightIsMinimum() {
         givenViewportInnerHeight(MAX_INNER_HEIGHT);
         whenGettingHeaderHeight();
         thenBrowserHeaderHeightIs(MIN_HEADER_HEIGHT);
     }
 
     @Test(expected = InvalidViewportHeightException.class)
-    public void testClassCastException() throws Exception {
+    public void testClassCastException() {
         givenViewportInnerHeight("a string");
         whenGettingHeaderHeight();
     }
 
     @Test(expected = InvalidViewportHeightException.class)
-    public void testJavaScriptReturnedNull() throws Exception {
+    public void testJavaScriptReturnedNull() {
         givenViewportInnerHeight(null);
         whenGettingHeaderHeight();
     }
