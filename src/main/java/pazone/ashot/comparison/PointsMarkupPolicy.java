@@ -14,7 +14,7 @@ import java.util.Set;
 
 public class PointsMarkupPolicy extends DiffMarkupPolicy {
 
-    private Set<Point> diffPoints = new LinkedHashSet<>();
+    private final Set<Point> diffPoints = new LinkedHashSet<>();
     private Set<Point> deposedPoints = new LinkedHashSet<>();
     private BufferedImage transparentMarkedImage = null;
 
@@ -45,19 +45,8 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
     public boolean equals(Object obj) {
         if (obj instanceof PointsMarkupPolicy) {
             PointsMarkupPolicy item = (PointsMarkupPolicy) obj;
-            if (diffPoints.size() != item.diffPoints.size()) {
-                return false;
-            }
-
-            Set<Point> referencedPoints = getDeposedPoints();
-            Set<Point> itemReferencedPoints = item.getDeposedPoints();
-
-            for (Point point : referencedPoints) {
-                if(!itemReferencedPoints.contains(point)) {
-                    return false;
-                }
-            }
-            return true;
+            return diffPoints.size() == item.diffPoints.size() && item.getDeposedPoints().containsAll(
+                    getDeposedPoints());
         }
         return false;
     }

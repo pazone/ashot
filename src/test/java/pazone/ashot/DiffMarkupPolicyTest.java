@@ -49,7 +49,7 @@ public class DiffMarkupPolicyTest {
     }
 
     @Test
-    public void testEquality() throws Exception {
+    public void testEquality() {
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 1, 2);
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyB, 0, 3);
         assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(true));
@@ -57,7 +57,7 @@ public class DiffMarkupPolicyTest {
     }
 
     @Test
-    public void testNotEquality() throws Exception {
+    public void testNotEquality() {
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 0, 0);
         addDiffPoints(getDiffPointsB(), diffMarkupPolicyB, 0, 0);
         assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(false));
@@ -65,7 +65,7 @@ public class DiffMarkupPolicyTest {
     }
 
     @Test
-    public void testNotEqualityByNumber() throws Exception {
+    public void testNotEqualityByNumber() {
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 0, 0);
         addDiffPoints(getDiffPointsB(), diffMarkupPolicyA, 0, 0);
         diffMarkupPolicyB.addDiffPoint(0, 0);

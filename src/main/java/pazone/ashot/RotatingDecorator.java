@@ -16,8 +16,8 @@ import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR;
 
 public class RotatingDecorator implements ShootingStrategy {
 
-    private CutStrategy cutStrategy;
-    private ShootingStrategy shootingStrategy;
+    private final CutStrategy cutStrategy;
+    private final ShootingStrategy shootingStrategy;
 
     public RotatingDecorator(CutStrategy cutStrategy, ShootingStrategy shootingStrategy) {
         this.cutStrategy = cutStrategy;

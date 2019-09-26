@@ -52,7 +52,7 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     @Test
-    public void testCoordsShiftWithDefaultIndent() throws Exception {
+    public void testCoordsShiftWithDefaultIndent() {
         givenCoordsWithHeight(VIEWPORT_HEIGHT / 3);
         whenTakingScreenshot(shootingCoords);
         whenPreparingCoords(singleton(shootingCoords));
@@ -60,7 +60,7 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     @Test
-    public void testTimesWhenCoordsEqualsViewport() throws Exception {
+    public void testTimesWhenCoordsEqualsViewport() {
         givenCoordsWithHeight(VIEWPORT_HEIGHT);
         whenTakingScreenshot(shootingCoords);
         thenScrollTimes(2);
@@ -68,7 +68,7 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     @Test
-    public void testTimesWhenCoordsLargerThanViewport() throws Exception {
+    public void testTimesWhenCoordsLargerThanViewport() {
         givenCoordsWithHeight(VIEWPORT_HEIGHT * 3);
         whenTakingScreenshot(shootingCoords);
         thenScrollTimes(4);
@@ -76,7 +76,7 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     @Test
-    public void testTimesWhenCoordsLessThanViewport() throws Exception {
+    public void testTimesWhenCoordsLessThanViewport() {
         givenCoordsWithHeight(VIEWPORT_HEIGHT / 2);
         whenTakingScreenshot(shootingCoords);
         thenScrollTimes(1);
@@ -84,21 +84,21 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     @Test
-    public void testScreenshotHeight() throws Exception {
+    public void testScreenshotHeight() {
         givenCoordsWithHeight(VIEWPORT_HEIGHT / 3);
         whenTakingScreenshot(shootingCoords);
         thenScreenshotIsHeight(VIEWPORT_HEIGHT / 3 + DEFAULT_COORDS_INDENT);
     }
 
     @Test
-    public void testScreenshotCoordsZeroHeight() throws Exception {
+    public void testScreenshotCoordsZeroHeight() {
         shootingCoords = new Coords(0, SHOOT_COORDS_OFFSET_Y, PAGE_WIDTH, 0);
         whenTakingScreenshot(shootingCoords);
         thenScreenshotIsHeight(DEFAULT_COORDS_INDENT);
     }
 
     @Test
-    public void testScreenshotFullPage() throws Exception {
+    public void testScreenshotFullPage() {
         whenTakingScreenshot();
         thenShootTimes(11);
         thenScrollTimes(11);
@@ -129,7 +129,7 @@ public class VerticalPastingShootingStrategyTest {
     }
 
     private void thenCoordsShiftedWith(double shootCoordsOffsetY) {
-        assertThat("Coords should be shifted correctly", preparedCoords, everyItem(Matchers.<Coords>hasProperty("y", Matchers.is(shootCoordsOffsetY))));
+        assertThat("Coords should be shifted correctly", preparedCoords, everyItem(Matchers.hasProperty("y", is(shootCoordsOffsetY))));
     }
 
     private void thenScreenshotIsHeight(int shotHeight) {
@@ -147,7 +147,7 @@ public class VerticalPastingShootingStrategyTest {
         verify(((TakesScreenshot) wd), times(times)).getScreenshotAs(any(OutputType.class));
     }
 
-    class MockVerticalPastingShootingDecorator extends ViewportPastingDecorator {
+    static class MockVerticalPastingShootingDecorator extends ViewportPastingDecorator {
 
         int pageHeight = DEFAULT_PAGE_HEIGHT;
         int pageWidth = PAGE_WIDTH;

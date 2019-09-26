@@ -4,12 +4,12 @@ import pazone.ashot.Screenshot;
 import pazone.ashot.coordinates.Coords;
 import pazone.ashot.util.ImageBytesDiffer;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static pazone.ashot.util.ImageBytesDiffer.areImagesEqual;
 import static pazone.ashot.util.ImageTool.rgbCompare;
 
 /**
@@ -118,7 +118,7 @@ public class ImageDiffer {
 
         private final boolean isSingle;
         private final Coords minRectangle;
-        private Set<Coords> coordsSet;
+        private final Set<Coords> coordsSet;
 
         public CoordsSet(Set<Coords> coordsSet) {
             isSingle = coordsSet.size() == 1;
@@ -145,15 +145,7 @@ public class ImageDiffer {
         }
 
         private boolean accurateContains(int i, int j) {
-            if (isSingle) {
-                return true;
-            }
-            for (Coords coords : coordsSet) {
-                if (coords.contains(i, j)) {
-                    return true;
-                }
-            }
-            return false;
+            return isSingle || coordsSet.stream().anyMatch(coords -> coords.contains(i, j));
         }
 
         private static Set<Coords> intersection(Set<Coords> coordsPool1, Set<Coords> coordsPool2) {

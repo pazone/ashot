@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -16,9 +17,7 @@ import static java.util.Arrays.asList;
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  * @author <a href="eoff@yandex-team.ru">Maksim Mukosey</a>
- */
-
-/**
+ *
  * Result of screen capture.
  * Contains final processed image and all required information for image comparison.
  */
@@ -46,7 +45,7 @@ public class Screenshot implements Serializable {
 
     public Screenshot(BufferedImage image) {
         this.image = image;
-        this.coordsToCompare = new HashSet<>(asList(Coords.ofImage(image)));
+        this.coordsToCompare = Collections.singleton(Coords.ofImage(image));
     }
 
     public Set<Coords> getCoordsToCompare() {

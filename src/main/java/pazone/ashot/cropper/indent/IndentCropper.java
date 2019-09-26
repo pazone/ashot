@@ -23,9 +23,9 @@ public class IndentCropper extends DefaultCropper {
 
     public static final int DEFAULT_INDENT = 50;
 
-    private int indent = DEFAULT_INDENT;
+    private int indent;
 
-    protected List<IndentFilter> filters = new LinkedList<>();
+    protected final List<IndentFilter> filters = new LinkedList<>();
 
     public IndentCropper(final int indent) {
         this.indent = indent;
@@ -102,8 +102,8 @@ public class IndentCropper extends DefaultCropper {
     }
 
     private static class NoFilteringArea {
-        private BufferedImage subimage;
-        private Coords coords;
+        private final BufferedImage subimage;
+        private final Coords coords;
 
         private NoFilteringArea(BufferedImage origin, Coords noFilterCoords) {
             this.subimage = ImageTool.subImage(origin, noFilterCoords);
