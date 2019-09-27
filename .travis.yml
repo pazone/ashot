@@ -11,4 +11,9 @@ test:
   script: "./mvnw clean test"
   skip_cleanup: true
 
-#todo deploy to oss
+deploySnapshot:
+  branches:
+    only:
+    - master
+  provider: script
+  script: "cp .travis.settings.xml $HOME/.m2/settings.xml && ./mvnw verify -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy"
