@@ -1,76 +1,70 @@
 package pazone.ashot;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 import pazone.ashot.comparison.DiffMarkupPolicy;
 import pazone.ashot.comparison.ImageMarkupPolicy;
 import pazone.ashot.comparison.PointsMarkupPolicy;
 
-import java.awt.*;
-import java.util.Collection;
+import java.awt.Point;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static pazone.ashot.DifferTest.loadImage;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static pazone.ashot.util.TestImageUtils.IMAGE_A_SMALL;
+import static pazone.ashot.util.TestImageUtils.IMAGE_B_SMALL;
 
 /**
  * @author Rovniakov Viacheslav rovner@yandex-team.ru
  */
+class DiffMarkupPolicyTest {
 
-@RunWith(Parameterized.class)
-public class DiffMarkupPolicyTest {
-
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return asList(new Object[][] {
-                {PointsMarkupPolicy.class},
-                {ImageMarkupPolicy.class}
-        });
+    private static Stream<Arguments> data() {
+        return Stream.of(
+                Arguments.of(new PointsMarkupPolicy(), new PointsMarkupPolicy()),
+                Arguments.of(new ImageMarkupPolicy(), new ImageMarkupPolicy())
+        );
     }
 
-    @Parameterized.Parameter
-    public Class<? extends DiffMarkupPolicy> diffStorageClass;
-
-    private DiffMarkupPolicy diffMarkupPolicyA;
-    private DiffMarkupPolicy diffMarkupPolicyB;
-
-    @Before
-    public void setUp() throws IllegalAccessException, InstantiationException {
-        diffMarkupPolicyA = diffStorageClass.newInstance();
-        diffMarkupPolicyB = diffStorageClass.newInstance();
-
-        diffMarkupPolicyA.setDiffImage(loadImage("img/A_s.png"));
-        diffMarkupPolicyB.setDiffImage(loadImage("img/B_s.png"));
+    private void initDiffMarkupPolicies(DiffMarkupPolicy diffMarkupPolicyA, DiffMarkupPolicy diffMarkupPolicyB) {
+        diffMarkupPolicyA.setDiffImage(IMAGE_A_SMALL);
+        diffMarkupPolicyB.setDiffImage(IMAGE_B_SMALL);
     }
 
-    @Test
-    public void testEquality() {
+    @ParameterizedTest
+    @MethodSource("data")
+    void testEquality(DiffMarkupPolicy diffMarkupPolicyA, DiffMarkupPolicy diffMarkupPolicyB) {
+        initDiffMarkupPolicies(diffMarkupPolicyA, diffMarkupPolicyB);
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 1, 2);
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyB, 0, 3);
-        assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(true));
-        assertThat(diffMarkupPolicyA.hashCode() == diffMarkupPolicyB.hashCode(), is(true));
+        assertThat(diffMarkupPolicyA, equalTo(diffMarkupPolicyB));
+        assertThat(diffMarkupPolicyA.hashCode(), equalTo(diffMarkupPolicyB.hashCode()));
     }
 
-    @Test
-    public void testNotEquality() {
+    @ParameterizedTest
+    @MethodSource("data")
+    void testNotEquality(DiffMarkupPolicy diffMarkupPolicyA, DiffMarkupPolicy diffMarkupPolicyB) {
+        initDiffMarkupPolicies(diffMarkupPolicyA, diffMarkupPolicyB);
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 0, 0);
         addDiffPoints(getDiffPointsB(), diffMarkupPolicyB, 0, 0);
-        assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(false));
-        assertThat(diffMarkupPolicyA.hashCode() == diffMarkupPolicyB.hashCode(), is(false));
+        assertThat(diffMarkupPolicyA, not(equalTo(diffMarkupPolicyB)));
+        assertThat(diffMarkupPolicyA.hashCode(), not(equalTo(diffMarkupPolicyB.hashCode())));
     }
 
-    @Test
-    public void testNotEqualityByNumber() {
+    @ParameterizedTest
+    @MethodSource("data")
+    void testNotEqualityByNumber(DiffMarkupPolicy diffMarkupPolicyA, DiffMarkupPolicy diffMarkupPolicyB) {
+        initDiffMarkupPolicies(diffMarkupPolicyA, diffMarkupPolicyB);
         addDiffPoints(getDiffPointsA(), diffMarkupPolicyA, 0, 0);
         addDiffPoints(getDiffPointsB(), diffMarkupPolicyA, 0, 0);
         diffMarkupPolicyB.addDiffPoint(0, 0);
-        assertThat(diffMarkupPolicyA.equals(diffMarkupPolicyB), is(false));
-        assertThat(diffMarkupPolicyA.hashCode() == diffMarkupPolicyB.hashCode(), is(false));
+        assertThat(diffMarkupPolicyA, not(equalTo(diffMarkupPolicyB)));
+        assertThat(diffMarkupPolicyA.hashCode(), not(equalTo(diffMarkupPolicyB.hashCode())));
     }
 
     private Set<Point> getDiffPointsA() {

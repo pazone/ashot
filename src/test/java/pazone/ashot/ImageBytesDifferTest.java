@@ -1,38 +1,38 @@
 package pazone.ashot;
 
-import org.junit.Test;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestFactory;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static pazone.ashot.util.ImageBytesDiffer.areImagesEqual;
-import static pazone.ashot.DifferTest.loadImage;
+import static pazone.ashot.util.TestImageUtils.loadImage;
+
+import java.util.stream.Stream;
 
 /**
  * @author <a href="frolic@yandex-team.ru">Viacheslav Frolov</a>
  */
-public class ImageBytesDifferTest {
+class ImageBytesDifferTest {
 
-    @Test
-    public void testImageDifferentSizes() {
-        assertFalse("Images should differ",
-                areImagesEqual(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_scaled.png")));
+    @TestFactory
+    Stream<DynamicTest> testDifferentImages() {
+        return Stream.of(
+                dynamicTest("Different size", () -> testDifferentImages("img/SolidColor_scaled.png")),
+                dynamicTest("One pixel difference", () -> testDifferentImages("img/SolidColor_1px_red.png")),
+                dynamicTest("Color mode difference", () -> testDifferentImages("img/SolidColor_indexed.png"))
+        );
+    }
+
+    void testDifferentImages(String path) {
+        assertFalse(areImagesEqual(loadImage("img/SolidColor.png"), loadImage(path)), "Images should differ");
     }
 
     @Test
-    public void testOnePixelDifference() {
-        assertFalse("Images should differ",
-                areImagesEqual(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_1px_red.png")));
-    }
-
-    @Test
-    public void testColorModeDifference() {
-        assertFalse("Images should differ",
-                areImagesEqual(loadImage("img/SolidColor.png"), loadImage("img/SolidColor_indexed.png")));
-    }
-
-    @Test
-    public void testEqualImages() {
-        assertTrue("Images should equal",
-                areImagesEqual(loadImage("img/SolidColor.png"), loadImage("img/SolidColor.png")));
+    void testEqualImages() {
+        assertTrue(areImagesEqual(loadImage("img/SolidColor.png"), loadImage("img/SolidColor.png")),
+                "Images should equal");
     }
 }

@@ -1,8 +1,10 @@
 package pazone.ashot;
 
-import org.junit.Test;
-import org.mockito.MockSettings;
-import org.mockito.stubbing.OngoingStubbing;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import pazone.ashot.cutter.CutStrategy;
@@ -10,61 +12,47 @@ import pazone.ashot.cutter.VariableCutStrategy;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 /**
  * @author <a href="frolic@yandex-team.ru">Vyacheslav Frolov</a>
  */
-public class VariableCutStrategyTest {
-    private MockSettings wdSettings = withSettings().extraInterfaces(JavascriptExecutor.class);
-    private WebDriver wd = mock(WebDriver.class, wdSettings);
+@ExtendWith(MockitoExtension.class)
+class VariableCutStrategyTest {
+
     private static final int MAX_HEADER_HEIGHT = 65;
     private static final int MIN_HEADER_HEIGHT = 41;
-    private static final Long MIN_INNER_HEIGHT = 960L;
-    private static final Long MAX_INNER_HEIGHT = 984L;
-    private CutStrategy strategy = spy(new VariableCutStrategy(
-            MIN_HEADER_HEIGHT, MAX_HEADER_HEIGHT, MIN_INNER_HEIGHT.intValue()));
-    private int headerHeight;
+    private static final int MIN_INNER_HEIGHT = 960;
 
-    @Test
-    public void testHeaderHeightIsMaximum() {
-        givenViewportInnerHeight(MIN_INNER_HEIGHT);
-        whenGettingHeaderHeight();
-        thenBrowserHeaderHeightIs(MAX_HEADER_HEIGHT);
+    private final CutStrategy strategy = new VariableCutStrategy(MIN_HEADER_HEIGHT, MAX_HEADER_HEIGHT,
+            MIN_INNER_HEIGHT);
+
+    @Mock(extraInterfaces = JavascriptExecutor.class)
+    private WebDriver webDriver;
+
+    @ParameterizedTest
+    @CsvSource({
+            "960, 65",
+            "984, 41"
+    })
+    void testGetBrowserHeaderHeight(long viewportHeight, int browserHeaderHeight) {
+        mockViewportInnerHeight(viewportHeight);
+        int headerHeight = strategy.getHeaderHeight(webDriver);
+        assertThat("Header height should be detected correctly", browserHeaderHeight, is(headerHeight));
     }
 
-    @Test
-    public void testHeaderHeightIsMinimum() {
-        givenViewportInnerHeight(MAX_INNER_HEIGHT);
-        whenGettingHeaderHeight();
-        thenBrowserHeaderHeightIs(MIN_HEADER_HEIGHT);
+    @ParameterizedTest
+    @CsvSource({
+            "a string",
+            ","
+    })
+    void testGetBrowserHeaderHeightWithInvalidViewportHeight(String viewportHeight) {
+        mockViewportInnerHeight(viewportHeight);
+        assertThrows(InvalidViewportHeightException.class, () -> strategy.getHeaderHeight(webDriver));
     }
 
-    @Test(expected = InvalidViewportHeightException.class)
-    public void testClassCastException() {
-        givenViewportInnerHeight("a string");
-        whenGettingHeaderHeight();
+    private void mockViewportInnerHeight(Object viewportHeight) {
+        when(((JavascriptExecutor) webDriver).executeScript(VariableCutStrategy.SCRIPT)).thenReturn(viewportHeight);
     }
-
-    @Test(expected = InvalidViewportHeightException.class)
-    public void testJavaScriptReturnedNull() {
-        givenViewportInnerHeight(null);
-        whenGettingHeaderHeight();
-    }
-
-    private OngoingStubbing<Object> givenViewportInnerHeight(Object obj) {
-        return when(((JavascriptExecutor) wd).executeScript(VariableCutStrategy.SCRIPT)).thenReturn(obj);
-    }
-
-    private void thenBrowserHeaderHeightIs(int headerHeight) {
-        assertThat("Header height should be detected correctly", headerHeight, is(this.headerHeight));
-    }
-
-    private void whenGettingHeaderHeight() {
-        headerHeight = strategy.getHeaderHeight(wd);
-    }
-
 }
