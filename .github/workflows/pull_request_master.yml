@@ -7,9 +7,7 @@ on:
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Set up JDK 1.8
@@ -18,10 +16,3 @@ jobs:
         java-version: 1.8
     - name: Tests
       run: ./mvnw clean test
-#     - name: deploy snapshot
-#       if: contains(github.ref, 'master')
-#       env:
-#         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-#       run: |
-#         cp .travis.settings.xml ~/.m2/settings.xml
-#         ./mvnw verify -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
