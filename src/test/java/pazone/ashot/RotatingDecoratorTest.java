@@ -1,49 +1,37 @@
 package pazone.ashot;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import pazone.ashot.comparison.ImageDiff;
-import pazone.ashot.coordinates.Coords;
 import pazone.ashot.cutter.FixedCutStrategy;
-import pazone.ashot.comparison.ImageDiffer;
+import pazone.ashot.util.ImageTool;
 
 import java.awt.image.BufferedImage;
-import java.util.Set;
+import java.io.IOException;
 
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static pazone.ashot.util.TestImageUtils.IMAGE_A_SMALL;
+import static pazone.ashot.util.TestImageUtils.assertImageEquals;
 
 /**
  * @author <a href="rovner@yandex-team.ru">Rovniakov Viacheslav</a>
  */
+@ExtendWith(MockitoExtension.class)
+class RotatingDecoratorTest {
 
-public class RotatingDecoratorTest {
-
-    private final WebDriver wd = mock(WebDriver.class);
+    @Mock(extraInterfaces = TakesScreenshot.class)
+    private WebDriver webDriver;
 
     @Test
-    public void testRotating() {
-        RotatingDecorator strategy = new RotatingDecorator(new FixedCutStrategy(0, 0), new MockShootingStrategy());
-        BufferedImage screenshot = strategy.getScreenshot(wd);
-        ImageDiff diff = new ImageDiffer().makeDiff(DifferTest.loadImage("img/expected/rotated.png"), screenshot);
-        assertFalse(diff.hasDiff());
-
-    }
-
-    private static class MockShootingStrategy implements ShootingStrategy {
-        @Override
-        public BufferedImage getScreenshot(WebDriver wd) {
-            return DifferTest.loadImage("img/A_s.png");
-        }
-
-        @Override
-        public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coords) {
-            return getScreenshot(wd);
-        }
-
-        @Override
-        public Set<Coords> prepareCoords(Set<Coords> coordsSet) {
-            return coordsSet;
-        }
+    void testRotating() throws IOException {
+        when(((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES)).thenReturn(
+                ImageTool.toByteArray(IMAGE_A_SMALL));
+        ShootingStrategy strategy = new RotatingDecorator(new FixedCutStrategy(0, 0), new SimpleShootingStrategy());
+        BufferedImage screenshot = strategy.getScreenshot(webDriver);
+        assertImageEquals(screenshot, "img/expected/rotated.png");
     }
 }

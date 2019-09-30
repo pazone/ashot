@@ -1,9 +1,13 @@
 package pazone.ashot;
 
-import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.MockSettings;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -14,91 +18,70 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.awt.image.BufferedImage.TYPE_4BYTE_ABGR_PRE;
 import static java.util.Collections.singleton;
 import static org.hamcrest.CoreMatchers.everyItem;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class VerticalPastingShootingStrategyTest {
+@ExtendWith(MockitoExtension.class)
+class VerticalPastingShootingStrategyTest {
 
     private static final int VIEWPORT_HEIGHT = 80;
     private static final int DEFAULT_PAGE_HEIGHT = VIEWPORT_HEIGHT * 10 + VIEWPORT_HEIGHT / 2;
     private static final int PAGE_WIDTH = 100;
     private static final int DEFAULT_COORDS_INDENT = VIEWPORT_HEIGHT / 2;
-    private static final double DEFAULT_COORDS_SHIFT = DEFAULT_COORDS_INDENT / 2;
-    private static final int SHOOT_COORDS_OFFSET_Y = VIEWPORT_HEIGHT * 4;
-    private MockSettings wdSettings = withSettings().extraInterfaces(JavascriptExecutor.class, TakesScreenshot.class);
-    private WebDriver wd = mock(WebDriver.class, wdSettings);
-    private BufferedImage viewPortShot = new BufferedImage(PAGE_WIDTH, VIEWPORT_HEIGHT, TYPE_4BYTE_ABGR_PRE);
-    private Set<Coords> coordsSet;
+
+    private final BufferedImage viewPortShot = new BufferedImage(PAGE_WIDTH, VIEWPORT_HEIGHT, TYPE_4BYTE_ABGR_PRE);
+    private Coords shootingCoords;
     private BufferedImage screenshot;
     private Set<Coords> preparedCoords;
-    private MockVerticalPastingShootingDecorator shootingStrategy;
-    private Coords shootingCoords;
 
-    @Before
-    public void setUp() throws Exception {
-        coordsSet = new HashSet<>();
-        MockVerticalPastingShootingDecorator shootingStrategy =
-                new MockVerticalPastingShootingDecorator(new SimpleShootingStrategy());
-        shootingStrategy.withScrollTimeout(0);
-        this.shootingStrategy = spy(shootingStrategy);
-        when(((TakesScreenshot) wd).getScreenshotAs(any(OutputType.class))).thenReturn(getImageAsBytes());
+    @Mock(extraInterfaces = {JavascriptExecutor.class, TakesScreenshot.class})
+    private WebDriver webDriver;
+
+    @Spy
+    private ViewportPastingDecorator shootingStrategy = new MockVerticalPastingShootingDecorator(
+            new SimpleShootingStrategy()).withScrollTimeout(0);
+
+    static Stream<Arguments> timesData() {
+        return Stream.of(
+                Arguments.of(VIEWPORT_HEIGHT,     2),
+                Arguments.of(VIEWPORT_HEIGHT / 2, 1),
+                Arguments.of(VIEWPORT_HEIGHT * 3, 4),
+                Arguments.of(0,                   1)
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("timesData")
+    void testTimes(int height, int times) throws IOException {
+        givenCoordsWithHeight(height);
+        whenTakingScreenshot(shootingCoords);
+        thenScrollTimes(times);
+        thenShootTimes(times);
+        thenScreenshotIsHeight(height + DEFAULT_COORDS_INDENT);
     }
 
     @Test
-    public void testCoordsShiftWithDefaultIndent() {
+    void testCoordsShiftWithDefaultIndent() throws IOException {
         givenCoordsWithHeight(VIEWPORT_HEIGHT / 3);
         whenTakingScreenshot(shootingCoords);
         whenPreparingCoords(singleton(shootingCoords));
-        thenCoordsShiftedWith(DEFAULT_COORDS_SHIFT);
+        thenCoordsShifted();
     }
 
     @Test
-    public void testTimesWhenCoordsEqualsViewport() {
-        givenCoordsWithHeight(VIEWPORT_HEIGHT);
-        whenTakingScreenshot(shootingCoords);
-        thenScrollTimes(2);
-        thenShootTimes(2);
-    }
-
-    @Test
-    public void testTimesWhenCoordsLargerThanViewport() {
-        givenCoordsWithHeight(VIEWPORT_HEIGHT * 3);
-        whenTakingScreenshot(shootingCoords);
-        thenScrollTimes(4);
-        thenShootTimes(4);
-    }
-
-    @Test
-    public void testTimesWhenCoordsLessThanViewport() {
-        givenCoordsWithHeight(VIEWPORT_HEIGHT / 2);
-        whenTakingScreenshot(shootingCoords);
-        thenScrollTimes(1);
-        thenShootTimes(1);
-    }
-
-    @Test
-    public void testScreenshotHeight() {
-        givenCoordsWithHeight(VIEWPORT_HEIGHT / 3);
-        whenTakingScreenshot(shootingCoords);
-        thenScreenshotIsHeight(VIEWPORT_HEIGHT / 3 + DEFAULT_COORDS_INDENT);
-    }
-
-    @Test
-    public void testScreenshotCoordsZeroHeight() {
-        shootingCoords = new Coords(0, SHOOT_COORDS_OFFSET_Y, PAGE_WIDTH, 0);
-        whenTakingScreenshot(shootingCoords);
-        thenScreenshotIsHeight(DEFAULT_COORDS_INDENT);
-    }
-
-    @Test
-    public void testScreenshotFullPage() {
+    void testScreenshotFullPage() throws IOException {
         whenTakingScreenshot();
         thenShootTimes(11);
         thenScrollTimes(11);
@@ -111,71 +94,69 @@ public class VerticalPastingShootingStrategyTest {
         return baos.toByteArray();
     }
 
+    private void mockScreenshotting() throws IOException {
+        when(((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES)).thenReturn(getImageAsBytes());
+    }
+
     private void givenCoordsWithHeight(int height) {
-        shootingCoords = new Coords(0, SHOOT_COORDS_OFFSET_Y, PAGE_WIDTH, height);
+        shootingCoords = new Coords(0, VIEWPORT_HEIGHT * 4, PAGE_WIDTH, height);
     }
 
-    private void whenTakingScreenshot() {
-        screenshot = shootingStrategy.getScreenshot(wd);
+    private void whenTakingScreenshot() throws IOException {
+        mockScreenshotting();
+        screenshot = shootingStrategy.getScreenshot(webDriver);
     }
 
-    private void whenTakingScreenshot(Coords coords) {
-        coordsSet.add(coords);
-        screenshot = shootingStrategy.getScreenshot(wd, coordsSet);
+    private void whenTakingScreenshot(Coords coords) throws IOException {
+        mockScreenshotting();
+        screenshot = shootingStrategy.getScreenshot(webDriver, singleton(coords));
     }
 
     private void whenPreparingCoords(Set<Coords> coords) {
         preparedCoords = shootingStrategy.prepareCoords(coords);
     }
 
-    private void thenCoordsShiftedWith(double shootCoordsOffsetY) {
-        assertThat("Coords should be shifted correctly", preparedCoords, everyItem(Matchers.hasProperty("y", is(shootCoordsOffsetY))));
+    private void thenCoordsShifted() {
+        assertThat("Coords should be shifted correctly", preparedCoords,
+                everyItem(hasProperty("y", is((double) DEFAULT_COORDS_INDENT / 2))));
     }
 
     private void thenScreenshotIsHeight(int shotHeight) {
         assertThat("Screenshot height should be correct", screenshot.getHeight(), is(shotHeight));
     }
 
-    /**
-     * Math.ceil(DEFAULT_PAGE_HEIGHT / VIEWPORT_HEIGHT)
-     */
     private void thenScrollTimes(int times) {
-        verify(shootingStrategy, times(times)).scrollVertically(any(JavascriptExecutor.class), anyInt());
+        verify(shootingStrategy, times(times)).scrollVertically(eq((JavascriptExecutor) webDriver), anyInt());
     }
 
     private void thenShootTimes(int times) {
-        verify(((TakesScreenshot) wd), times(times)).getScreenshotAs(any(OutputType.class));
+        verify(((TakesScreenshot) webDriver), times(times)).getScreenshotAs(OutputType.BYTES);
     }
 
     static class MockVerticalPastingShootingDecorator extends ViewportPastingDecorator {
 
-        int pageHeight = DEFAULT_PAGE_HEIGHT;
-        int pageWidth = PAGE_WIDTH;
-        int viewportHeight = VIEWPORT_HEIGHT;
-        int currentScrollY = 0;
-
-        public MockVerticalPastingShootingDecorator(ShootingStrategy strategy) {
+        MockVerticalPastingShootingDecorator(ShootingStrategy strategy) {
             super(strategy);
         }
 
         @Override
         public int getFullHeight(WebDriver driver) {
-            return pageHeight;
+            return DEFAULT_PAGE_HEIGHT;
         }
 
         @Override
         public int getFullWidth(WebDriver driver) {
-            return pageWidth;
+            return PAGE_WIDTH;
         }
 
         @Override
         public int getWindowHeight(WebDriver driver) {
-            return viewportHeight;
+            return VIEWPORT_HEIGHT;
         }
 
         @Override
         public int getCurrentScrollY(JavascriptExecutor js) {
-            return currentScrollY;
+            return 0;
         }
 
     }

@@ -1,162 +1,138 @@
 package pazone.ashot;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import pazone.ashot.comparison.DiffMarkupPolicy;
 import pazone.ashot.comparison.ImageDiff;
 import pazone.ashot.comparison.ImageDiffer;
 import pazone.ashot.comparison.ImageMarkupPolicy;
 import pazone.ashot.comparison.PointsMarkupPolicy;
 import pazone.ashot.coordinates.Coords;
-import pazone.ashot.util.ImageTool;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static pazone.ashot.util.TestImageUtils.IMAGE_A_SMALL;
+import static pazone.ashot.util.TestImageUtils.IMAGE_A_SMALL_PATH;
+import static pazone.ashot.util.TestImageUtils.IMAGE_B_SMALL;
+import static pazone.ashot.util.TestImageUtils.assertImageEquals;
+import static pazone.ashot.util.TestImageUtils.loadImage;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
+class DifferTest {
 
-@RunWith(Parameterized.class)
-public class DifferTest {
+    private static final BufferedImage IMAGE_B_BIG = loadImage("img/B_b.png");
+    private static final String IMAGE_IGNORED_TEMPLATE = "img/ignore_color_template.png";
+    private static final String IMAGE_IGNORED_PASS = "img/ignore_color_pass.png";
+    private static final String IMAGE_IGNORED_FAIL = "img/ignore_color_fail.png";
 
-    public static final BufferedImage IMAGE_A_SMALL = loadImage("img/A_s.png");
-    public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
-    public static final BufferedImage IMAGE_B_BIG = loadImage("img/B_b.png");
-    public static final BufferedImage IMAGE_IGNORED_TEMPLATE = loadImage("img/ignore_color_template.png");
-    public static final BufferedImage IMAGE_IGNORED_PASS = loadImage("img/ignore_color_pass.png");
-    public static final BufferedImage IMAGE_IGNORED_FAIL = loadImage("img/ignore_color_fail.png");
-    public ImageDiffer imageDiffer;
-
-    public static BufferedImage loadImage(String path) {
-        try {
-            return ImageIO.read(ClassLoader.getSystemResourceAsStream(path));
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+    private static Stream<DiffMarkupPolicy> data() {
+        return Stream.of(new PointsMarkupPolicy(), new ImageMarkupPolicy());
     }
 
-    @Parameterized.Parameters
-    public static Collection<Object[]> data() {
-        return asList(new Object[][] {
-                {PointsMarkupPolicy.class},
-                {ImageMarkupPolicy.class}
-        });
-    }
-
-    @Parameterized.Parameter
-    public Class<? extends DiffMarkupPolicy> diffStorageClass;
-
-    @Before
-    public void setUp() throws IllegalAccessException, InstantiationException {
-        imageDiffer = new ImageDiffer()
+    private ImageDiffer createImageDiffer(DiffMarkupPolicy diffMarkupPolicy) {
+        return new ImageDiffer()
                 .withColorDistortion(10)
-                .withDiffMarkupPolicy(diffStorageClass.newInstance()
-                        .withDiffColor(Color.RED));
+                .withDiffMarkupPolicy(diffMarkupPolicy.withDiffColor(Color.RED));
     }
 
-    @Test
-    public void testSameSizeDiff() {
-        ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/same_size_diff.png")));
+    @ParameterizedTest
+    @MethodSource("data")
+    void testSameSizeDiff(DiffMarkupPolicy diffMarkupPolicy) {
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
+
+        assertAll(
+                () -> assertImageEquals(diff.getMarkedImage(), "img/expected/same_size_diff.png"),
+                () -> assertImageEquals(diff.getTransparentMarkedImage(), "img/expected/transparent_diff.png"),
+                () -> assertThat(diff.withDiffSizeTrigger(624).hasDiff(), is(false)),
+                () -> assertThat(diff.withDiffSizeTrigger(623).hasDiff(), is(true))
+        );
     }
 
-    @Test
-    public void testDifferentSizeDiff() {
-        ImageDiff diff = imageDiffer.makeDiff(IMAGE_B_SMALL, IMAGE_B_BIG);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/different_size_diff.png")));
+    @ParameterizedTest
+    @MethodSource("data")
+    void testDifferentSizeDiff(DiffMarkupPolicy diffMarkupPolicy) {
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(IMAGE_B_SMALL, IMAGE_B_BIG);
+        assertImageEquals(diff.getMarkedImage(), "img/expected/different_size_diff.png");
     }
 
-    @Test
-    public void testSetDiffColor() {
+    @ParameterizedTest
+    @MethodSource("data")
+    void testSetDiffColor(DiffMarkupPolicy diffMarkupPolicy) {
         ImageDiffer greenDiffer = new ImageDiffer()
-                .withDiffMarkupPolicy(
-                        new ImageMarkupPolicy()
-                                .withDiffColor(Color.GREEN)
-                );
+                .withDiffMarkupPolicy(diffMarkupPolicy.withDiffColor(Color.GREEN));
         ImageDiff diff = greenDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/green_diff.png")));
+        assertImageEquals(diff.getMarkedImage(), "img/expected/green_diff.png");
     }
 
-    @Test
-    public void testSetDiffSizeTrigger() {
-        ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_B_SMALL);
-        assertThat(diff.withDiffSizeTrigger(624).hasDiff(), is(false));
-        assertThat(diff.withDiffSizeTrigger(623).hasDiff(), is(true));
-    }
-
-    @Test
-    public void testEqualImagesDiff() {
-        ImageDiff diff = imageDiffer.makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
+    @ParameterizedTest
+    @MethodSource("data")
+    void testEqualImagesDiff(DiffMarkupPolicy diffMarkupPolicy) {
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(IMAGE_A_SMALL, IMAGE_A_SMALL);
         assertFalse(diff.hasDiff());
     }
 
-    @Test
-    public void testEqualImagesWithIgnoredColorDiff() {
-        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
-        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
-        assertFalse(diff.hasDiff());
+    static Stream<Arguments> dataWithIgnoredColorDiff() {
+        return Stream.of(
+                Arguments.of(Color.MAGENTA, IMAGE_IGNORED_PASS, false),
+                Arguments.of(Color.MAGENTA, IMAGE_IGNORED_FAIL, true),
+                Arguments.of(Color.RED,     IMAGE_IGNORED_PASS, true)
+        );
     }
 
-    @Test
-    public void testNonEqualImagesWithIgnoredColorDiff() {
-        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MAGENTA);
-        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_FAIL);
-        assertTrue(diff.hasDiff());
+    @ParameterizedTest
+    @MethodSource("dataWithIgnoredColorDiff")
+    void testDiffImagesWithIgnoredColorDiff(Color ignoredColor, String imageToCompare, boolean hasDiff) {
+        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(ignoredColor);
+        ImageDiff diff = imageDifferWithIgnored.makeDiff(loadImage(IMAGE_IGNORED_TEMPLATE), loadImage(imageToCompare));
+        assertThat(diff.hasDiff(), equalTo(hasDiff));
     }
 
-    @Test
-    public void testEqualImagesWithWrongIgnoredColorDiff() {
-        ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.RED);
-        ImageDiff diff = imageDifferWithIgnored.makeDiff(IMAGE_IGNORED_TEMPLATE, IMAGE_IGNORED_PASS);
-        assertTrue(diff.hasDiff());
+    @ParameterizedTest
+    @MethodSource("data")
+    void testIgnoredCoordsSame(DiffMarkupPolicy diffMarkupPolicy) {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new Coords(50, 50));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new Coords(50, 50));
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(a, b);
+        assertImageEquals(diff.getMarkedImage(), "img/expected/ignore_coords_same.png");
     }
 
-    @Test
-    public void testIgnoredCoordsSame() {
-        Screenshot a = createScreenshotWithSameIgnoredAreas(IMAGE_A_SMALL);
-        Screenshot b = createScreenshotWithSameIgnoredAreas(IMAGE_B_SMALL);
-        ImageDiff diff = imageDiffer.makeDiff(a, b);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_same.png")));
+    @ParameterizedTest
+    @MethodSource("data")
+    void testIgnoredCoordsNotSame(DiffMarkupPolicy diffMarkupPolicy) {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new Coords(55, 55));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new Coords(80, 80));
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(a, b);
+        assertImageEquals(diff.getMarkedImage(), "img/expected/ignore_coords_not_same.png");
     }
 
-    @Test
-    public void testIgnoredCoordsNotSame() {
-        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, Collections.singleton(new Coords(55, 55)));
-        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, Collections.singleton(new Coords(80, 80)));
-        ImageDiff diff = imageDiffer.makeDiff(a, b);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/ignore_coords_not_same.png")));
-    }
-
-    @Test
-    public void testCoordsToCompareAndIgnoredCombine() {
-        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, Collections.singleton(new Coords(60, 60)));
+    @ParameterizedTest
+    @MethodSource("data")
+    void testCoordsToCompareAndIgnoredCombine(DiffMarkupPolicy diffMarkupPolicy) {
+        Screenshot a = createScreenshotWithIgnoredAreas(IMAGE_A_SMALL, new Coords(60, 60));
         a.setCoordsToCompare(Collections.singleton(new Coords(50, 50, 100, 100)));
-        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, Collections.singleton(new Coords(80, 80)));
+        Screenshot b = createScreenshotWithIgnoredAreas(IMAGE_B_SMALL, new Coords(80, 80));
         b.setCoordsToCompare(Collections.singleton(new Coords(50, 50, 100, 100)));
-        ImageDiff diff = imageDiffer.makeDiff(a, b);
-        assertThat(diff.getMarkedImage(), ImageTool.equalImage(loadImage("img/expected/combined_diff.png")));
+        ImageDiff diff = createImageDiffer(diffMarkupPolicy).makeDiff(a, b);
+        assertImageEquals(diff.getMarkedImage(), "img/expected/combined_diff.png");
     }
 
-    @Test
-    public void testTransparentImageWithMarkedDiff() {
-        ImageDiff imageDiff = imageDiffer.makeDiff(loadImage("img/A_s.png"), loadImage("img/B_s.png"));
-        assertThat(imageDiff.getTransparentMarkedImage(), ImageTool.equalImage(loadImage("img/expected/transparent_diff.png")));
-    }
-
-    @Test
-    public void testDiffSize() {
-        String path = "img/A_s.png";
+    @ParameterizedTest
+    @MethodSource("data")
+    void testDiffSize(DiffMarkupPolicy diffMarkupPolicy) {
+        String path = IMAGE_A_SMALL_PATH;
         BufferedImage image1 = loadImage(path);
         BufferedImage image2 = loadImage(path);
 
@@ -166,17 +142,13 @@ public class DifferTest {
             image2.setRGB(i, 1, rgb);
         }
 
-        ImageDiff imageDiff = imageDiffer.makeDiff(image1, image2);
-        assertEquals("Should have diff size " + diffSize, diffSize, imageDiff.getDiffSize());
+        ImageDiff imageDiff = createImageDiffer(diffMarkupPolicy).makeDiff(image1, image2);
+        assertEquals(diffSize, imageDiff.getDiffSize(), "Should have diff size " + diffSize);
     }
 
-    private Screenshot createScreenshotWithSameIgnoredAreas(BufferedImage image) {
-        return createScreenshotWithIgnoredAreas(image, Collections.singleton(new Coords(50, 50)));
-    }
-
-    private Screenshot createScreenshotWithIgnoredAreas(BufferedImage image, Set<Coords> ignored) {
+    private Screenshot createScreenshotWithIgnoredAreas(BufferedImage image, Coords ignoredArea) {
         Screenshot screenshot = new Screenshot(image);
-        screenshot.setIgnoredAreas(ignored);
+        screenshot.setIgnoredAreas(Collections.singleton(ignoredArea));
         return screenshot;
     }
 }
