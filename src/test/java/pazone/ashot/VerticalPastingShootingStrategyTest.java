@@ -140,18 +140,8 @@ class VerticalPastingShootingStrategyTest {
         }
 
         @Override
-        public int getFullHeight(WebDriver driver) {
-            return DEFAULT_PAGE_HEIGHT;
-        }
-
-        @Override
-        public int getFullWidth(WebDriver driver) {
-            return PAGE_WIDTH;
-        }
-
-        @Override
-        public int getWindowHeight(WebDriver driver) {
-            return VIEWPORT_HEIGHT;
+        protected PageDimensions getPageDimensions(WebDriver driver) {
+            return new PageDimensions(DEFAULT_PAGE_HEIGHT, PAGE_WIDTH, VIEWPORT_HEIGHT);
         }
 
         @Override

@@ -2,12 +2,13 @@ package pazone.ashot;
 
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import pazone.ashot.util.InnerScript;
 import pazone.ashot.coordinates.Coords;
+import pazone.ashot.util.InnerScript;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,6 +17,8 @@ import java.util.Set;
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
 public class ViewportPastingDecorator extends ShootingDecorator {
+
+    public static final String PAGE_DIMENSIONS_JS = "js/page_dimensions.js";
 
     protected int scrollTimeout = 0;
     private Coords shootingArea;
@@ -37,14 +40,14 @@ public class ViewportPastingDecorator extends ShootingDecorator {
     @Override
     public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coordsSet) {
         JavascriptExecutor js = (JavascriptExecutor) wd;
-        int pageHeight = getFullHeight(wd);
-        int pageWidth = getFullWidth(wd);
-        int viewportHeight = getWindowHeight(wd);
-        shootingArea = getShootingCoords(coordsSet, pageWidth, pageHeight, viewportHeight);
+        PageDimensions pageDimensions = getPageDimensions(wd);
+        shootingArea = getShootingCoords(coordsSet, pageDimensions);
 
-        BufferedImage finalImage = new BufferedImage(pageWidth, shootingArea.height, BufferedImage.TYPE_3BYTE_BGR);
+        BufferedImage finalImage = new BufferedImage(pageDimensions.getViewportWidth(), shootingArea.height,
+                BufferedImage.TYPE_3BYTE_BGR);
         Graphics2D graphics = finalImage.createGraphics();
 
+        int viewportHeight = pageDimensions.getViewportHeight();
         int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
         for (int n = 0; n < scrollTimes; n++) {
             scrollVertically(js, shootingArea.y + viewportHeight * n);
@@ -62,16 +65,10 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         return shootingArea == null ? coordsSet : shiftCoords(coordsSet, shootingArea);
     }
 
-    public int getFullHeight(WebDriver driver) {
-        return ((Number) InnerScript.execute(InnerScript.PAGE_HEIGHT_JS, driver)).intValue();
-    }
-
-    public int getFullWidth(WebDriver driver) {
-        return ((Number) InnerScript.execute(InnerScript.VIEWPORT_WIDTH_JS, driver)).intValue();
-    }
-
-    public int getWindowHeight(WebDriver driver) {
-        return ((Number) InnerScript.execute(InnerScript.VIEWPORT_HEIGHT_JS, driver)).intValue();
+    protected PageDimensions getPageDimensions(WebDriver driver) {
+        Map<String, Number> pageDimensions = InnerScript.execute(PAGE_DIMENSIONS_JS, driver);
+        return new PageDimensions(pageDimensions.get("pageHeight").intValue(),
+                pageDimensions.get("viewportWidth").intValue(), pageDimensions.get("viewportHeight").intValue());
     }
 
     protected int getCurrentScrollY(JavascriptExecutor js) {
@@ -83,11 +80,11 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
     }
 
-    private Coords getShootingCoords(Set<Coords> coords, int pageWidth, int pageHeight, int viewPortHeight) {
+    private Coords getShootingCoords(Set<Coords> coords, PageDimensions pageDimensions) {
         if (coords == null || coords.isEmpty()) {
-            return new Coords(0, 0, pageWidth, pageHeight);
+            return new Coords(0, 0, pageDimensions.getViewportWidth(), pageDimensions.getPageHeight());
         }
-        return extendShootingArea(Coords.unity(coords), viewPortHeight, pageHeight);
+        return extendShootingArea(Coords.unity(coords), pageDimensions);
     }
 
     private Set<Coords> shiftCoords(Set<Coords> coordsSet, Coords shootingArea) {
@@ -101,10 +98,10 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         return shiftedCoords;
     }
 
-    private Coords extendShootingArea(Coords shootingCoords, int viewportHeight, int pageHeight) {
-        int halfViewport = viewportHeight / 2;
+    private Coords extendShootingArea(Coords shootingCoords, PageDimensions pageDimensions) {
+        int halfViewport = pageDimensions.getViewportHeight() / 2;
         shootingCoords.y = Math.max(shootingCoords.y - halfViewport / 2, 0);
-        shootingCoords.height = Math.min(shootingCoords.height + halfViewport, pageHeight);
+        shootingCoords.height = Math.min(shootingCoords.height + halfViewport, pageDimensions.getPageHeight());
         return shootingCoords;
     }
 
