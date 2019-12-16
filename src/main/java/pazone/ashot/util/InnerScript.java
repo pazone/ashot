@@ -14,10 +14,6 @@ import static java.lang.Thread.currentThread;
 
 public final class InnerScript {
 
-    public static final String PAGE_HEIGHT_JS = "js/page_height.js";
-    public static final String VIEWPORT_HEIGHT_JS = "js/viewport_height.js";
-    public static final String VIEWPORT_WIDTH_JS = "js/viewport_width.js";
-
     private InnerScript() {
         throw new UnsupportedOperationException();
     }
