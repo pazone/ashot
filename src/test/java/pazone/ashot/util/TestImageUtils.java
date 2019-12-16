@@ -7,11 +7,14 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class TestImageUtils {
+public final class TestImageUtils {
 
     public static final String IMAGE_A_SMALL_PATH = "img/A_s.png";
     public static final BufferedImage IMAGE_A_SMALL = loadImage(IMAGE_A_SMALL_PATH);
     public static final BufferedImage IMAGE_B_SMALL = loadImage("img/B_s.png");
+
+    private TestImageUtils() {
+    }
 
     public static BufferedImage loadImage(String path) {
         try {

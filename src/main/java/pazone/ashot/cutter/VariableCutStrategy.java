@@ -13,7 +13,8 @@ import pazone.ashot.InvalidViewportHeightException;
  */
 public class VariableCutStrategy implements CutStrategy {
 
-    public static final String SCRIPT = "var h = window.innerHeight || document.documentElement.clientHeight; return h;";
+    public static final String SCRIPT = "var h = window.innerHeight || document.documentElement.clientHeight; "
+            + "return h;";
     private final int headerMin;
     private final int headerMax;
     private final int windowInnerHeightMin;
@@ -74,7 +75,8 @@ public class VariableCutStrategy implements CutStrategy {
         }
 
         if (innerHeight == null) {
-            throw new InvalidViewportHeightException("Could not acquire window.innerHeight property! Returned value is null.");
+            throw new InvalidViewportHeightException(
+                    "Could not acquire window.innerHeight property! Returned value is null.");
         }
 
         return innerHeight.intValue();

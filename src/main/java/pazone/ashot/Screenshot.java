@@ -12,8 +12,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  * @author <a href="eoff@yandex-team.ru">Maksim Mukosey</a>

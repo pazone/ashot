@@ -8,7 +8,7 @@ abstract class ShootingDecorator implements ShootingStrategy {
 
     private final ShootingStrategy shootingStrategy;
 
-    public ShootingDecorator(ShootingStrategy shootingStrategy) {
+    ShootingDecorator(ShootingStrategy shootingStrategy) {
         this.shootingStrategy = shootingStrategy;
     }
 

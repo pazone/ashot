@@ -3,7 +3,6 @@ package pazone.ashot;
 import org.openqa.selenium.WebDriver;
 import pazone.ashot.cutter.CutStrategy;
 import pazone.ashot.cutter.FixedCutStrategy;
-import pazone.ashot.cutter.VariableCutStrategy;
 import pazone.ashot.coordinates.Coords;
 
 import java.awt.image.BufferedImage;
@@ -33,7 +32,7 @@ public class CuttingDecorator extends ShootingDecorator {
     }
 
     /**
-     * Will use custom cut strategy, for example {@link VariableCutStrategy}.
+     * Will use custom cut strategy, for example {@link pazone.ashot.cutter.VariableCutStrategy}.
      * @param cutStrategy - strategy to get height of browser's header
      * @return Cutting decorator
      */

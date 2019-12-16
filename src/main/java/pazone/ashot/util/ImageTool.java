@@ -37,16 +37,18 @@ public final class ImageTool {
     }
 
     public static boolean rgbCompare(int rgb1, int rgb2, int inaccuracy) {
-        if (inaccuracy == 0) return rgb1 == rgb2;
+        if (inaccuracy == 0) {
+            return rgb1 == rgb2;
+        }
         int red1 = (rgb1 & 0x00FF0000) >> 16;
         int green1 = (rgb1 & 0x0000FF00) >> 8;
         int blue1 = (rgb1 & 0x000000FF);
         int red2 = (rgb2 & 0x00FF0000) >> 16;
         int green2 = (rgb2 & 0x0000FF00) >> 8;
         int blue2 = (rgb2 & 0x000000FF);
-        return Math.abs(red1 - red2) <= inaccuracy &&
-                Math.abs(green1 - green2) <= inaccuracy &&
-                Math.abs(blue1 - blue2) <= inaccuracy;
+        return Math.abs(red1 - red2) <= inaccuracy
+                && Math.abs(green1 - green2) <= inaccuracy
+                && Math.abs(blue1 - blue2) <= inaccuracy;
     }
 
     public static Matcher<BufferedImage> equalImage(final BufferedImage second) {

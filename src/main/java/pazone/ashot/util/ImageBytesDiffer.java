@@ -19,17 +19,17 @@ public final class ImageBytesDiffer {
     }
 
     public static boolean areImagesEqual(BufferedImage expected, BufferedImage actual) {
-        return  expected.getHeight() == actual.getHeight() &&
-                expected.getWidth() == actual.getWidth() &&
-                actual.getColorModel().equals(expected.getColorModel()) &&
-                areImagesBuffersEqual(expected.getRaster().getDataBuffer(), actual.getRaster().getDataBuffer());
+        return  expected.getHeight() == actual.getHeight()
+                && expected.getWidth() == actual.getWidth()
+                && actual.getColorModel().equals(expected.getColorModel())
+                && areImagesBuffersEqual(expected.getRaster().getDataBuffer(), actual.getRaster().getDataBuffer());
     }
 
     private static boolean areImagesBuffersEqual(DataBuffer expected, DataBuffer actual) {
-        return actual.getDataType() == expected.getDataType() &&
-                actual.getNumBanks() == expected.getNumBanks() &&
-                actual.getSize() == expected.getSize() &&
-                areImagesBytesEqual(actual, expected);
+        return actual.getDataType() == expected.getDataType()
+                && actual.getNumBanks() == expected.getNumBanks()
+                && actual.getSize() == expected.getSize()
+                && areImagesBytesEqual(actual, expected);
     }
 
     private static boolean areImagesBytesEqual(DataBuffer expected, DataBuffer actual) {

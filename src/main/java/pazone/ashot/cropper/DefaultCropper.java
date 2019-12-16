@@ -3,7 +3,7 @@ package pazone.ashot.cropper;
 import pazone.ashot.Screenshot;
 import pazone.ashot.coordinates.Coords;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 

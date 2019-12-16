@@ -275,7 +275,7 @@ public final class ShootingStrategies {
         return viewportRetina(shootingStrategy, SCROLL_TIMEOUT_IOS, cutStrategy, 2F);
     }
 
-    private static final CutStrategy iOS8CutStrategy(int minViewport) {
+    private static CutStrategy iOS8CutStrategy(int minViewport) {
         return new VariableCutStrategy(HEADER_IOS_8_MIN, HEADER_IOS_8_MAX, minViewport);
     }
 }

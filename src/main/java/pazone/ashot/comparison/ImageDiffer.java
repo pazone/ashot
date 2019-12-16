@@ -65,8 +65,10 @@ public class ImageDiffer {
         Coords expectedImageCoords = Coords.ofImage(expected.getImage());
         Coords actualImageCoords = Coords.ofImage(actual.getImage());
 
-        CoordsSet compareCoordsSet = new CoordsSet(CoordsSet.union(actual.getCoordsToCompare(), expected.getCoordsToCompare()));
-        CoordsSet ignoreCoordsSet = new CoordsSet(CoordsSet.intersection(actual.getIgnoredAreas(), expected.getIgnoredAreas()));
+        CoordsSet compareCoordsSet = new CoordsSet(
+                CoordsSet.union(actual.getCoordsToCompare(), expected.getCoordsToCompare()));
+        CoordsSet ignoreCoordsSet = new CoordsSet(
+                CoordsSet.intersection(actual.getIgnoredAreas(), expected.getIgnoredAreas()));
 
         int width = Math.max(expected.getImage().getWidth(), actual.getImage().getWidth());
         int height = Math.max(expected.getImage().getHeight(), actual.getImage().getHeight());
@@ -86,7 +88,7 @@ public class ImageDiffer {
     }
 
     private boolean hasDiffInChannel(Screenshot expected, Screenshot actual, int i, int j) {
-        if(ignoredColor != null && rgbCompare(expected.getImage().getRGB(i, j), ignoredColor.getRGB(), 0)) {
+        if (ignoredColor != null && rgbCompare(expected.getImage().getRGB(i, j), ignoredColor.getRGB(), 0)) {
            return false;
         }
 
@@ -97,7 +99,8 @@ public class ImageDiffer {
         return makeDiff(new Screenshot(expected), new Screenshot(actual));
     }
 
-    private BufferedImage createDiffImage(BufferedImage expectedImage, BufferedImage actualImage, int width, int height) {
+    private BufferedImage createDiffImage(BufferedImage expectedImage, BufferedImage actualImage, int width,
+            int height) {
         BufferedImage diffImage = new BufferedImage(width, height, actualImage.getType());
         paintImage(actualImage, diffImage);
         paintImage(expectedImage, diffImage);
@@ -120,7 +123,7 @@ public class ImageDiffer {
         private final Coords minRectangle;
         private final Set<Coords> coordsSet;
 
-        public CoordsSet(Set<Coords> coordsSet) {
+        CoordsSet(Set<Coords> coordsSet) {
             isSingle = coordsSet.size() == 1;
             this.coordsSet = coordsSet;
             int minX = Integer.MAX_VALUE;

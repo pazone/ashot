@@ -5,7 +5,7 @@ import pazone.ashot.cropper.DefaultCropper;
 import pazone.ashot.coordinates.Coords;
 import pazone.ashot.util.ImageTool;
 
-import java.awt.*;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -101,7 +101,7 @@ public class IndentCropper extends DefaultCropper {
         return image;
     }
 
-    private static class NoFilteringArea {
+    private static final class NoFilteringArea {
         private final BufferedImage subimage;
         private final Coords coords;
 

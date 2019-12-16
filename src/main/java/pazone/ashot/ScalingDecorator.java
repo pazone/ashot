@@ -3,7 +3,9 @@ package pazone.ashot;
 import org.openqa.selenium.WebDriver;
 import pazone.ashot.coordinates.Coords;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 

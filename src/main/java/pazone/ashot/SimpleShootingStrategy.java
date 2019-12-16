@@ -24,7 +24,7 @@ public class SimpleShootingStrategy implements ShootingStrategy {
         TakesScreenshot takesScreenshot;
         try {
             takesScreenshot = (TakesScreenshot) wd;
-        } catch (ClassCastException ignored){
+        } catch (ClassCastException ignored) {
             takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
         }
         try {
