@@ -25,7 +25,7 @@
     </scm>
 
     <properties>
-        <mockito.version>3.0.0</mockito.version>
+        <mockito.version>3.2.0</mockito.version>
     </properties>
 
     <name>AShot WebDriver Utility</name>
