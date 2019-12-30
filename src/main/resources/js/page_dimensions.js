@@ -4,4 +4,4 @@ var pageHeight = Math.max(body.scrollHeight, body.offsetHeight, documentElement.
     documentElement.scrollHeight, documentElement.offsetHeight);
 var viewportHeight = window.innerHeight || documentElement.clientHeight|| body.clientHeight;
 var viewportWidth = window.innerWidth || documentElement.clientWidth || body.clientWidth;
-return {pageHeight, viewportHeight, viewportWidth}
+return {"pageHeight": pageHeight, "viewportHeight": viewportHeight, "viewportWidth": viewportWidth}
