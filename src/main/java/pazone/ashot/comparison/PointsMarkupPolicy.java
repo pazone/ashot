@@ -85,7 +85,7 @@ public class PointsMarkupPolicy extends DiffMarkupPolicy {
         Point diffPoint = iterator.next();
         double x = diffPoint.getX();
         double y = diffPoint.getY();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             diffPoint = iterator.next();
             x = Math.min(x, diffPoint.getX());
             y = Math.min(y, diffPoint.getY());

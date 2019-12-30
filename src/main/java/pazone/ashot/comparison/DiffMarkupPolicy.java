@@ -1,6 +1,6 @@
 package pazone.ashot.comparison;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 

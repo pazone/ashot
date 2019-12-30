@@ -143,7 +143,8 @@ public class AShot implements Serializable {
         return screenshot;
     }
 
-    protected synchronized Set<Coords> compileIgnoredAreas(WebDriver driver, CoordsPreparationStrategy preparationStrategy) {
+    protected synchronized Set<Coords> compileIgnoredAreas(WebDriver driver,
+            CoordsPreparationStrategy preparationStrategy) {
         Set<Coords> ignoredCoords = new HashSet<>();
         for (By ignoredLocator : ignoredLocators) {
             List<WebElement> ignoredElements = driver.findElements(ignoredLocator);

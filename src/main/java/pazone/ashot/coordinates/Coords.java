@@ -2,7 +2,7 @@ package pazone.ashot.coordinates;
 
 import com.google.gson.Gson;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.HashSet;

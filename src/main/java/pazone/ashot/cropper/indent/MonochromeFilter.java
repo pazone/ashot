@@ -2,8 +2,9 @@ package pazone.ashot.cropper.indent;
 
 import pazone.ashot.util.ImageTool;
 
-import javax.swing.*;
 import java.awt.image.BufferedImage;
+
+import javax.swing.GrayFilter;
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>

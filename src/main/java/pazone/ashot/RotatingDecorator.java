@@ -4,7 +4,7 @@ import org.openqa.selenium.WebDriver;
 import pazone.ashot.coordinates.Coords;
 import pazone.ashot.cutter.CutStrategy;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 

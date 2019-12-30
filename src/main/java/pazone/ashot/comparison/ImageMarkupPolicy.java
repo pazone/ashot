@@ -58,8 +58,10 @@ public class ImageMarkupPolicy extends DiffMarkupPolicy {
         if (obj instanceof ImageMarkupPolicy) {
             ImageMarkupPolicy item = (ImageMarkupPolicy) obj;
             return this.diffPointCount == item.diffPointCount
-                    && this.xSum - this.diffPointCount * this.xReference == item.xSum - item.diffPointCount * item.xReference
-                    && this.ySum - this.diffPointCount * this.yReference == item.ySum - item.diffPointCount * item.yReference;
+                    && this.xSum - this.diffPointCount * this.xReference
+                        == item.xSum - item.diffPointCount * item.xReference
+                    && this.ySum - this.diffPointCount * this.yReference
+                        == item.ySum - item.diffPointCount * item.yReference;
         }
         return false;
     }

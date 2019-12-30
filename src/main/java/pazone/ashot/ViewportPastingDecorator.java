@@ -5,7 +5,7 @@ import org.openqa.selenium.WebDriver;
 import pazone.ashot.coordinates.Coords;
 import pazone.ashot.util.InnerScript;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.HashSet;
 import java.util.Map;
@@ -73,7 +73,7 @@ public class ViewportPastingDecorator extends ShootingDecorator {
 
     protected int getCurrentScrollY(JavascriptExecutor js) {
         return ((Number) js.executeScript("var scrY = window.pageYOffset;"
-        		+ "if(scrY){return scrY;} else {return 0;}")).intValue();
+                + "if(scrY){return scrY;} else {return 0;}")).intValue();
     }
 
     protected void scrollVertically(JavascriptExecutor js, int scrollY) {
