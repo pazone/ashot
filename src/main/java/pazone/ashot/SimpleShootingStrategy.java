@@ -1,6 +1,5 @@
 package pazone.ashot;
 
-import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -20,20 +19,17 @@ public class SimpleShootingStrategy implements ShootingStrategy {
 
     @Override
     public BufferedImage getScreenshot(WebDriver wd) {
-        ByteArrayInputStream imageArrayStream = null;
         TakesScreenshot takesScreenshot;
         try {
             takesScreenshot = (TakesScreenshot) wd;
         } catch (ClassCastException ignored) {
             takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
         }
-        try {
-            imageArrayStream = new ByteArrayInputStream(takesScreenshot.getScreenshotAs(OutputType.BYTES));
+        try (ByteArrayInputStream imageArrayStream =
+                     new ByteArrayInputStream(takesScreenshot.getScreenshotAs(OutputType.BYTES))) {
             return ImageIO.read(imageArrayStream);
         } catch (IOException e) {
             throw new ImageReadException("Can not parse screenshot data", e);
-        } finally {
-            IOUtils.closeQuietly(imageArrayStream);
         }
     }
 
