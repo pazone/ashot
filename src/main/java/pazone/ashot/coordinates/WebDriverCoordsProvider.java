@@ -1,8 +1,10 @@
 package pazone.ashot.coordinates;
 
-import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
 
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
@@ -10,11 +12,12 @@ import org.openqa.selenium.WebElement;
 public class WebDriverCoordsProvider extends CoordsProvider {
     @Override
     public Coords ofElement(WebDriver driver, WebElement element) {
-        Rectangle rect = element.getRect();
+        Point point = element.getLocation();
+        Dimension dimension = element.getSize();
         return new Coords(
-                rect.getX(),
-                rect.getY(),
-                rect.getWidth(),
-                rect.getHeight());
+                point.getX(),
+                point.getY(),
+                dimension.getWidth(),
+                dimension.getHeight());
     }
 }
