@@ -5,11 +5,9 @@ import org.openqa.selenium.Point;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-
 /**
  * @author <a href="pazone@yandex-team.ru">Pavel Zorin</a>
  */
-
 public class WebDriverCoordsProvider extends CoordsProvider {
     @Override
     public Coords ofElement(WebDriver driver, WebElement element) {
