@@ -6,7 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.Rectangle;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.Point;
 import org.openqa.selenium.WebElement;
 
 class WebDriverCoordsProviderTest {
@@ -19,7 +20,8 @@ class WebDriverCoordsProviderTest {
         int y = 2;
         int height = 3;
         int width = 4;
-        when(element.getRect()).thenReturn(new Rectangle(x, y, height, width));
+        when(element.getLocation()).thenReturn(new Point(x, y));
+        when(element.getSize()).thenReturn(new Dimension(width, height));
         Coords coords = webDriverCoordsProvider.ofElement(null, element);
         assertAll(
                 () -> assertEquals(x, coords.x),
