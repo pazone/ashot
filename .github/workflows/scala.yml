@@ -1,0 +1,20 @@
+name: Deploy
+
+on: pull_request
+
+jobs:
+  deploy:
+    name: Deploy my app
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          target_url: http://my-app-url.com
+          environment: production
