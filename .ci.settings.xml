@@ -13,17 +13,6 @@
                     <name>bintray</name>
                     <url>https://jcenter.bintray.com</url>
                 </repository>
-                <repository>
-                    <id>central</id>
-                    <name>central</name>
-                    <url>http://central.maven.org</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </repository>
             </repositories>
             <pluginRepositories>
                 <pluginRepository>
