@@ -39,8 +39,8 @@ new AShot()
   .takeScreenshot(webDriver);
 ```
 
-There are built-in strategies in ```ShootingStrategies``` for different use cases. In case there are no suitable strategies it is possible to build it using existing strategies as decorators or implement your own.
-```
+There are built-in strategies in `ShootingStrategies` for different use cases. In case there are no suitable strategies it is possible to build it using existing strategies as decorators or implement your own.
+```java
 CutStrategy cutting = new VariableCutStrategy(HEADER_IOS_8_MIN, HEADER_IOS_8_MAX, VIEWPORT_MIN_IOS_8_SIM);
 ShootingStrategy rotating = new RotatingDecorator(cutting, ShootingStrategies.simple());
 ShootingStrategy pasting = new ViewportPastingDecorator(rotating)
@@ -78,7 +78,7 @@ new AShot()
 Here is the result.
 ![simple weather snippet](/doc/img/def_crop.png)
  
-```DefaultCropper``` is used by default. Can we do better? Yes, we can.
+`DefaultCropper` is used by default. Can we do better? Yes, we can.
  
 ```java
 new AShot()
@@ -99,7 +99,7 @@ Screenshot myScreenshot = new AShot()
   .takeScreenshot(driver, yandexWeatherElement);
 ```
 
-Use ```ImageDiffer``` to find a difference between two images.
+Use `ImageDiffer` to find a difference between two images.
 
 ```java
 ImageDiff diff = new ImageDiffer().makeDiff(myScreenshot, anotherScreenshot);
@@ -128,4 +128,4 @@ ImageDiffer imageDifferWithIgnored = new ImageDiffer().withIgnoredColor(Color.MA
 ImageDiff diff = imageDifferWithIgnored.makeDiff(templateWithSomeMagentaPixels, actualScreenshot);
 assertFalse(diff.hasDiff());
 ```
-Any pixels in template with color MAGENTA (255, 0, 255 in RGB) will be ignored during comparison.
+Any pixels in template with color `MAGENTA` (255, 0, 255 in RGB) will be ignored during comparison.
