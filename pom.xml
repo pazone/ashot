@@ -4,7 +4,7 @@
 
     <groupId>io.github.pazone</groupId>
     <artifactId>ashot</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1-SNAPSHOT</version>
 
     <licenses>
         <license>
@@ -22,7 +22,7 @@
         <url>https://github.com/pazone/ashot</url>
         <connection>scm:git:git@github.com:pazone/ashot.git</connection>
         <developerConnection>scm:git:git@github.com:pazone/ashot.git</developerConnection>
-      <tag>ashot-1.6.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <properties>
