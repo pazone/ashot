@@ -57,7 +57,7 @@ public class ScalingDecorator extends ShootingDecorator {
         int scaledWidth = (int) (image.getWidth() / dprX);
         int scaledHeight = (int) (image.getHeight() / dprY);
 
-        final BufferedImage bufferedImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_3BYTE_BGR);
+        final BufferedImage bufferedImage = new BufferedImage(scaledWidth, scaledHeight, image.getType());
         final Graphics2D graphics2D = bufferedImage.createGraphics();
         graphics2D.setComposite(AlphaComposite.Src);
         graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
