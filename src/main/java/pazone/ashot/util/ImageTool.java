@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -102,6 +103,12 @@ public final class ImageTool {
         graphics.drawImage(img, 0, 0, null);
         graphics.dispose();
         return bufferedImage;
+    }
+
+    public static BufferedImage toBufferedImage(byte[] imageBytes) throws IOException {
+        try (ByteArrayInputStream bais = new ByteArrayInputStream(imageBytes)) {
+            return ImageIO.read(bais);
+        }
     }
 
 }
