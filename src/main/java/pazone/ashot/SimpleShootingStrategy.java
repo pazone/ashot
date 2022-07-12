@@ -5,10 +5,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.remote.Augmenter;
 import pazone.ashot.coordinates.Coords;
+import pazone.ashot.util.ImageTool;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Set;
 
@@ -25,9 +24,9 @@ public class SimpleShootingStrategy implements ShootingStrategy {
         } catch (ClassCastException ignored) {
             takesScreenshot = (TakesScreenshot) new Augmenter().augment(wd);
         }
-        try (ByteArrayInputStream imageArrayStream =
-                     new ByteArrayInputStream(takesScreenshot.getScreenshotAs(OutputType.BYTES))) {
-            return ImageIO.read(imageArrayStream);
+        try {
+            byte[] imageBytes = takesScreenshot.getScreenshotAs(OutputType.BYTES);
+            return ImageTool.toBufferedImage(imageBytes);
         } catch (IOException e) {
             throw new ImageReadException("Can not parse screenshot data", e);
         }
