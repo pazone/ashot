@@ -32,6 +32,18 @@ public class CuttingDecorator extends ShootingDecorator {
     }
 
     /**
+     * Will use {@link FixedCutStrategy} to cut off header and footer.
+     * @param headerToCut - height of header in pixels
+     * @param footerToCut - height of footer in pixels
+     * @param leftBarToCut - width of left bar in pixels
+     * @param rightBarToCut - width of right bar in pixels
+     * @return Cutting decorator
+     */
+    public CuttingDecorator withCut(int headerToCut, int footerToCut, int leftBarToCut, int rightBarToCut) {
+        return withCutStrategy(new FixedCutStrategy(headerToCut, footerToCut, leftBarToCut, rightBarToCut));
+    }
+
+    /**
      * Will use custom cut strategy, for example {@link pazone.ashot.cutter.VariableCutStrategy}.
      * @param cutStrategy - strategy to get height of browser's header
      * @return Cutting decorator
@@ -48,7 +60,10 @@ public class CuttingDecorator extends ShootingDecorator {
         int w = baseImage.getWidth();
         final int headerToCut = getHeaderToCut(wd);
         final int footerToCut = getFooterToCut(wd);
-        return baseImage.getSubimage(0, headerToCut, w, h - headerToCut - footerToCut);
+        final int leftBarToCut = getLeftBarToCut(wd);
+        final int rightBarToCut = getRightBarToCut(wd);
+        return baseImage.getSubimage(leftBarToCut, headerToCut, w - leftBarToCut - rightBarToCut,
+            h - headerToCut - footerToCut);
     }
 
     @Override
@@ -64,4 +79,11 @@ public class CuttingDecorator extends ShootingDecorator {
         return cutStrategy.getFooterHeight(wd);
     }
 
+    protected int getLeftBarToCut(WebDriver wd) {
+        return cutStrategy.getLeftBarWidth(wd);
+    }
+
+    protected int getRightBarToCut(WebDriver wd) {
+        return cutStrategy.getRightBarWidth(wd);
+    }
 }

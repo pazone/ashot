@@ -10,10 +10,18 @@ import org.openqa.selenium.WebDriver;
 public class FixedCutStrategy implements CutStrategy {
     private final int headerToCut;
     private final int footerToCut;
+    private final int leftBarToCut;
+    private final int rightBarToCut;
 
     public FixedCutStrategy(int headerToCut, int footerToCut) {
+        this(headerToCut, footerToCut, 0, 0);
+    }
+
+    public FixedCutStrategy(int headerToCut, int footerToCut, int leftBarToCut, int rightBarToCut) {
         this.headerToCut = headerToCut;
         this.footerToCut = footerToCut;
+        this.leftBarToCut = leftBarToCut;
+        this.rightBarToCut = rightBarToCut;
     }
 
     @Override
@@ -24,5 +32,15 @@ public class FixedCutStrategy implements CutStrategy {
     @Override
     public int getFooterHeight(WebDriver driver) {
         return footerToCut;
+    }
+
+    @Override
+    public int getLeftBarWidth(WebDriver driver) {
+        return leftBarToCut;
+    }
+
+    @Override
+    public int getRightBarWidth(WebDriver driver) {
+        return rightBarToCut;
     }
 }
