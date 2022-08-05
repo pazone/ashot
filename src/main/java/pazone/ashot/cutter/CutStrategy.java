@@ -27,7 +27,7 @@ public interface CutStrategy extends Serializable {
      * Obtains width of left bar that will be cut off from initial screenshot.
      *
      * @param driver - webDriver
-     * @return width of header in pixels
+     * @return width of the left bar in pixels
      */
     default int getLeftBarWidth(WebDriver driver) {
         return 0;
@@ -37,7 +37,7 @@ public interface CutStrategy extends Serializable {
      * Obtains width of right bar that will be cut off from initial screenshot.
      *
      * @param driver - webDriver
-     * @return width of header in pixels
+     * @return width of the right bar in pixels
      */
     default int getRightBarWidth(WebDriver driver) {
         return 0;
