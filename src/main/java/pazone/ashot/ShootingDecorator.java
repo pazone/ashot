@@ -4,11 +4,11 @@ import pazone.ashot.coordinates.Coords;
 
 import java.util.Set;
 
-abstract class ShootingDecorator implements ShootingStrategy {
+public abstract class ShootingDecorator implements ShootingStrategy {
 
     private final ShootingStrategy shootingStrategy;
 
-    ShootingDecorator(ShootingStrategy shootingStrategy) {
+    protected ShootingDecorator(ShootingStrategy shootingStrategy) {
         this.shootingStrategy = shootingStrategy;
     }
 
