@@ -52,7 +52,7 @@ public class ViewportPastingDecorator extends ShootingDecorator {
         for (int n = 0; n < scrollTimes; n++) {
             scrollVertically(js, shootingArea.y + viewportHeight * n);
             waitForScrolling();
-            BufferedImage part = getShootingStrategy().getScreenshot(wd);
+            BufferedImage part = getChunk(wd, n, scrollTimes);
             graphics.drawImage(part, 0, getCurrentScrollY(js) - shootingArea.y, null);
         }
 
@@ -78,6 +78,18 @@ public class ViewportPastingDecorator extends ShootingDecorator {
 
     protected void scrollVertically(JavascriptExecutor js, int scrollY) {
         js.executeScript("scrollTo(0, arguments[0]); return [];", scrollY);
+    }
+
+    /**
+     * Returns a single chunk (viewport screenshot) used to build a full screenshot
+     *
+     * @param wd                  WebDriver instance
+     * @param currentChunkIndex   Zero-based index of the chunk to get
+     * @param totalNumberOfChunks Total number of chunks
+     * @return Current screenshot chunk (viewport screenshot)
+     */
+    protected BufferedImage getChunk(WebDriver wd, int currentChunkIndex, int totalNumberOfChunks) {
+        return getShootingStrategy().getScreenshot(wd);
     }
 
     private Coords getShootingCoords(Set<Coords> coords, PageDimensions pageDimensions) {
