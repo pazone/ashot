@@ -137,7 +137,6 @@
                         <version>3.2.2</version>
                         <configuration>
                             <configLocation>config/checkstyle/checkstyle.xml</configLocation>
-                            <encoding>UTF-8</encoding>
                             <consoleOutput>true</consoleOutput>
                             <failsOnError>true</failsOnError>
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
