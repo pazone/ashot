@@ -67,7 +67,6 @@ class VerticalPastingShootingStrategyTest {
     void testTimes(int height, int times) throws IOException {
         givenCoordsWithHeight(height);
         whenTakingScreenshot(shootingCoords);
-        thenScrollTimes(times);
         thenShootTimes(times);
         thenScreenshotIsHeight(height + DEFAULT_COORDS_INDENT);
     }
@@ -84,7 +83,6 @@ class VerticalPastingShootingStrategyTest {
     void testScreenshotFullPage() throws IOException {
         whenTakingScreenshot();
         thenShootTimes(11);
-        thenScrollTimes(11);
         thenScreenshotIsHeight(DEFAULT_PAGE_HEIGHT);
     }
 
@@ -125,12 +123,9 @@ class VerticalPastingShootingStrategyTest {
         assertThat("Screenshot height should be correct", screenshot.getHeight(), is(shotHeight));
     }
 
-    private void thenScrollTimes(int times) {
-        verify(shootingStrategy, times(times)).scrollVertically(eq((JavascriptExecutor) webDriver), anyInt());
-    }
-
     private void thenShootTimes(int times) {
         verify(((TakesScreenshot) webDriver), times(times)).getScreenshotAs(OutputType.BYTES);
+        verify(shootingStrategy, times(times + 1)).scrollVertically(eq((JavascriptExecutor) webDriver), anyInt());
     }
 
     static class MockVerticalPastingShootingDecorator extends ViewportPastingDecorator {
