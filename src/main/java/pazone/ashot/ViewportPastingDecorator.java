@@ -40,24 +40,30 @@ public class ViewportPastingDecorator extends ShootingDecorator {
     @Override
     public BufferedImage getScreenshot(WebDriver wd, Set<Coords> coordsSet) {
         JavascriptExecutor js = (JavascriptExecutor) wd;
-        PageDimensions pageDimensions = getPageDimensions(wd);
-        shootingArea = getShootingCoords(coordsSet, pageDimensions);
+        int initialY = getCurrentScrollY(js);
 
-        BufferedImage finalImage = new BufferedImage(pageDimensions.getViewportWidth(), shootingArea.height,
-                BufferedImage.TYPE_3BYTE_BGR);
-        Graphics2D graphics = finalImage.createGraphics();
+        try {
+            PageDimensions pageDimensions = getPageDimensions(wd);
+            shootingArea = getShootingCoords(coordsSet, pageDimensions);
 
-        int viewportHeight = pageDimensions.getViewportHeight();
-        int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
-        for (int n = 0; n < scrollTimes; n++) {
-            scrollVertically(js, shootingArea.y + viewportHeight * n);
-            waitForScrolling();
-            BufferedImage part = getChunk(wd, n, scrollTimes);
-            graphics.drawImage(part, 0, getCurrentScrollY(js) - shootingArea.y, null);
+            BufferedImage finalImage = new BufferedImage(pageDimensions.getViewportWidth(), shootingArea.height,
+                    BufferedImage.TYPE_3BYTE_BGR);
+            Graphics2D graphics = finalImage.createGraphics();
+
+            int viewportHeight = pageDimensions.getViewportHeight();
+            int scrollTimes = (int) Math.ceil(shootingArea.getHeight() / viewportHeight);
+            for (int n = 0; n < scrollTimes; n++) {
+                scrollVertically(js, shootingArea.y + viewportHeight * n);
+                waitForScrolling();
+                BufferedImage part = getChunk(wd, n, scrollTimes);
+                graphics.drawImage(part, 0, getCurrentScrollY(js) - shootingArea.y, null);
+            }
+
+            graphics.dispose();
+            return finalImage;
+        } finally {
+            scrollVertically(js, initialY);
         }
-
-        graphics.dispose();
-        return finalImage;
     }
 
     @Override
