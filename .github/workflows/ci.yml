@@ -35,4 +35,4 @@ jobs:
         OSS_USER: ${{ secrets.OSS_USER }}
       run: |
         cp .ci.settings.xml ~/.m2/settings.xml
-        ./mvnw verify -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
+        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
