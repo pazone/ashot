@@ -19,16 +19,6 @@ jobs:
         java-version: 11
         cache: 'maven'
 
-    - name: deploy snapshot (sonatype)
-      if: github.ref == 'refs/heads/master'
-      env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        OSS_PWD: ${{ secrets.OSS_PWD }}
-        OSS_USER: ${{ secrets.OSS_USER }}
-      run: |
-        cp .ci.settings.xml ~/.m2/settings.xml
-        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
-
     - name: deploy snapshot (github packages
       if: github.ref == 'refs/heads/master'
       env:
