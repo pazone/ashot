@@ -1,0 +1,42 @@
+name: Release and Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+
+      - name: Extract Release Version
+        run: |
+          RELEASE_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Release version: $RELEASE_VERSION"
+        id: release_version
+
+      - name: Verify Tag and Release
+        run: |
+          TAG_VERSION=$(echo "${GITHUB_REF#refs/tags/}")
+          if [ "$TAG_VERSION" != "${{ steps.release_version.outputs.version }}" ]; then
+            echo "Error: Tag version ($TAG_VERSION) does not match release version ($RELEASE_VERSION)"
+            exit 1
+          fi
+          echo "Tag version and release version match: $RELEASE_VERSION"      
+
+      - name: Release with Maven
+        run: ./mvnw --batch-mode release:clean release:prepare release:perform
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          MAVEN_USERNAME: ${{ secrets.GITHUB_ACTOR }}
+          MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
