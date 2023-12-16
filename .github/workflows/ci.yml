@@ -26,13 +26,3 @@ jobs:
 
     - name: Tests
       run: ./mvnw clean test
-
-    - name: deploy snapshot
-      if: github.ref == 'refs/heads/master' && matrix.java == '8'
-      env:
-        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-        OSS_PWD: ${{ secrets.OSS_PWD }}
-        OSS_USER: ${{ secrets.OSS_USER }}
-      run: |
-        cp .ci.settings.xml ~/.m2/settings.xml
-        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
