@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: 11
+        cache: 'maven'
+
+    - name: deploy snapshot (sonatype)
+      if: github.ref == 'refs/heads/master'
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        OSS_PWD: ${{ secrets.OSS_PWD }}
+        OSS_USER: ${{ secrets.OSS_USER }}
+      run: |
+        cp .ci.settings.xml ~/.m2/settings.xml
+        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
+
+    - name: deploy snapshot (github packages)
+      if: github.ref == 'refs/heads/master'
+      env:
+        GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+        MAVEN_USERNAME: ${{ secrets.GITHUB_ACTOR }}
+        MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cp .ci.settings.xml ~/.m2/settings.xml
+        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
