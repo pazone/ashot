@@ -22,6 +22,7 @@
         <url>https://github.com/pazone/ashot</url>
         <connection>scm:git:git@github.com:pazone/ashot.git</connection>
         <developerConnection>scm:git:git@github.com:pazone/ashot.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
@@ -112,20 +113,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
                 <version>2.5.3</version>
+                <configuration>
+                    <scmCommentPrefix>[ci skip]</scmCommentPrefix>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
-<!--    <distributionManagement>-->
-<!--        <snapshotRepository>-->
-<!--            <id>ossrh</id>-->
-<!--            <url>https://oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--        </snapshotRepository>-->
-<!--        <repository>-->
-<!--            <id>ossrh</id>-->
-<!--            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>-->
-<!--        </repository>-->
-<!--    </distributionManagement>-->
 
     <distributionManagement>
         <repository>
