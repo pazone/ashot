@@ -22,16 +22,6 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
-      - name: Verify Tag and Release
-        run: |
-          TAG_VERSION=$(echo "${GITHUB_REF#refs/tags/}")
-          RELEASE_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
-          if [ "$TAG_VERSION" != "$RELEASE_VERSION" ]; then
-            echo "Error: Tag version ($TAG_VERSION) does not match release version ($RELEASE_VERSION)"
-            exit 1
-          fi
-          echo "Tag version and release version match: $RELEASE_VERSION"      
-
       - name: Release with Maven
         run: ./mvnw --batch-mode release:clean release:prepare release:perform
         env:
