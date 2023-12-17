@@ -16,8 +16,11 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v2
         with:
-          distribution: 'adopt'
+          distribution: 'zulu'
           java-version: '11'
+          server-id: github
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
 
       - name: Extract Release Version
         run: |

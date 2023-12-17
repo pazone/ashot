@@ -18,13 +18,14 @@ jobs:
         distribution: 'zulu'
         java-version: 11
         cache: 'maven'
+        server-id: github
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
 
-    - name: deploy snapshot (github packages
+    - name: deploy snapshot (github packages)
       if: github.ref == 'refs/heads/master'
       env:
         GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
         MAVEN_USERNAME: ${{ secrets.GITHUB_ACTOR }}
-        MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        cp .ci.settings.xml ~/.m2/settings.xml
-        ./mvnw -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
+        MAVEN_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+      run: ./mvnw --batch-mode -Dgpg.passphrase=$GPG_PASSPHRASE -DskipTests deploy
