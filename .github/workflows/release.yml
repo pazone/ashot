@@ -12,7 +12,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - run: git checkout ${GITHUB_REF#refs/*/}
 
       - name: Set up JDK
         uses: actions/setup-java@v2
