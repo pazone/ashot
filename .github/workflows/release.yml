@@ -1,5 +1,10 @@
 name: Release and Deploy
 
+on:
+  push:
+    branches:
+      - 'release*'
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -17,7 +22,7 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
-      - name: Release with Maven
+      - name: Release
         run: |
           git config user.email "pazonec@yandex.ru"
           git config --global user.name "Pavel Zorin"
