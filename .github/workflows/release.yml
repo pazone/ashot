@@ -1,10 +1,5 @@
 name: Release and Deploy
 
-on:
-  push:
-    tags:
-      - 'v*'
-
 jobs:
   release:
     runs-on: ubuntu-latest
