@@ -22,17 +22,20 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
+      - name: Configure SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts    
+
       - name: Release
-        uses: qcastel/github-actions-maven-release@v1.12.41
+        run: |
+          git config user.email "pazonec@yandex.ru"
+          git config --global user.name "Pavel Zorin"
+          ./mvnw -B -DskipTests release:clean release:prepare release:perform
         env:
-          JAVA_HOME: /usr/lib/jvm/java-11-openjdk/
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.GITHUB_ACTOR }}
           MAVEN_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          git-release-bot-name: "automated release"
-          git-release-bot-email: "pazonec@yandex.ru"
-
-          maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Dmaven.deploy.skip=true"
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-          release-branch-name: 'release'
