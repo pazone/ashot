@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -21,14 +23,6 @@ jobs:
           server-id: github
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
-
-      - name: Configure SSH Key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts    
 
       - name: Release
         run: |
