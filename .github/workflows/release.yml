@@ -3,7 +3,7 @@ name: Release and Deploy
 on:
   push:
     branches:
-      - 'release*'
+      - 'release'
 
 jobs:
   release:
@@ -35,3 +35,4 @@ jobs:
 
           maven-args: "-Dmaven.javadoc.skip=true -DskipTests -DskipITs -Dmaven.deploy.skip=true"
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          release-branch-name: 'release'
