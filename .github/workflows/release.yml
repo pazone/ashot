@@ -26,7 +26,7 @@ jobs:
         run: |
           git config user.email "pazonec@yandex.ru"
           git config --global user.name "Pavel Zorin"
-          ./mvnw --batch-mode -DskipTests release:clean release:prepare release:perform
+          ./mvnw --batch-mode -DskipTests -X release:clean release:prepare release:perform
         env:
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_USERNAME: ${{ secrets.GITHUB_ACTOR }}
