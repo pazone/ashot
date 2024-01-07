@@ -20,7 +20,7 @@
 
     <scm>
         <url>https://github.com/pazone/ashot</url>
-        <connection>scm:git:git@github.com:pazone/ashot.git</connection>
+        <connection>scm:git:ssh:git@github.com:pazone/ashot.git</connection>
         <developerConnection>scm:git:git@github.com:pazone/ashot.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
