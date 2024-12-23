@@ -42,6 +42,7 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-chromium-driver</artifactId>
             <version>${selenium.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
