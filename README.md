@@ -3,6 +3,7 @@ aShot
 
 
 [![release](https://img.shields.io/github/v/release/pazone/ashot.svg)](https://github.com/pazone/ashot/releases/latest) [![Maven Central](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.ashot/ashot/badge.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/ru.yandex.qatools.ashot/ashot)
+[![libs.tech recommends](https://libs.tech/project/24496061/badge.svg)](https://libs.tech/project/24496061/ashot)
 
 
 WebDriver Screenshot utility
