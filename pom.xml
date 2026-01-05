@@ -138,7 +138,7 @@
         <profile>
             <id>checkstyle-checks</id>
             <activation>
-                <jdk>[17,)</jdk>
+                <jdk>[21,)</jdk>
             </activation>
             <build>
                 <plugins>
@@ -165,7 +165,7 @@
                             <dependency>
                                 <groupId>com.puppycrawl.tools</groupId>
                                 <artifactId>checkstyle</artifactId>
-                                <version>12.3.0</version>
+                                <version>13.0.0</version>
                             </dependency>
                         </dependencies>
                     </plugin>
